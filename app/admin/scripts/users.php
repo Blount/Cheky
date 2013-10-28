@@ -1,0 +1,2 @@
+<?php
+$users = $userStorage->fetchAll();

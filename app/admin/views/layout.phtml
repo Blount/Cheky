@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Alerte mail pour Leboncoin.fr</title>
+        <meta charset="utf-8">
+        <meta name="robots" content="none">
+        <link rel="stylesheet" href="static/styles.css" />
+    </head>
+    <body>
+        <?php if ($userAuthed) : ?>
+        <header>
+            <h1><a href="./">Système d'alerte Leboncoin</a></h1>
+            <ul class="topmenu">
+                <li<?php echo $action === "users"?' class="active"':''; ?>><a href="?mod=admin&amp;a=users">Utilisateurs</a></li>
+                <li<?php echo $action === "proxy"?' class="active"':''; ?>><a href="?mod=admin&amp;a=proxy">Proxy</a></li>
+                <li<?php echo $action === "mail"?' class="active"':''; ?>><a href="?mod=admin&amp;a=mail">Mail</a></li>
+                <li<?php echo $action === "log"?' class="active"':''; ?>><a href="?mod=admin&amp;a=log">Log</a></li>
+                <li style="float: right;"><a href="?a=logout">Déconnexion <span>(<?php echo htmlspecialchars($userAuthed->getUsername()); ?>)</span></a></li>
+            </ul>
+        </header>
+        <?php endif; ?>
+        <div class="content">
+            <?php if (false && true !== $msg = testHTTPConnection($client)) : ?>
+            <div style="color: #EF0000; font-weight: bold;">
+                <p>Erreur lors du test de connexion :</p>
+                <p>Message retourné par le test : <?php echo $msg; ?></p>
+                <p>Message retourné par cURL : <?php echo ($error = $client->getError())?$error:"aucun"; ?>.</p>
+                <ul>
+                    <li>Un message comme "connection time out" peut signifier que Leboncoin bloque vos connexions.</li>
+                    <li>Vérifiez que votre hébergement permet des connexions distantes.</li>
+                    <li>Vérifiez si votre proxy fonctionne correctement.</li>
+                </ul>
+            </div>
+            <?php endif; ?>
+            <?php echo $content; ?>
+        </div>
+        <?php if ($userAuthed) : ?>
+        <footer>
+            <?php if ($userAuthed->getUsername() == "admin") : ?>
+            <a href="?mod=admin&amp;a=users" style="color: #EF0000;">Administration</a> |
+            <?php endif; ?>
+            Version <?php echo require DOCUMENT_ROOT."/version.php"; ?>
+            | <a href="https://github.com/Blount/LBCAlerte/issues">Rapporter un bug</a>
+        </footer>
+        <?php endif; ?>
+    </body>
+</html>

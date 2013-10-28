@@ -1,0 +1,65 @@
+<a href="?mod=mail&amp;a=form" class="link-create-alert">Ajouter une alerte</a>
+<?php if ($groups) : ?>
+<?php foreach ($groups AS $group) : ?>
+<?php if (count($groups) > 1 || $group != "Sans groupe") : ?>
+<h2><?php echo $group != "Sans groupe"?"Groupe : ":""; ?><?php echo htmlspecialchars($group); ?></h2>
+<?php endif; ?>
+<?php $alerts = $alertsByGroup[$group]; ?>
+<table style="width: 100%;">
+    <thead>
+        <tr>
+            <th style="width: 250px">E-Mail</th>
+            <th style="width: 250px">Titre</th>
+            <th>URL</th>
+            <th style="width: 100px">Intervalle</th>
+            <th style="width: 100px">Prix</th>
+            <th style="width: 200px">Villes</th>
+            <th style="width: 70px">Actif</th>
+            <th style="width: 170px">&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($alerts AS $alert) : ?>
+        <tr>
+            <td><?php echo htmlspecialchars($alert->email); ?></td>
+            <td><?php echo $alert->title?htmlspecialchars($alert->title):"-"; ?></td>
+            <td class="link">
+                <a href="<?php echo htmlspecialchars($alert->url); ?>" target="_blank"><?php
+                    echo str_replace("http://www.leboncoin.fr", "", htmlspecialchars($alert->url)); ?></a>
+            </td>
+            <td><?php echo (int)$alert->interval; ?> mins</td>
+            <td>
+                <?php if ($alert->price_min != -1 && $alert->price_max != -1) : ?>
+                entre <?php echo $alert->price_min; ?>€ et <?php echo $alert->price_max; ?>€
+                <?php elseif ($alert->price_min != -1) : ?>
+                à partir de <?php echo $alert->price_min; ?>€
+                <?php elseif ($alert->price_max != -1) : ?>
+                jusque <?php echo $alert->price_max; ?>€
+                <?php else: ?>
+                -
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if ($alert->cities) : ?>
+                <ul style="margin: 0; padding: 0 0 0 15px;"><li>
+                <?php echo str_replace("\n", "</li><li>", htmlspecialchars($alert->cities)); ?>
+                </li></ul>
+                <?php else: ?>
+                -
+                <?php endif; ?>
+            </td>
+            <td>
+                <a href="?mod=mail&amp;a=suspend&amp;id=<?php echo $alert->id;
+                    ?>"><img src="static/images/<?php
+                    echo $alert->suspend?"disable":"enable"; ?>.png" alt="" /></a>
+            </td>
+            <td>
+                <a href="?mod=mail&amp;a=form&amp;id=<?php echo $alert->id; ?>">modifier</a> |
+                <a href="?mod=mail&amp;a=form-delete&amp;id=<?php echo $alert->id; ?>">supprimer</a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<?php endforeach; ?>
+<?php endif; ?>

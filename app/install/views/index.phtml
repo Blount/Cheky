@@ -1,0 +1,35 @@
+<?php if (!empty($errors)) : ?>
+<ul class="error"><li><?php echo implode("</li><li>", $errors); ?></li></ul>
+<?php else: ?>
+<form action="" method="post">
+    <fieldset>
+        <legend>Nouvelle installation</legend>
+        <?php if (!isset($_GET["success"]) || $_GET["success"] != "true") : ?>
+        <dl>
+            <dt>Mot de passe admin :</dt>
+            <dd>
+                <input type="password" name="password" />
+                <?php if (!empty($formErrors["password"])) : ?>
+                <p class="error"><?php echo $formErrors["password"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>Confirmer le mot de passe :</dt>
+            <dd>
+                <input type="password" name="confirmPassword" />
+                <?php if (!empty($formErrors["confirmPassword"])) : ?>
+                <p class="error"><?php echo $formErrors["confirmPassword"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>Cliquez sur le bouton suivant pour lancer l'installation.</dt>
+            <dd><input type="submit" value="Installer" /></dd>
+        </dl>
+        <?php else: ?>
+        <p style="color: #001FA6;"><strong>Installation terminée.</strong></p>
+        <p>Vous pouvez vous connecter avec les identifiants suivants :<br />
+        <strong>Utilisateur:</strong> admin<br />
+        <strong>Mot de passe:</strong> spécifié lors de l'installation.</p>
+        <p><a href="./">continuer &gt;</a></p>
+        <?php endif; ?>
+    </fieldset>
+</form>
+<?php endif; ?>

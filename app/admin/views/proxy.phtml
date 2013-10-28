@@ -1,0 +1,74 @@
+<?php if (isset($_POST["testProxy"])) : ?>
+<div style="width: 680px; border: 1px solid #666666; margin-bottom: 10px; padding: 10px;">
+    <h2>Test de connexion via le proxy</h2>
+    <?php if (!empty($errors["test"]["msg"])) : ?>
+    <p style="color: red;"><?php echo htmlspecialchars($errors["test"]["msg"]); ?></p>
+    <?php endif; ?>
+    <ul>
+        <li>Connexion à <a href="http://www.free.fr">Free.fr</a> :
+            <?php if (isset($errors["test"]["site"])) : ?>
+            <span style="color: red;">échec</span>
+            (erreur: <?php echo htmlspecialchars($errors["test"]["site"]); ?>)
+            <?php else: ?>
+            <span style="color: #009900;">réussi</span>
+            <?php endif; ?>
+        </li>
+        <li>Connexion à <a href="http://www.leboncoin.fr">Leboncoin</a> :
+            <?php if (isset($errors["test"]["lbc"])) : ?>
+            <span style="color: red;">échec</span>
+            (erreur: <?php echo htmlspecialchars($errors["test"]["lbc"]); ?>)
+            <?php else: ?>
+            <span style="color: #009900;">réussi</span>
+            <?php endif; ?>
+        </li>
+    </ul>
+</div>
+<?php endif; ?>
+<form action="" method="post" autocomplete="off">
+    <fieldset>
+        <legend>Configuration d'un serveur proxy</legend>
+        <p>
+            Vous pouvez configurer ici un proxy de connexion qui sera
+            utilisé pour se connecter à Leboncoin.
+        </p>
+        <dl>
+            <dt style="margin-bottom: 5px;">
+                <label for="proxy_ip">Proxy</label>
+            </dt>
+            <dd style="float: left;">
+                IP:<br /><input type="text" id="proxy_ip" name="proxy_ip" value="<?php
+                    echo htmlspecialchars($options["proxy_ip"]);
+                ?>" />
+            </dd>
+            <dd style="float: left; margin-left: 10px;">
+                Port:<br /><input type="text" id="proxy_port" name="proxy_port" value="<?php
+                    echo htmlspecialchars($options["proxy_port"]);
+                ?>" size="7" />
+                <?php if (isset($errors["proxy"])) : ?>
+                <p class="error"><?php echo $errors["proxy"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt style="clear: both; margin-bottom: 5px;">
+                <label for="proxy_ip">Utilisateur et mot de passe du proxy <span style="font-weight: normal;">(optionnel)</span></label>
+            </dt>
+            <dd style="float: left;">
+                Utilisateur:<br /><input type="text" id="proxy_user" name="proxy_user" value="<?php
+                    echo htmlspecialchars($options["proxy_user"]);
+                ?>" />
+            </dd>
+            <dd style="float: left; margin-left: 10px;">
+                Mot de passe:<br />
+                <input type="password" id="proxy_password" name="proxy_password"<?php
+                echo !empty($options["proxy_password"])?' placeholder="Valeur masquée"':""; ?> />
+                <?php if (isset($errors["proxy_ident"])) : ?>
+                <p class="error"><?php echo $errors["proxy_ident"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt style="clear: both;">&nbsp;</dt>
+            <dd>
+                <input type="submit" value="Enregistrer" />
+                <input type="submit" name="testProxy" value="Tester" />
+            </dd>
+        </dl>
+    </fieldset>
+</form>

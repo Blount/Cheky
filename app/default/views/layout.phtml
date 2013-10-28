@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Alerte mail pour Leboncoin.fr</title>
+        <meta charset="utf-8">
+        <meta name="robots" content="none">
+        <link rel="stylesheet" href="static/styles.css" />
+    </head>
+    <body>
+        <?php if ($userAuthed) : ?>
+        <header>
+            <h1><a href="./">Système d'alerte Leboncoin</a></h1>
+            <ul class="topmenu">
+                <li<?php echo $module === "default"?' class="active"':''; ?>><a href="./?"><img src="static/images/home.png" alt="" /></a></li>
+                <li<?php echo $module === "mail"?' class="active"':''; ?>><a href="?mod=mail">Mail</a></li>
+                <li<?php echo $module === "rss"?' class="active"':''; ?>><a href="?mod=rss">RSS</a></li>
+                <li><a href="http://alerte.ilatumi.org/forum">Forum</a></li>
+                <li style="float: right;"><a href="?a=logout">Déconnexion <span>(<?php echo htmlspecialchars($userAuthed->getUsername()); ?>)</span></a></li>
+            </ul>
+        </header>
+        <?php endif; ?>
+        <div class="content">
+            <?php echo $content; ?>
+        </div>
+        <?php if ($userAuthed) : ?>
+        <footer>
+            <?php if ($userAuthed->getUsername() == "admin") : ?>
+            <a href="?mod=admin&amp;a=users" style="color: #EF0000;">Administration</a> |
+            <?php endif; ?>
+            Version <?php echo require DOCUMENT_ROOT."/version.php"; ?>
+            | <a href="https://github.com/Blount/LBCAlerte/issues">Rapporter un bug</a>
+        </footer>
+        <?php endif; ?>
+    </body>
+</html>

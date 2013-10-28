@@ -1,0 +1,26 @@
+<form action="" method="post">
+    <dl>
+        <dt>
+            <label for="email">Utilisateur</label>
+        </dt>
+        <dd>
+            <input type="text" id="username" name="username" value="<?php
+                echo htmlspecialchars($username);
+            ?>" />
+            <?php if (isset($errors["username"])) : ?>
+            <p class="error"><?php echo $errors["username"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="password">Mot de passe</label>
+        </dt>
+        <dd>
+            <input type="password" id="password" name="password" />
+            <?php if (isset($errors["password"])) : ?>
+            <p class="error"><?php echo $errors["password"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>&nbsp;</dt>
+        <dd><input type="submit" value="Connexion" /></dd>
+    </dl>
+</form>

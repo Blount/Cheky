@@ -1,0 +1,125 @@
+<?php
+$alertCategories = $alert->getCategories();
+?>
+<form action="" method="post">
+    <fieldset>
+        <legend>Ajouter une alerte</legend>
+        <dl>
+            <dt>
+                <label for="email">E-Mail</label>
+            </dt>
+            <dd>
+                <input type="text" id="email" name="email" value="<?php
+                    echo htmlspecialchars($alert->email);
+                ?>" size="50" />
+                <?php if (isset($errors["email"])) : ?>
+                <p class="error"><?php echo $errors["email"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>
+                <label for="email">grouper les annonces dans un unique mail.</label>
+            </dt>
+            <dd>
+                <input type="hidden" name="group_ads" value="0" />
+                <input type="checkbox" id="group_ads" name="group_ads" value="1"<?php
+                    echo $alert->group_ads?'checked="checked"':''
+                ?> />
+                <?php if (isset($errors["group_ads"])) : ?>
+                <p class="error"><?php echo $errors["group_ads"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>
+                <label for="title">Titre</label>
+            </dt>
+            <dd>
+                <input type="text" id="title" name="title" value="<?php
+                    echo htmlspecialchars($alert->title);
+                ?>" size="50" />
+                <?php if (isset($errors["title"])) : ?>
+                <p class="error"><?php echo $errors["title"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>
+                <label for="url">URL de recherche Leboncoin</label>
+            </dt>
+            <dd>
+                <input type="text" id="url" name="url" value="<?php
+                    echo htmlspecialchars($alert->url);
+                ?>" size="50" />
+                <?php if (isset($errors["url"])) : ?>
+                <p class="error"><?php echo $errors["url"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>
+                <label for="interval">Intervalle de contrôle d'alerte (en minute)</label>
+            </dt>
+            <dd>
+                <input type="text" id="interval" name="interval" value="<?php
+                    echo $alert->interval;
+                ?>" size="10" />
+                <?php if (isset($errors["interval"])) : ?>
+                <p class="error"><?php echo $errors["interval"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt><label for="group">Groupe</label></dt>
+            <dd>
+                <input id="group" name="group" value="<?php echo htmlspecialchars($alert->group); ?>" />
+            </dd>
+            <dt>&nbsp;</dt>
+            <dd><input type="submit" value="Enregistrer" />
+                | <a href="?mod=mail">annuler</a></dd>
+        </dl>
+    </fieldset>
+    <fieldset>
+        <legend>Filtres supplémentaires</legend>
+        <dl>
+            <dt>
+                <label>Filtre sur le prix</label>
+            <dt>
+            <dd>
+                <label for="price_min">
+                    Prix min :
+                    <input type="text" id="price_min" name="price_min" value="<?php
+                        echo $alert->price_min != -1?(int)$alert->price_min:"";
+                    ?>" size="6" />
+                </label>
+                <label for="price_max">
+                    Prix max :
+                    <input type="text" id="price_max" name="price_max" value="<?php
+                        echo $alert->price_max != -1?(int)$alert->price_max:"";
+                    ?>" size="6" />
+                </label>
+                <?php if (isset($errors["price"])) : ?>
+                <p class="error"><?php echo $errors["price"]; ?></p>
+                <?php endif; ?>
+                <br />
+                <label for="price_strict"><input type="checkbox"
+                    id="price_strict" name="price_strict" value="1"<?php
+                    echo $alert->price_strict?' checked="checked"':"";
+                ?> /> cochez cette case pour exclure les annonces sans prix d'indiqué de votre recherche.</label>
+            </dd>
+            <dt><label for="cities">Filtre sur les villes (une par ligne)</label></dt>
+            <dd>
+                <textarea id="cities" name="cities" cols="30" rows="10"><?php
+                    echo htmlspecialchars($alert->cities) ?></textarea>
+            </dd>
+            <dt><label>Filtre multi-catégorie</label></dt>
+            <dd style="overflow: auto; height: 150px;">
+                <?php foreach ($categoryCollection->fetchAll() AS $group => $categories) : ?>
+                <?php echo htmlspecialchars($group); ?><br />
+                <?php foreach ($categories AS $id => $category) : ?>
+                <label for="category-<?php echo $id; ?>"><input id="category-<?php
+                    echo $id; ?>" type="checkbox" name="categories[]" value="<?php
+                    echo htmlspecialchars($category); ?>"<?php
+                    echo in_array($category, $alertCategories)?' checked="checked"':'';
+                    ?> /><?php
+                    echo htmlspecialchars($category); ?></label><br />
+                <?php endforeach; ?>
+                <?php endforeach; ?>
+            </dd>
+            <dt>&nbsp;</dt>
+            <dd><input type="submit" value="Enregistrer" />
+                | <a href="?mod=mail">annuler</a></dd>
+        </dl>
+    </fieldset>
+</form>

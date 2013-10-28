@@ -1,0 +1,19 @@
+<h2>Fichier jounal</h2>
+<p>Voici les dernières lignes du fichier log: <?php
+    echo htmlspecialchars($filename, null, "UTF-8"); ?></p>
+<ul id="lastlog" class="lastlog">
+    <?php if (0 == count($lines)) : ?>
+    <li>Rien à signaler.</li>
+    <?php else: ?>
+    <?php foreach ($lines AS $line) : ?>
+    <li<?php
+        if (strpos($line, "ERROR")) {
+            echo ' class="lastlog-error"';
+        }
+    ?>><?php echo htmlspecialchars($line, null, "UTF-8"); ?></li>
+    <?php endforeach; ?>
+    <?php endif; ?>
+</ul>
+<script type="text/javascript">
+document.getElementById("lastlog").scrollTop = 50000;
+</script>

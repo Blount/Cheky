@@ -1,0 +1,174 @@
+
+html {
+	font-size: 13px;
+	background: #FFFFFF;
+    padding: 0;
+}
+
+body {
+	margin: 0;
+	background: transparent;
+}
+
+a:link,
+a:visited,
+a:active,
+a:hover
+{
+	color: #AB0000;
+	text-decoration: none;
+}
+
+
+a.link-create-alert {
+	font-size: .9em;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+table {
+    border: 1px solid #999999;
+    border-collapse: collapse;
+    text-align: center;
+    margin: 10px 0;
+    width: 100%;
+}
+table thead tr {
+    background: #FFFFFF;
+    background: linear-gradient(bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
+    background: linear-gradient(to bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
+    line-height: 30px;
+}
+table td, table th {
+    border: 1px solid #999999;
+    padding: 2px 5px;
+}
+table td {
+    line-height: 200%;
+}
+table td.link {
+    word-wrap: break-word;
+}
+table img {
+	vertical-align: middle;
+}
+.error {
+    color: #EF0000;
+    font-weight: bold;
+    margin: 0;
+}
+form {
+	width: 700px;
+}
+form fieldset {
+    padding: 10px 30px;
+}
+form legend {
+	font-size: 1.5em;
+}
+form dt {
+    font-weight: bold;
+}
+form dd {
+    margin: 0 0 20px 0;
+}
+
+header {
+	background: #F0F0F0;
+	background: linear-gradient(bottom, #FFFFFF, #DDDDDD) no-repeat #E0E0E0;
+	background: linear-gradient(to bottom, #FFFFFF, #DDDDDD) no-repeat #E0E0E0;
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    box-shadow: 0 0 5px #000000;
+    color: #000000;
+    position: relative;
+    z-index: 2;
+}
+header h1 {
+	margin: 0;
+	padding: 10px;
+}
+header h1 a:link,
+header h1 a:active,
+header h1 a:hover,
+header h1 a:visited
+{
+	color: #333333;
+}
+
+footer {
+    background: #FFFFFF;
+    margin: 0 0 10px 0;
+    padding: 0 10px;
+    color: #000000;
+    line-height: 30px;
+    border-top: 1px solid #CCCCCC;
+    font-size: .85em;
+}
+
+.topmenu {
+    background: #424242;
+	margin: 0;
+	padding: 0 10px;
+	list-style: none;
+	overflow: hidden;
+	line-height: 30px;
+	font-size: 1em;
+	text-transform: uppercase;
+}
+.topmenu li {
+	float: left;
+}
+.topmenu a:link,
+.topmenu a:hover,
+.topmenu a:visited,
+.topmenu a:active
+{
+	padding: 0 20px;
+	color: #FFFFFF;
+	display: block;
+}
+.topmenu a span
+{
+	font-size: .9em;
+	text-transform: none;
+}
+.topmenu img
+{
+	vertical-align: middle;
+}
+.topmenu li:hover,
+.topmenu li.active {
+    background: #EF0000;
+}
+
+.content {
+	padding: 30px 10px;
+    background: #F0F0F0;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+/* Log */
+.lastlog {
+	background: #FAFAFA;
+	border: 1px solid #DDDDDD;
+	height: 500px;
+/* 	width: 700px; */
+	list-style: none;
+	padding: 10px;
+	margin: 0;
+	line-height: 130%;
+	overflow: auto;
+}
+.lastlog .lastlog-error {
+	color: #E00000;
+}
+
+
+
+
+
+

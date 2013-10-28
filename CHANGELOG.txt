@@ -1,0 +1,11 @@
+
+## Version 2.0
+
+ * fusion de LBCRss et LBCMail.
+ * ajout: installateur.
+ * ajout: panneau d'administration (gestion proxy, configuration envoi de mail, etc.).
+ * ajout: gestion de compte utilisateur.
+ * ajout: que ce soit pour les flux RSS ou les alertes mail, une identification est requise.
+ * ajout: possibilité de recevoir les nouvelles annonces dans des mails séparés.
+ * ajout: nouveau système de contrôle des alertes.
+ * ajout: inclure l'URL de recherche dans le mail.

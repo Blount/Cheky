@@ -1,0 +1,23 @@
+<p><a href="?mod=admin&amp;a=add-user">Nouvel utilisateur</a></p>
+<table style="width: 500px; text-align: left;">
+    <thead>
+        <tr>
+            <th>Nom d'utilisateur</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($users AS $user) : ?>
+        <tr>
+            <td><?php echo htmlspecialchars($user->getUsername()); ?></td>
+            <td>
+                <?php if ($user->getUsername() != "admin") : ?>
+                <a href="?mod=admin&amp;a=delete-user&amp;username=<?php echo urlencode($user->getUsername()); ?>">supprimer</a>
+                <?php else: ?>
+                -
+                <?php endif; ?>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
