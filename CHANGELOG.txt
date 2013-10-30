@@ -1,3 +1,6 @@
+## Version 2.1
+
+ * correction: check.php crash sur variable inéxistante.
 
 ## Version 2.0
 
