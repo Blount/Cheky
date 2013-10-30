@@ -12,7 +12,8 @@ if ($key && (!isset($_GET["key"]) || $_GET["key"] != $key)) {
     return;
 }
 
-$daemon = in_array("--daemon", $_SERVER["argv"]);
+$daemon = isset($_SERVER["argv"]) && is_array($_SERVER["argv"])
+    && in_array("--daemon", $_SERVER["argv"]);
 
 declare(ticks = 1);
 
