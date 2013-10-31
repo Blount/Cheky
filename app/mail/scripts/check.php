@@ -58,8 +58,10 @@ class Main
         $this->_loop = true;
         $this->_sleeping = false;
 
-        pcntl_signal(SIGTERM, array($this, "sigHandler"));
-        pcntl_signal(SIGINT, array($this, "sigHandler"));
+        if (function_exists("pcntl_signal")) {
+            pcntl_signal(SIGTERM, array($this, "sigHandler"));
+            pcntl_signal(SIGINT, array($this, "sigHandler"));
+        }
 
         $this->_httpClient = $client;
 
@@ -301,9 +303,11 @@ $main = new Main($config, $client);
 
 if (!$daemon) {
     $main->check();
+    $main->shutdown();
     return;
 }
 $main->loop();
+$main->shutdown();
 
 
 
