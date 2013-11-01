@@ -9,8 +9,7 @@
     <thead>
         <tr>
             <th style="width: 250px">E-Mail</th>
-            <th style="width: 250px">Titre</th>
-            <th>URL</th>
+            <th>Titre</th>
             <th style="width: 100px">Intervalle</th>
             <th style="width: 100px">Prix</th>
             <th style="width: 200px">Villes</th>
@@ -22,12 +21,9 @@
         <?php foreach ($alerts AS $alert) : ?>
         <tr>
             <td><?php echo htmlspecialchars($alert->email); ?></td>
-            <td><?php echo $alert->title?htmlspecialchars($alert->title):"-"; ?></td>
-            <td class="link">
-                <a href="<?php echo htmlspecialchars($alert->url); ?>" target="_blank"><?php
-                    echo str_replace("http://www.leboncoin.fr", "", htmlspecialchars($alert->url)); ?></a>
-            </td>
-            <td><?php echo (int)$alert->interval; ?> mins</td>
+            <td class="title"><a href="<?php echo htmlspecialchars($alert->url); ?>" target="_blank"><?php
+                echo $alert->title?htmlspecialchars($alert->title):"-"; ?></a></td>
+            <td class="intervalle"><?php echo (int)$alert->interval; ?> mins</td>
             <td>
                 <?php if ($alert->price_min != -1 && $alert->price_max != -1) : ?>
                 entre <?php echo $alert->price_min; ?>€ et <?php echo $alert->price_max; ?>€

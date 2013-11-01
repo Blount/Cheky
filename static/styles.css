@@ -46,8 +46,16 @@ table td, table th {
 table td {
     line-height: 200%;
 }
+table td.title {
+    text-align: left;
+}
 table td.link {
     word-wrap: break-word;
+    text-align: left;
+}
+table td.intervalle {
+    text-align: right;
+    padding-right: 10px;
 }
 table img {
 	vertical-align: middle;
