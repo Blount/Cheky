@@ -216,7 +216,10 @@ class Main
                     $this->_mailer->clearAddresses();
                     $error = false;
                     try {
-                        $this->_mailer->addAddress($alert->email);
+                        $emails = explode(",", $alert->email);
+                        foreach ($emails AS $email) {
+                            $this->_mailer->addAddress(trim($email));
+                        }
                     } catch (phpmailerException $e) {
                         $this->_logger->warn($e->getMessage());
                         $error = true;
