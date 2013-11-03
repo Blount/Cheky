@@ -58,8 +58,10 @@ class Main
         $this->_loop = true;
         $this->_sleeping = false;
 
-        pcntl_signal(SIGTERM, array($this, "sigHandler"));
-        pcntl_signal(SIGINT, array($this, "sigHandler"));
+        if (function_exists("pcntl_signal")) {
+            pcntl_signal(SIGTERM, array($this, "sigHandler"));
+            pcntl_signal(SIGINT, array($this, "sigHandler"));
+        }
 
         $this->_httpClient = $client;
 
@@ -212,28 +214,23 @@ class Main
                     $this->_logger->info($countAds." annonce".
                         ($countAds > 1?"s":"")." trouvée".($countAds > 1?"s":""));
                     $this->_mailer->clearAddresses();
-                    $this->_mailer->addAddress($alert->email);
-                    if ($alert->group_ads) {
-                        $subject = "Alert LeBonCoin : ".$alert->title;
-                        $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
-                        <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
-                        <p>Liste des nouvelles annonces :</p><hr /><br />'.
-                        implode("<br /><hr /><br />", $newAds).'<hr /><br />';
-
-                        $this->_mailer->Subject = $subject;
-                        $this->_mailer->Body = $message;
-                        try {
-                            $this->_mailer->send();
-                        } catch (phpmailerException $e) {
-                            $this->_logger->warn($e->getMessage());
+                    $error = false;
+                    try {
+                        $emails = explode(",", $alert->email);
+                        foreach ($emails AS $email) {
+                            $this->_mailer->addAddress(trim($email));
                         }
-                    } else {
-                        $newAds = array_reverse($newAds, true);
-                        foreach ($newAds AS $id => $ad) {
-                            $subject = ($alert->title?$alert->title." : ":"").$ads[$id]->getTitle();
+                    } catch (phpmailerException $e) {
+                        $this->_logger->warn($e->getMessage());
+                        $error = true;
+                    }
+                    if (!$error) {
+                        if ($alert->group_ads) {
+                            $subject = "Alert LeBonCoin : ".$alert->title;
                             $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
                             <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
-                            <p>Nouvelle annonce :</p><hr /><br />'.$ad.'<hr /><br />';
+                            <p>Liste des nouvelles annonces :</p><hr /><br />'.
+                            implode("<br /><hr /><br />", $newAds).'<hr /><br />';
 
                             $this->_mailer->Subject = $subject;
                             $this->_mailer->Body = $message;
@@ -241,6 +238,22 @@ class Main
                                 $this->_mailer->send();
                             } catch (phpmailerException $e) {
                                 $this->_logger->warn($e->getMessage());
+                            }
+                        } else {
+                            $newAds = array_reverse($newAds, true);
+                            foreach ($newAds AS $id => $ad) {
+                                $subject = ($alert->title?$alert->title." : ":"").$ads[$id]->getTitle();
+                                $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
+                                <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
+                                <p>Nouvelle annonce :</p><hr /><br />'.$ad.'<hr /><br />';
+
+                                $this->_mailer->Subject = $subject;
+                                $this->_mailer->Body = $message;
+                                try {
+                                    $this->_mailer->send();
+                                } catch (phpmailerException $e) {
+                                    $this->_logger->warn($e->getMessage());
+                                }
                             }
                         }
                     }
@@ -301,9 +314,11 @@ $main = new Main($config, $client);
 
 if (!$daemon) {
     $main->check();
+    $main->shutdown();
     return;
 }
 $main->loop();
+$main->shutdown();
 
 
 

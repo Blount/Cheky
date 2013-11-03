@@ -30,9 +30,6 @@ foreach ($files AS $file) {
 }
 
 $logger = Logger::getLogger("main");
-$logger->info("test flux rss");
-$logger->warn("test flux rss");
-$logger->error("test flux rss");
 
 $id = sha1($_SERVER["REQUEST_URI"]);
 $cache_filename = DOCUMENT_ROOT."/var/feeds/".$id.".xml";
