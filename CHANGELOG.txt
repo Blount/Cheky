@@ -1,3 +1,11 @@
+
+## Version 2.2
+
+ * ajout: possibilité de spécifier plusieurs adresses de destinataire pour les alertes mails.
+ * amélioration de l'affichage de la liste des alertes.
+ * correction: crash de check.php si une adresse mail est invalide.
+ * correction: vérifier la prise en charge des SIGNAL.
+
 ## Version 2.1
 
  * correction: check.php crash sur variable inéxistante.
