@@ -26,15 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $client->setProxyPassword($options["proxy_password"]);
         }
         $errors["test"] = array();
-        if ($client->hasProxy()) {
-            if (false === $client->request("http://www.free.fr")) {
-                $errors["test"]["site"] = $client->getError();
-            }
-            if (false === $client->request("http://www.leboncoin.fr")) {
-                $errors["test"]["lbc"] = $client->getError();
-            }
-        } else {
-            $errors["test"]["msg"] = "Aucun proxy configuré.";
+        if (false === $client->request("http://www.free.fr")) {
+            $errors["test"]["site"] = $client->getError();
+        }
+        if (false === $client->request("http://www.leboncoin.fr")) {
+            $errors["test"]["lbc"] = $client->getError();
         }
     } else {
         $config->set("proxy", "ip", $options["proxy_ip"]);
