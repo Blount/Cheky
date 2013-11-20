@@ -48,7 +48,7 @@ class Bootstrap
             ),
             "appenders" => array(
                 "default" => array(
-                    "class" => "LoggerAppenderFile",
+                    "class" => "LoggerAppenderRollingFile",
                     "layout" => array(
                         "class" => "LoggerLayoutPattern",
                         "params" => array(
@@ -57,6 +57,8 @@ class Bootstrap
                     ),
                     "params" => array(
                         "file" => DOCUMENT_ROOT."/var/log/info.log",
+                        "maxFileSize" => "3MB",
+                        "maxBackupIndex" => 5,
                         "append" => true
                     )
                 )
