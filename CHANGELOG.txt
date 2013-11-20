@@ -1,4 +1,9 @@
 
+## Version 2.3
+
+ * correction: mise en place de rotation de log (5*3Mo max).
+ * correction: paramètre invalide pour la fonction date.
+
 ## Version 2.2
 
  * ajout: possibilité de spécifier plusieurs adresses de destinataire pour les alertes mails.
