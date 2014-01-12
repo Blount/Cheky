@@ -3,6 +3,7 @@
 
  * correction: mise en place de rotation de log (5*3Mo max).
  * correction: paramètre invalide pour la fonction date.
+ * correction: tester la connexion même si aucun proxy spécifié.
 
 ## Version 2.2
 
