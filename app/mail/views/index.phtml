@@ -8,6 +8,7 @@
 <table style="width: 100%;">
     <thead>
         <tr>
+            <th style="width: 20px"></th>
             <th style="width: 250px">Envoyer à</th>
             <th>Titre</th>
             <th style="width: 100px">Intervalle</th>
@@ -18,8 +19,9 @@
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($alerts AS $alert) : ?>
+        <?php $i = 1; foreach ($alerts AS $alert) : ?>
         <tr>
+            <td><?php echo $i++; ?></td>
             <td><?php echo str_replace(",", "<br />", htmlspecialchars($alert->email)); ?></td>
             <td class="title"><a href="<?php echo htmlspecialchars($alert->url); ?>" target="_blank"><?php
                 echo $alert->title?htmlspecialchars($alert->title):"-"; ?></a></td>
