@@ -8,6 +8,7 @@ class Session extends AuthAbstract
 {
     public function __construct(\App\User\Storage $storage)
     {
+        session_name("lbcalerte");
         session_start();
         if (isset($_SESSION["auth"])) {
             if (isset($_SESSION["auth"]["username"])) {
