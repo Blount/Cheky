@@ -10,12 +10,12 @@ class Session extends AuthAbstract
     {
         session_name("lbcalerte");
         session_start();
-        if (isset($_SESSION["auth"])) {
-            if (isset($_SESSION["auth"]["username"])) {
-                $this->_username = $_SESSION["auth"]["username"];
+        if (isset($_SESSION["lbcauth"])) {
+            if (isset($_SESSION["lbcauth"]["username"])) {
+                $this->_username = $_SESSION["lbcauth"]["username"];
             }
-            if (isset($_SESSION["auth"]["password"])) {
-                $this->_password = $_SESSION["auth"]["password"];
+            if (isset($_SESSION["lbcauth"]["password"])) {
+                $this->_password = $_SESSION["lbcauth"]["password"];
             }
         }
         parent::__construct($storage);
@@ -28,13 +28,13 @@ class Session extends AuthAbstract
 
     public function clear()
     {
-        unset($_SESSION["auth"]);
+        unset($_SESSION["lbcauth"]);
     }
 
     public function authenticate()
     {
         if ($user = parent::authenticate()) {
-            $_SESSION["auth"] = array(
+            $_SESSION["lbcauth"] = array(
                 "username" => $user->getUsername(),
                 "password" => $user->getPassword()
             );
