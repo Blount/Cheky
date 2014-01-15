@@ -98,7 +98,7 @@ $alertCategories = $alert->getCategories();
                     echo $alert->price_strict?' checked="checked"':"";
                 ?> /> cochez cette case pour exclure les annonces sans prix d'indiqué de votre recherche.</label>
             </dd>
-            <dt><label for="cities">Filtre sur les villes (une par ligne)</label></dt>
+            <dt><label for="cities">Filtre sur les villes ou départements (un par ligne)</label></dt>
             <dd>
                 <textarea id="cities" name="cities" cols="30" rows="10"><?php
                     echo htmlspecialchars($alert->cities) ?></textarea>
