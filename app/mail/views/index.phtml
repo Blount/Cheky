@@ -9,8 +9,12 @@
     <thead>
         <tr>
             <th style="width: 20px"></th>
-            <th style="width: 250px">Envoyer à</th>
-            <th>Titre</th>
+            <th style="width: 250px"><?php if ($sort == "email") :
+                ?><img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;<?php
+                endif; ?><a href="?mod=mail&amp;sort=email">Envoyer à</a></th>
+            <th><?php if ($sort == "title") :
+            ?><img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;<?php
+                endif; ?><a href="?mod=mail&amp;sort=title">Titre</a></th>
             <th style="width: 100px">Intervalle</th>
             <th style="width: 100px">Prix</th>
             <th style="width: 200px">Villes</th>
