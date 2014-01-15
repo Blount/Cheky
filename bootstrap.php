@@ -30,6 +30,7 @@ class Bootstrap
 
     protected function initPHPConfig()
     {
+        mb_internal_encoding("UTF-8");
         if (function_exists("date_default_timezone_set")) {
             date_default_timezone_set("Europe/Paris");
         }
