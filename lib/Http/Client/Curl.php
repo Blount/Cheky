@@ -31,26 +31,42 @@ class HttpClientCurl extends HttpClientAbstract
             curl_setopt($this->_resource, CURLOPT_POST, true);
         }
         if ($this->_proxy_ip) {
-            curl_setopt($this->_resource, CURLOPT_PROXY, $this->_proxy_ip);
-            if (!$this->_proxy_type || $this->_proxy_type == self::PROXY_TYPE_HTTP) {
-                curl_setopt($this->_resource, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+            if ($this->getProxyType() == self::PROXY_TYPE_WEB) {
+                $url = $this->_proxy_ip.urlencode($this->getUrl());
             } else {
-                curl_setopt($this->_resource, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
-            }
-            if ($this->_proxy_port) {
-                curl_setopt($this->_resource, CURLOPT_PROXYPORT, $this->_proxy_port);
-            }
-            if ($this->_proxy_user) {
-                curl_setopt($this->_resource, CURLOPT_PROXYUSERPWD, $this->_proxy_user.":".$this->_proxy_password);
+                curl_setopt($this->_resource, CURLOPT_PROXY, $this->_proxy_ip);
+                if (!$this->_proxy_type || $this->_proxy_type == self::PROXY_TYPE_HTTP) {
+                    curl_setopt($this->_resource, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+                } else {
+                    curl_setopt($this->_resource, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+                }
+                if ($this->_proxy_port) {
+                    curl_setopt($this->_resource, CURLOPT_PROXYPORT, $this->_proxy_port);
+                }
+                if ($this->_proxy_user) {
+                    curl_setopt($this->_resource, CURLOPT_PROXYUSERPWD, $this->_proxy_user.":".$this->_proxy_password);
+                }
             }
         }
         if ($userAgent = $this->getUserAgent()) {
             curl_setopt($this->_resource, CURLOPT_USERAGENT, $userAgent);
         }
         curl_setopt($this->_resource, CURLOPT_NOBODY, !$this->_download_body);
-        curl_setopt($this->_resource, CURLOPT_URL, $this->getUrl());
+        curl_setopt($this->_resource, CURLOPT_URL, $url);
         $body = curl_exec($this->_resource);
         $this->_respond_code = curl_getinfo($this->_resource, CURLINFO_HTTP_CODE);
+        if ($this->getProxyType() == self::PROXY_TYPE_WEB) {
+            // restaure les vrai URL
+            if (preg_match_all("#<(?:img|a)[^>]+(?:src|href)=(?:'|\")(https?://.*(http[^'\"]+))(?:'|\")[^>]*/?>#ismU", $body, $matches,  PREG_SET_ORDER)) {
+                $replaceFrom = array();
+                $replaceTo = array();
+                foreach ($matches AS $m) {
+                    $replaceFrom[] = $m[1];
+                    $replaceTo[] = urldecode($m[2]);
+                }
+                $body = str_replace($replaceFrom, $replaceTo, $body);
+            }
+        }
         $this->_body = $body;
         return $this->_body;
     }
