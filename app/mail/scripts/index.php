@@ -51,6 +51,7 @@ foreach ($alerts AS $alert) {
     $alertsByGroup[$group][] = $alert;
 }
 $groups = array_unique($groups);
+sort($groups);
 if (in_array("Sans groupe", $groups)) {
     // met les alertes sans groupe à la fin.
     unset($groups[array_search("Sans groupe", $groups)]);
