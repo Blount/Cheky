@@ -1,4 +1,9 @@
-<a href="?mod=mail&amp;a=form" class="link-create-alert">Ajouter une alerte</a>
+<p><?php if (0 < $nbAlertes = count($alerts)) : ?>
+<strong><?php echo $nbAlertes ?> <?php
+    echo $nbAlertes > 1?"alertes enregistrées":"alerte enregistrée"; ?></strong> |
+<?php endif; ?>
+<a href="?mod=mail&amp;a=form" class="link-create-alert">Ajouter une alerte</a></p>
+
 <?php if ($groups) : ?>
 <?php foreach ($groups AS $group) : ?>
 <?php if (count($groups) > 1 || $group != "Sans groupe") : ?>
