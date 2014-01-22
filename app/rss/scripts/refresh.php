@@ -14,8 +14,8 @@ use \FeedWriter\RSS2;
 
 $aUrl = parse_url($_GET["url"]);
 if (!isset($aUrl["host"]) || $aUrl["host"] != "www.leboncoin.fr") {
-    echo "Cette adresse ne semble pas valide.";
-    exit;
+//     echo "Cette adresse ne semble pas valide.";
+//     exit;
 }
 $_GET["url"] = preg_replace("#o=[0-9]*&?#", "", $_GET["url"]);
 
@@ -34,8 +34,8 @@ $logger = Logger::getLogger("main");
 $id = sha1($_SERVER["REQUEST_URI"]);
 $cache_filename = DOCUMENT_ROOT."/var/feeds/".$id.".xml";
 if (is_file($cache_filename)) {
-    readfile($cache_filename);
-    return;
+//     readfile($cache_filename);
+//     return;
 }
 
 $content = $client->request($_GET["url"]);

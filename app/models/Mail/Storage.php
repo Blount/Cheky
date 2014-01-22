@@ -81,7 +81,8 @@ class Storage
 
         fclose($fpNewFile);
         fclose($fopen);
-        rename($this->_filename.".new", $this->_filename);
+        file_put_contents($this->_filename, file_get_contents($this->_filename.".new"));
+        unlink($this->_filename.".new");
         return $this;
     }
 
@@ -102,7 +103,8 @@ class Storage
 
         fclose($fpNewFile);
         fclose($fopen);
-        rename($this->_filename.".new", $this->_filename);
+        file_put_contents($this->_filename, file_get_contents($this->_filename.".new"));
+        unlink($this->_filename.".new");
         return $this;
     }
 
