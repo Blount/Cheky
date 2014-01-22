@@ -47,6 +47,8 @@ abstract class HttpClientAbstract
     {
         if (0 === strpos($ip, "http://") || 0 === strpos($ip, "https://")) {
             $this->setProxyType(self::PROXY_TYPE_WEB);
+        } else {
+            $this->setProxyType(self::PROXY_TYPE_HTTP);
         }
         $this->_proxy_ip = $ip;
         return $this;
