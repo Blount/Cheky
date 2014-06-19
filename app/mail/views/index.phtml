@@ -23,6 +23,8 @@
             <th style="width: 100px">Intervalle</th>
             <th style="width: 100px">Prix</th>
             <th style="width: 200px">Villes</th>
+            <th style="width: 140px">Envoyer par email</th>
+            <th style="width: 140px">Envoyer par SMS</th>
             <th style="width: 70px">Actif</th>
             <th style="width: 170px">&nbsp;</th>
         </tr>
@@ -56,7 +58,17 @@
                 <?php endif; ?>
             </td>
             <td>
-                <a href="?mod=mail&amp;a=suspend&amp;id=<?php echo $alert->id;
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_mail&amp;id=<?php echo $alert->id;
+                    ?>"><img src="static/images/<?php
+                    echo !$alert->send_mail?"disable":"enable"; ?>.png" alt="" /></a>
+            </td>
+            <td>
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_sms&amp;id=<?php echo $alert->id;
+                    ?>"><img src="static/images/<?php
+                    echo !$alert->send_sms?"disable":"enable"; ?>.png" alt="" /></a>
+            </td>
+            <td>
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id=<?php echo $alert->id;
                     ?>"><img src="static/images/<?php
                     echo $alert->suspend?"disable":"enable"; ?>.png" alt="" /></a>
             </td>
