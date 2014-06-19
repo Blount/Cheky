@@ -1,0 +1,33 @@
+<form action="" method="post" autocomplete="off">
+    <fieldset>
+        <legend>Configuration SMS via Free Mobile</legend>
+        <dl>
+            <dt>
+                <label for="free_mobile_user">ID utilisateur</label>
+            </dt>
+            <dd>
+                <input type="text" id="free_mobile_user" name="free_mobile_user" value="<?php
+                    echo htmlspecialchars($params["free_mobile_user"]);
+                ?>" />
+                <?php if (isset($errors["free_mobile_user"])) : ?>
+                <p class="error"><?php echo $errors["free_mobile_user"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>
+                <label for="free_mobile_key">Clé d'identification</label>
+            </dt>
+            <dd>
+                <input type="text" id="free_mobile_key" name="free_mobile_key" value="<?php
+                    echo htmlspecialchars($params["free_mobile_key"]);
+                ?>" />
+                <?php if (isset($errors["free_mobile_key"])) : ?>
+                <p class="error"><?php echo $errors["free_mobile_key"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>&nbsp;</dt>
+            <dd><input type="submit" value="Enregistrer" />
+                <input type="submit" name="test" value="Effectuer un test" />
+                | <a href="?mod=admin&amp;a=users">annuler</a></dd>
+        </dl>
+    </fieldset>
+</form>
