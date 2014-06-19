@@ -1,6 +1,7 @@
 <?php
 
 define("DOCUMENT_ROOT", dirname(__FILE__));
+define("DS", DIRECTORY_SEPARATOR);
 
 // Define application environment
 defined("APPLICATION_ENV")
