@@ -18,11 +18,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     $alert->fromArray($_POST);
+    if (empty($alert->send_mail) && empty($alert->send_sms)) {
+        $errors["send_type"] = "Vous devez sélectionner au moins un moyen de communication.";
+    }
     if (empty($alert->email)) {
         $errors["email"] = "Ce champ est obligatoire.";
-    }
-    if (empty($alert->url)) {
-        $errors["url"] = "Ce champ est obligatoire.";
     }
     if (empty($alert->price_min)) {
         $alert->price_min = -1;
@@ -42,15 +42,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $alert->price_strict = false;
     }
     $alert->group = !empty($_POST["group"])?trim($_POST["group"]):"";
-    $aUrl = parse_url($alert->url);
-    if (!isset($aUrl["host"]) || $aUrl["host"] != "www.leboncoin.fr") {
-        $errors["url"] = "Cette adresse ne semble pas valide.";
+    if (empty($alert->url)) {
+        $errors["url"] = "Ce champ est obligatoire.";
     } else {
-        $alert->url = preg_replace("#o=[0-9]*&?#", "", $alert->url);
+        $aUrl = parse_url($alert->url);
+        if (!isset($aUrl["host"]) || $aUrl["host"] != "www.leboncoin.fr") {
+            $errors["url"] = "Cette adresse ne semble pas valide.";
+        } else {
+            $alert->url = preg_replace("#o=[0-9]*&?#", "", $alert->url);
+        }
     }
     $alert->interval = (int)$alert->interval;
     if ($alert->interval != (int)$alert->interval || $alert->interval < 0) {
-        $errors["interval"] = "Cette valeur n'est valide.";
+        $errors["interval"] = "Cette valeur n'est pas valide.";
     }
     if (empty($errors)) {
         if (!empty($_POST["categories"])) {

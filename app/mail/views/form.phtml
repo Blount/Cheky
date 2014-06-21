@@ -3,55 +3,24 @@ $alertCategories = $alert->getCategories();
 ?>
 <form action="" method="post">
     <fieldset>
-        <legend>Ajouter une alerte</legend>
+        <legend>Ajouter une nouvelle alerte</legend>
         <dl>
             <dt>
-                <label for="email">E-Mail</label>
-            </dt>
-            <dd>
-                <input type="text" id="email" name="email" value="<?php
-                    echo htmlspecialchars($alert->email);
-                ?>" size="50" />
-                <?php if (isset($errors["email"])) : ?>
-                <p class="error"><?php echo $errors["email"]; ?></p>
-                <?php endif; ?>
-            </dd>
-            <dt>
-                <label for="email">grouper les annonces dans un unique mail.</label>
-            </dt>
-            <dd>
-                <input type="hidden" name="group_ads" value="0" />
-                <input type="checkbox" id="group_ads" name="group_ads" value="1"<?php
-                    echo $alert->group_ads?'checked="checked"':''
-                ?> />
-                <?php if (isset($errors["group_ads"])) : ?>
-                <p class="error"><?php echo $errors["group_ads"]; ?></p>
-                <?php endif; ?>
-            </dd>
-            <dt>
-                <label for="title">Titre</label>
-            </dt>
-            <dd>
-                <input type="text" id="title" name="title" value="<?php
-                    echo htmlspecialchars($alert->title);
-                ?>" size="50" />
-                <?php if (isset($errors["title"])) : ?>
-                <p class="error"><?php echo $errors["title"]; ?></p>
-                <?php endif; ?>
-            </dd>
-            <dt>
-                <label for="url">URL de recherche Leboncoin</label>
+                <label for="url">URL de recherche Leboncoin (requis)</label>
             </dt>
             <dd>
                 <input type="text" id="url" name="url" value="<?php
                     echo htmlspecialchars($alert->url);
-                ?>" size="50" />
+                ?>" size="75" placeholder="Ex: <?php
+                    echo htmlspecialchars("http://www.leboncoin.fr/ventes_immobilieres/offres/champagne_ardenne/?f=a&th=1&pe=7&ret=1");
+                ?>" />
                 <?php if (isset($errors["url"])) : ?>
                 <p class="error"><?php echo $errors["url"]; ?></p>
                 <?php endif; ?>
             </dd>
             <dt>
-                <label for="interval">Intervalle de contrôle d'alerte (en minute)</label>
+                <label for="interval">Nombre de minutes avant la prochaine
+                    vérification de nouvelles annonces (requis)</label>
             </dt>
             <dd>
                 <input type="text" id="interval" name="interval" value="<?php
@@ -61,9 +30,67 @@ $alertCategories = $alert->getCategories();
                 <p class="error"><?php echo $errors["interval"]; ?></p>
                 <?php endif; ?>
             </dd>
-            <dt><label for="group">Groupe</label></dt>
+            <dt>
+                Comment souhaitez-vous recevoir les alertes (requis) :
+            </dt>
+            <dd>
+                <input type="hidden" name="send_mail" value="0" />
+                <input type="hidden" name="send_sms" value="0" />
+                <label for="alert_mail">
+                    <input id="alert_mail" type="checkbox" name="send_mail" value="1"<?php
+                        echo $alert->send_mail?' checked="checked"':''
+                    ?> />
+                    par email
+                </label>
+                <label for="alert_sms">
+                    <input id="alert_sms" type="checkbox" name="send_sms" value="1"<?php
+                        echo $alert->send_sms?' checked="checked"':''
+                    ?> />
+                    par SMS
+                </label>
+                <?php if (isset($errors["send_type"])) : ?>
+                <p class="error"><?php echo $errors["send_type"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>
+                <label for="email">Entrez une adresse email valide (requis)</label>
+            </dt>
+            <dd>
+                <input type="text" id="email" name="email" value="<?php
+                    echo htmlspecialchars($alert->email);
+                ?>" size="50" />
+                <p class="form-more">Vous pouvez indiquer plusieurs adresses en les séparant par une virgule.</p>
+                <?php if (isset($errors["email"])) : ?>
+                <p class="error"><?php echo $errors["email"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>
+                <label for="email">Cochez la case pour grouper les annonces dans un unique mail.</label>
+            </dt>
+            <dd>
+                <input type="hidden" name="group_ads" value="0" />
+                <input type="checkbox" id="group_ads" name="group_ads" value="1"<?php
+                    echo $alert->group_ads?' checked="checked"':''
+                ?> />
+                <?php if (isset($errors["group_ads"])) : ?>
+                <p class="error"><?php echo $errors["group_ads"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>
+                <label for="title">Indiquez un nom pour l'alerte (optionnel mais conseillé)</label>
+            </dt>
+            <dd>
+                <input type="text" id="title" name="title" value="<?php
+                    echo htmlspecialchars($alert->title);
+                ?>" size="50" placeholder="Ex: Achat de maison" />
+                <?php if (isset($errors["title"])) : ?>
+                <p class="error"><?php echo $errors["title"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt><label for="group">Nom du groupe (optionnel)</label></dt>
             <dd>
                 <input id="group" name="group" value="<?php echo htmlspecialchars($alert->group); ?>" />
+                <p class="form-more">Les alertes seront affichées par groupe sur la page de vos alertes.</p>
             </dd>
             <dt>&nbsp;</dt>
             <dd><input type="submit" value="Enregistrer" />
@@ -71,7 +98,7 @@ $alertCategories = $alert->getCategories();
         </dl>
     </fieldset>
     <fieldset>
-        <legend>Filtres supplémentaires</legend>
+        <legend>Filtres supplémentaires (optionnelles)</legend>
         <dl>
             <dt>
                 <label>Filtre sur le prix</label>
