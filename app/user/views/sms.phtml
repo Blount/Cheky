@@ -1,4 +1,15 @@
 <form action="" method="post" autocomplete="off">
+    <?php if (!empty($_POST["test"])) : ?>
+    <?php if (isset($error)) : ?>
+    <p style="font-weight: bold; color: #993333;"><?php
+        echo htmlspecialchars($error);
+    ?></p>
+    <?php else: ?>
+    <p style="font-weight: bold; color: #333399;">Vous devriez recevoir un SMS contenant le message suivant:
+        « La notification SMS est fonctionnelle ».</p>
+    <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
+    <?php endif; ?>
+    <?php endif; ?>
     <fieldset>
         <legend>Configuration SMS via Free Mobile</legend>
         <dl>
