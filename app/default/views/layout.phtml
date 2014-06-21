@@ -28,7 +28,7 @@
             <?php if ($userAuthed->getUsername() == "admin") : ?>
             <a href="?mod=admin&amp;a=users" style="color: #EF0000;">Administration</a> |
             <?php endif; ?>
-            Version <?php echo require DOCUMENT_ROOT."/version.php"; ?>
+            Version <?php echo APPLICATION_VERSION; ?>
             | <a href="https://github.com/Blount/LBCAlerte/issues">Rapporter un bug</a>
         </footer>
         <?php endif; ?>

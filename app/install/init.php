@@ -1,7 +1,5 @@
 <?php
 
-$version = require DOCUMENT_ROOT."/version.php";
-
 if (is_file($config->getFilename()) && !isset($_GET["success"])) {
     header("LOCATION: ?mod=install&a=upgrade");
     exit;

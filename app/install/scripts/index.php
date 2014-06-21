@@ -25,7 +25,7 @@ if (!$errors && $_SERVER["REQUEST_METHOD"] == "POST") {
         if (!is_dir(DOCUMENT_ROOT."/var/log")) {
             mkdir(DOCUMENT_ROOT."/var/log");
         }
-        $config->set("general", "version", $version);
+        $config->set("general", "version", APPLICATION_VERSION);
         $config->save();
 
         require_once DOCUMENT_ROOT."/app/models/User/Storage.php";

@@ -7,6 +7,9 @@ define("DS", DIRECTORY_SEPARATOR);
 defined("APPLICATION_ENV")
     || define("APPLICATION_ENV", (getenv("APPLICATION_ENV") ? getenv("APPLICATION_ENV") : "production"));
 
+// Define application environment
+define("APPLICATION_VERSION", require DOCUMENT_ROOT."/version.php");
+
 set_include_path(
     dirname(__FILE__)."/lib".PATH_SEPARATOR.get_include_path()
 );
