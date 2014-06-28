@@ -13,7 +13,7 @@ class Parser
             "cities" => "", "categories" => array()
         ), $filters);
         if (trim($filters["cities"])) {
-            $filters["cities"] = array_map("trim", explode("\n", $filters["cities"]));
+            $filters["cities"] = array_map("trim", explode("\n", mb_strtolower($filters["cities"])));
         }
         if (!is_array($filters["categories"])) {
             $filters["categories"] = array();
@@ -120,7 +120,9 @@ class Parser
                     continue;
                 }
             }
-            if ($filters["cities"] && !in_array($ad->getCity(), $filters["cities"])) {
+            $city = mb_strtolower($ad->getCity());
+            $country = mb_strtolower($ad->getCounty());
+            if ($filters["cities"] && !in_array($city, $filters["cities"]) && !in_array($country, $filters["cities"])) {
                 continue;
             }
             if ($filters["categories"] && !in_array($ad->getCategory(), $filters["categories"])) {

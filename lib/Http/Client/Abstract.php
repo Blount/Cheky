@@ -16,8 +16,10 @@ abstract class HttpClientAbstract
 
     const METHOD_GET = "get";
     const METHOD_POST = "post";
+
     const PROXY_TYPE_HTTP = 1;
     const PROXY_TYPE_SOCKS5 = 2;
+    const PROXY_TYPE_WEB = 3;
 
     /**
      * @param string $ip
@@ -25,7 +27,7 @@ abstract class HttpClientAbstract
      */
     public function setProxyType($type)
     {
-        if ($type != self::PROXY_TYPE_HTTP && $type != self::PROXY_TYPE_SOCKS5) {
+        if ($type != self::PROXY_TYPE_HTTP && $type != self::PROXY_TYPE_SOCKS5 && $type != self::PROXY_TYPE_WEB) {
             throw new Exception("Type de proxy invalide.");
         }
         $this->_proxy_type = $type;
@@ -43,6 +45,11 @@ abstract class HttpClientAbstract
      */
     public function setProxyIp($ip)
     {
+        if (0 === strpos($ip, "http://") || 0 === strpos($ip, "https://")) {
+            $this->setProxyType(self::PROXY_TYPE_WEB);
+        } else {
+            $this->setProxyType(self::PROXY_TYPE_HTTP);
+        }
         $this->_proxy_ip = $ip;
         return $this;
     }

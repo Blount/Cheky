@@ -1,10 +1,14 @@
 <?php
 
 define("DOCUMENT_ROOT", dirname(__FILE__));
+define("DS", DIRECTORY_SEPARATOR);
 
 // Define application environment
 defined("APPLICATION_ENV")
     || define("APPLICATION_ENV", (getenv("APPLICATION_ENV") ? getenv("APPLICATION_ENV") : "production"));
+
+// Define application environment
+define("APPLICATION_VERSION", require DOCUMENT_ROOT."/version.php");
 
 set_include_path(
     dirname(__FILE__)."/lib".PATH_SEPARATOR.get_include_path()
@@ -30,6 +34,7 @@ class Bootstrap
 
     protected function initPHPConfig()
     {
+        mb_internal_encoding("UTF-8");
         if (function_exists("date_default_timezone_set")) {
             date_default_timezone_set("Europe/Paris");
         }

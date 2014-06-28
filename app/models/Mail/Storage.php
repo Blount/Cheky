@@ -11,7 +11,8 @@ class Storage
     protected $_header = array(
         "email", "id", "title", "url", "interval", "time_last_ad",
         "time_updated", "price_min", "price_max", "price_strict",
-        "cities", "suspend", "group", "group_ads", "categories"
+        "cities", "suspend", "group", "group_ads", "categories",
+        "send_mail", "send_sms"
     );
 
     public function __construct($filename)
@@ -81,7 +82,8 @@ class Storage
 
         fclose($fpNewFile);
         fclose($fopen);
-        rename($this->_filename.".new", $this->_filename);
+        file_put_contents($this->_filename, file_get_contents($this->_filename.".new"));
+        unlink($this->_filename.".new");
         return $this;
     }
 
@@ -102,7 +104,8 @@ class Storage
 
         fclose($fpNewFile);
         fclose($fopen);
-        rename($this->_filename.".new", $this->_filename);
+        file_put_contents($this->_filename, file_get_contents($this->_filename.".new"));
+        unlink($this->_filename.".new");
         return $this;
     }
 

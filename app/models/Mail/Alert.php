@@ -19,6 +19,8 @@ class Alert
     public $suspend = 0;
     public $group = "";
     public $group_ads = 1;
+    public $send_mail = 1;
+    public $send_sms = 0;
 
     public function fromArray(array $values)
     {
@@ -55,7 +57,9 @@ class Alert
             "suspend" => $this->suspend,
             "group" => $this->group,
             "group_ads" => $this->group_ads,
-            "categories" => $this->categories
+            "categories" => $this->categories,
+            "send_mail" => $this->send_mail,
+            "send_sms" => $this->send_sms
         );
     }
 }

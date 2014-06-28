@@ -4,8 +4,13 @@ set_time_limit(0);
 $key = "";
 
 require dirname(__FILE__)."/../../../bootstrap.php";
-require_once DOCUMENT_ROOT."/app/models/Mail/Storage.php";
+
+// lib
 require_once "PHPMailer/class.phpmailer.php";
+require_once "SMS/FreeMobile.php";
+
+// modèle
+require_once DOCUMENT_ROOT."/app/models/Mail/Storage.php";
 require_once DOCUMENT_ROOT."/app/models/User/Storage.php";
 
 if ($key && (!isset($_GET["key"]) || $_GET["key"] != $key)) {
@@ -157,11 +162,25 @@ class Main
         $this->_countError = 0;
         $this->_timer = 5;
         $users = $this->_userStorage->fetchAll();
+
+        // génération d'URL court pour les SMS
+        $curlTinyurl = curl_init();
+        curl_setopt($curlTinyurl, CURLOPT_RETURNTRANSFER, 1);
+
+        // pour envoi de SMS
+        $sms = new \SMS\FreeMobile();
+
         foreach ($users AS $user) {
+
             $file = DOCUMENT_ROOT."/var/configs/".$user->getUsername().".csv";
             if (!is_file($file)) {
                 continue;
             }
+
+            // configuration SMS
+            $sms->setKey($user->getOption("free_mobile_key"))
+                ->setUser($user->getOption("free_mobile_user"));
+
             $this->_logger->info("Fichier config: ".$file);
             $storage = new App\Mail\Storage($file);
             $alerts = $storage->fetchAll();
@@ -215,37 +234,23 @@ class Main
                         ($countAds > 1?"s":"")." trouvée".($countAds > 1?"s":""));
                     $this->_mailer->clearAddresses();
                     $error = false;
-                    try {
-                        $emails = explode(",", $alert->email);
-                        foreach ($emails AS $email) {
-                            $this->_mailer->addAddress(trim($email));
-                        }
-                    } catch (phpmailerException $e) {
-                        $this->_logger->warn($e->getMessage());
-                        $error = true;
-                    }
-                    if (!$error) {
-                        if ($alert->group_ads) {
-                            $subject = "Alert LeBonCoin : ".$alert->title;
-                            $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
-                            <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
-                            <p>Liste des nouvelles annonces :</p><hr /><br />'.
-                            implode("<br /><hr /><br />", $newAds).'<hr /><br />';
-
-                            $this->_mailer->Subject = $subject;
-                            $this->_mailer->Body = $message;
-                            try {
-                                $this->_mailer->send();
-                            } catch (phpmailerException $e) {
-                                $this->_logger->warn($e->getMessage());
+                    if ($alert->send_mail) {
+                        try {
+                            $emails = explode(",", $alert->email);
+                            foreach ($emails AS $email) {
+                                $this->_mailer->addAddress(trim($email));
                             }
-                        } else {
-                            $newAds = array_reverse($newAds, true);
-                            foreach ($newAds AS $id => $ad) {
-                                $subject = ($alert->title?$alert->title." : ":"").$ads[$id]->getTitle();
+                        } catch (phpmailerException $e) {
+                            $this->_logger->warn($e->getMessage());
+                            $error = true;
+                        }
+                        if (!$error) {
+                            if ($alert->group_ads) {
+                                $subject = "Alert LeBonCoin : ".$alert->title;
                                 $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
                                 <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
-                                <p>Nouvelle annonce :</p><hr /><br />'.$ad.'<hr /><br />';
+                                <p>Liste des nouvelles annonces :</p><hr /><br />'.
+                                implode("<br /><hr /><br />", $newAds).'<hr /><br />';
 
                                 $this->_mailer->Subject = $subject;
                                 $this->_mailer->Body = $message;
@@ -254,6 +259,63 @@ class Main
                                 } catch (phpmailerException $e) {
                                     $this->_logger->warn($e->getMessage());
                                 }
+                            } else {
+                                $newAds = array_reverse($newAds, true);
+                                foreach ($newAds AS $id => $ad) {
+                                    $subject = ($alert->title?$alert->title." : ":"").$ads[$id]->getTitle();
+                                    $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
+                                    <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
+                                    <p>Nouvelle annonce :</p><hr /><br />'.$ad.'<hr /><br />';
+
+                                    $this->_mailer->Subject = $subject;
+                                    $this->_mailer->Body = $message;
+                                    try {
+                                        $this->_mailer->send();
+                                    } catch (phpmailerException $e) {
+                                        $this->_logger->warn($e->getMessage());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if ($alert->send_sms) {
+                        if ($countAds < 5) { // limite à 5 SMS
+                            foreach ($newAds AS $id => $ad) {
+                                $ad = $ads[$id]; // récupère l'objet.'
+                                $url = "http://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
+                                curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$url);
+                                if ($url = curl_exec($curlTinyurl)) {
+                                    $msg  = "Nouvelle annonce ".($alert->title?$alert->title." : ":"").$ad->getTitle();
+                                    $others = array();
+                                    if ($ad->getPrice()) {
+                                        $others[] = number_format($ad->getPrice(), 0, ',', ' ')."€";
+                                    }
+                                    if ($ad->getCity()) {
+                                        $others[] = $ad->getCity();
+                                    } elseif ($ad->getCountry()) {
+                                        $others[] = $ad->getCounty();
+                                    }
+                                    if ($others) {
+                                        $msg .= " (".implode(", ", $others).")";
+                                    }
+                                    $msg .= ": ".$url;
+                                    try {
+                                        $sms->send($msg);
+                                    } catch (Exception $e) {
+                                        $this->_logger->warn("Erreur sur envoi de SMS: (".$e->getCode().") ".$e->getMessage());
+                                    }
+                                }
+                            }
+                        } else { // envoi un msg global
+                            curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$alert->url);
+                            if ($url = curl_exec($curlTinyurl)) {
+                                $msg  = "Il y a ".$countAds." nouvelles annonces pour votre alerte '".($alert->title?$alert->title:"sans nom")."'";
+                                $msg .= ": ".$url;
+                                try {
+                                    $sms->send($msg);
+                                } catch (Exception $e) {
+                                    $this->_logger->warn("Erreur sur envoi de SMS: (".$e->getCode().") ".$e->getMessage());
+                                }
                             }
                         }
                     }
@@ -261,6 +323,9 @@ class Main
                 $storage->save($alert);
             }
         }
+
+        unset($sms);
+        curl_close($curlTinyurl);
         $this->_mailer->smtpClose();
     }
 

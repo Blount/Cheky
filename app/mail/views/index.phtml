@@ -1,4 +1,9 @@
-<a href="?mod=mail&amp;a=form" class="link-create-alert">Ajouter une alerte</a>
+<p><?php if (0 < $nbAlertes = count($alerts)) : ?>
+<strong><?php echo $nbAlertes ?> <?php
+    echo $nbAlertes > 1?"alertes enregistrées":"alerte enregistrée"; ?></strong> |
+<?php endif; ?>
+<a href="?mod=mail&amp;a=form" class="link-create-alert">Ajouter une alerte</a></p>
+
 <?php if ($groups) : ?>
 <?php foreach ($groups AS $group) : ?>
 <?php if (count($groups) > 1 || $group != "Sans groupe") : ?>
@@ -8,18 +13,26 @@
 <table style="width: 100%;">
     <thead>
         <tr>
-            <th style="width: 250px">Envoyer à</th>
-            <th>Titre</th>
+            <th style="width: 20px"></th>
+            <th style="width: 250px"><?php if ($sort == "email") :
+                ?><img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;<?php
+                endif; ?><a href="?mod=mail&amp;sort=email">Envoyer à</a></th>
+            <th><?php if ($sort == "title") :
+            ?><img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;<?php
+                endif; ?><a href="?mod=mail&amp;sort=title">Titre</a></th>
             <th style="width: 100px">Intervalle</th>
             <th style="width: 100px">Prix</th>
             <th style="width: 200px">Villes</th>
+            <th style="width: 140px">Envoyer par email</th>
+            <th style="width: 140px">Envoyer par SMS</th>
             <th style="width: 70px">Actif</th>
             <th style="width: 170px">&nbsp;</th>
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($alerts AS $alert) : ?>
+        <?php $i = 1; foreach ($alerts AS $alert) : ?>
         <tr>
+            <td><?php echo $i++; ?></td>
             <td><?php echo str_replace(",", "<br />", htmlspecialchars($alert->email)); ?></td>
             <td class="title"><a href="<?php echo htmlspecialchars($alert->url); ?>" target="_blank"><?php
                 echo $alert->title?htmlspecialchars($alert->title):"-"; ?></a></td>
@@ -45,7 +58,17 @@
                 <?php endif; ?>
             </td>
             <td>
-                <a href="?mod=mail&amp;a=suspend&amp;id=<?php echo $alert->id;
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_mail&amp;id=<?php echo $alert->id;
+                    ?>"><img src="static/images/<?php
+                    echo !$alert->send_mail?"disable":"enable"; ?>.png" alt="" /></a>
+            </td>
+            <td>
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_sms&amp;id=<?php echo $alert->id;
+                    ?>"><img src="static/images/<?php
+                    echo !$alert->send_sms?"disable":"enable"; ?>.png" alt="" /></a>
+            </td>
+            <td>
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id=<?php echo $alert->id;
                     ?>"><img src="static/images/<?php
                     echo $alert->suspend?"disable":"enable"; ?>.png" alt="" /></a>
             </td>

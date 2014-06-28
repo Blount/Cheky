@@ -24,6 +24,7 @@ class Storage
                 $user = new User();
                 $user->setPassword(substr($value, 0, 40))
                     ->setUsername(substr($value, 40));
+                $this->_loadUserOptions($user);
                 $users[] = $user;
             }
             fclose($fopen);
@@ -42,6 +43,7 @@ class Storage
                     $user = new User();
                     $user->setPassword(substr($value, 0, 40))
                         ->setUsername($username);
+                    $this->_loadUserOptions($user);
                     break;
                 }
             }
@@ -69,7 +71,9 @@ class Storage
             }
             fclose($fopen);
             fclose($fpNewFile);
-            rename($this->_filename.".new", $this->_filename);
+            file_put_contents($this->_filename, file_get_contents($this->_filename.".new"));
+            unlink($this->_filename.".new");
+            $this->_saveUserOptions($user);
         }
         return $this;
     }
@@ -87,7 +91,9 @@ class Storage
             }
             fclose($fopen);
             fclose($fpNewFile);
-            rename($this->_filename.".new", $this->_filename);
+            file_put_contents($this->_filename, file_get_contents($this->_filename.".new"));
+            unlink($this->_filename.".new");
+            $this->_deleteUserOptions($user);
         }
         return $this;
     }
@@ -105,5 +111,39 @@ class Storage
         } elseif (!is_writable($this->_filename)) {
             throw new \Exception("Pas d'accès en écriture sur le fichier '".$this->_filename."'.");
         }
+    }
+
+    protected function _loadUserOptions(User $user)
+    {
+        $dir = DOCUMENT_ROOT.DS."var".DS."configs";
+        $filename = $dir.DS."user_".$user->getUsername().".json";
+        if (is_file($filename)) {
+            $data = json_decode(trim(file_get_contents($filename)), true);
+            if ($data && is_array($data)) {
+                $user->setOptions($data);
+            }
+        }
+        return $this;
+    }
+
+    protected function _saveUserOptions(User $user)
+    {
+        $dir = DOCUMENT_ROOT.DS."var".DS."configs";
+        if (!is_dir($dir)) {
+            mkdir($dir);
+        }
+        $filename = $dir.DS."user_".$user->getUsername().".json";
+        file_put_contents($filename, json_encode($user->getOptions()));
+        return $this;
+    }
+
+    protected function _deleteUserOptions($user)
+    {
+        $dir = DOCUMENT_ROOT.DS."var".DS."configs";
+        $filename = $dir.DS."user_".$user->getUsername().".json";
+        if (is_file($filename)) {
+            unlink($filename);
+        }
+        return $this;
     }
 }

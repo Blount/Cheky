@@ -11,8 +11,7 @@ if ($auth->getUsername() != "admin") {
 }
 
 $require_upgrade = false;
-$version = require DOCUMENT_ROOT."/version.php";
 
-if (-1 == version_compare($config->get("general", "version"), $version)) {
+if (-1 == version_compare($config->get("general", "version"), APPLICATION_VERSION)) {
     $require_upgrade = true;
 }
