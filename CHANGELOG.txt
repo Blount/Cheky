@@ -1,4 +1,18 @@
 
+## Version 2.4
+
+ * ajout: notification par SMS pour les abonnés Free Mobile.
+ * ajout: numéroter les lignes dans le tableau des alertes mails.
+ * ajout: filtre multi départements en complément du filtre multi villes (thx @greenchap).
+ * ajout: trie des alertes par email ou par titre.
+ * ajout: configurer l'UTF-8 pour les fonctions mb_*
+ * ajout: prise en charge de certain proxy web (expérimental).
+ * amélioration: formulaire d'ajout et de modification d'alerte améliorer.
+ * correction: conflit de session possible si installation en parallèle avec d'autre application (sous dossier).
+ * correction: trier les groupes par ordre alphabétique.
+ * correction: corriger la définition du type de proxy.
+ * utiliser file_get_contents/file_put_contents au lieu de "rename" (problème de droit).
+
 ## Version 2.3
 
  * correction: mise en place de rotation de log (5*3Mo max).
