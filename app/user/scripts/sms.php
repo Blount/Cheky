@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $sms->setKey($params["free_mobile_key"])
                 ->setUser($params["free_mobile_user"]);
             try {
-//                 $sms->send("La notification SMS est fonctionnelle.");
+                $sms->send("La notification SMS est fonctionnelle.");
             } catch (Exception $e) {
                 $error = "Erreur lors de l'envoi du SMS: (".$e->getCode().") ".$e->getMessage();
             }
