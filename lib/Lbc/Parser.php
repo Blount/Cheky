@@ -121,7 +121,7 @@ class Parser
                 }
             }
             $city = mb_strtolower($ad->getCity());
-            $country = mb_strtolower($ad->getCounty());
+            $country = mb_strtolower($ad->getCountry());
             if ($filters["cities"] && !in_array($city, $filters["cities"]) && !in_array($country, $filters["cities"])) {
                 continue;
             }

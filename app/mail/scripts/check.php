@@ -293,7 +293,7 @@ class Main
                                     if ($ad->getCity()) {
                                         $others[] = $ad->getCity();
                                     } elseif ($ad->getCountry()) {
-                                        $others[] = $ad->getCounty();
+                                        $others[] = $ad->getCountry();
                                     }
                                     if ($others) {
                                         $msg .= " (".implode(", ", $others).")";

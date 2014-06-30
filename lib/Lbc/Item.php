@@ -164,7 +164,7 @@ class Item
     /**
      * @return string
      */
-    public function getCounty()
+    public function getCountry()
     {
         return $this->_county;
     }
