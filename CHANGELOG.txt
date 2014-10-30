@@ -1,4 +1,8 @@
 
+## Version 2.4.1
+
+ * correction: faute orthographe dans nom de méthode.
+
 ## Version 2.4
 
  * ajout: notification par SMS pour les abonnés Free Mobile.
