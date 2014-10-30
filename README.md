@@ -16,6 +16,18 @@ Une fois votre hébergement trouvé, envoyez simplement le contenu du fichier t�
 
 **Donnez les permissions d'écriture sur le répertoire "var". Celui-ci contiendra des données générées par l'application: config, fichiers des alertes, cache des flux RSS, etc.**
 
+### Protection du répertoire "var"
+
+L'accès au répertoire "var" est bloqué pour les clients HTTP grâce à un fichier `.htaccess`, l'utilisation d'un serveur autre qu'Apache requiert une configuration additionnelle pour en bloquer l'accès.
+
+* Exemple pour Nginx
+  
+  ```Nginx
+  location /chemin-vers-LBCAlerte/var {
+      deny all;
+  }
+  ```
+
 ## Flux RSS
 
 Effectuez votre recherche sur Leboncoin.fr. Lorsque les résultats vous satisfont, copiez le lien de votre barre d'adresse. Retournez à votre application (onglet RSS) et collez le lien dans le champ.
