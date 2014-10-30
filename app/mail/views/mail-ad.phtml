@@ -7,18 +7,18 @@
     <?php if ($ad->getPrice()) : ?>
     &nbsp;&nbsp;&nbsp;&nbsp;<strong>Prix</strong> : <?php echo number_format($ad->getPrice(), 0, ',', ' '); ?> €
     <?php endif; ?>
-    
+
     <?php if ($ad->getCategory()) : ?>
     <br />
     <strong>Catégorie</strong> : <?php echo $ad->getCategory(); ?>
     <?php endif; ?>
     <br />
-    <?php if ($ad->getCounty()) : ?>
-    <strong>Département</strong> : <?php echo $ad->getCounty(); ?>
+    <?php if ($ad->getCountry()) : ?>
+    <strong>Département</strong> : <?php echo $ad->getCountry(); ?>
     <?php endif; ?>
     <?php if ($ad->getCity()) : ?>
     &nbsp;&nbsp;&nbsp;&nbsp;<strong>Ville</strong> : <a href="http://maps.google.fr/?z=9&q=<?php
-        echo htmlspecialchars($ad->getCounty().' '.$ad->getCity());
+        echo htmlspecialchars($ad->getCountry().' '.$ad->getCity());
     ?>" title="Localiser sur Google Map"><?php echo $ad->getCity(); ?></a>
     <?php endif; ?>
     <br />Annonce de <?php echo $ad->getProfessionnal()?'professionnel':'particulier.'; ?>
