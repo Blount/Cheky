@@ -6,7 +6,7 @@ require_once dirname(__FILE__)."/Abstract.php";
 
 class Session extends AuthAbstract
 {
-    public function __construct(\App\User\Storage $storage)
+    public function __construct(\App\Storage\User $storage)
     {
         session_name("lbcalerte");
         session_start();

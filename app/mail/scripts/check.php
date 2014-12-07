@@ -3,22 +3,9 @@
 set_time_limit(0);
 $key = "";
 
-require dirname(__FILE__)."/../../../bootstrap.php";
-
-// lib
-require_once "PHPMailer/class.phpmailer.php";
-require_once "SMS/FreeMobile.php";
-
-// modèle
-require_once DOCUMENT_ROOT."/app/models/Mail/Storage.php";
-require_once DOCUMENT_ROOT."/app/models/User/Storage.php";
-
 if ($key && (!isset($_GET["key"]) || $_GET["key"] != $key)) {
     return;
 }
-
-$daemon = isset($_SERVER["argv"]) && is_array($_SERVER["argv"])
-    && in_array("--daemon", $_SERVER["argv"]);
 
 declare(ticks = 1);
 
@@ -56,7 +43,10 @@ class Main
     protected $_timer = 5;
     protected $_countError = 0;
 
-    public function __construct(Config_Lite $config, HttpClientAbstract $client)
+    public function __construct(
+        \Config_Lite $config,
+        \HttpClientAbstract $client,
+        \App\Storage\User $userStorage)
     {
         $this->_config = $config;
 
@@ -69,8 +59,7 @@ class Main
         }
 
         $this->_httpClient = $client;
-
-        $this->_userStorage = new App\User\Storage(DOCUMENT_ROOT."/var/users.db");
+        $this->_userStorage = $userStorage;
 
         $this->_lockFile = DOCUMENT_ROOT."/var/.lock";
         $this->_lock();
@@ -170,19 +159,25 @@ class Main
         // pour envoi de SMS
         $sms = new \SMS\FreeMobile();
 
-        foreach ($users AS $user) {
+        $storageType = $this->_config->get("storage", "type");
 
-            $file = DOCUMENT_ROOT."/var/configs/".$user->getUsername().".csv";
-            if (!is_file($file)) {
-                continue;
+        foreach ($users AS $user) {
+            if ($storageType == "db") {
+                $storage = new \App\Storage\Db\Alert($this->_userStorage->getDbConnection(), $user);
+                $this->_logger->info("User: ".$user->getUsername());
+            } else {
+                $file = DOCUMENT_ROOT."/var/configs/".$user->getUsername().".csv";
+                if (!is_file($file)) {
+                    continue;
+                }
+                $storage = new \App\Storage\File\Alert($file);
+                $this->_logger->info("Fichier config: ".$file);
             }
 
             // configuration SMS
             $sms->setKey($user->getOption("free_mobile_key"))
                 ->setUser($user->getOption("free_mobile_user"));
 
-            $this->_logger->info("Fichier config: ".$file);
-            $storage = new App\Mail\Storage($file);
             $alerts = $storage->fetchAll();
             $this->_logger->info(count($alerts)." alerte".
                 (count($alerts) > 1?"s":"")." trouvée".(count($alerts) > 1?"s":""));
@@ -375,7 +370,28 @@ class Main
     }
 }
 
-$main = new Main($config, $client);
+require dirname(__FILE__)."/../../../bootstrap.php";
+
+// lib
+require_once "PHPMailer/class.phpmailer.php";
+require_once "SMS/FreeMobile.php";
+
+// modèle
+$storageType = $config->get("storage", "type");
+if ($storageType == "db") {
+    require_once DOCUMENT_ROOT."/app/models/Storage/Db/Alert.php";
+    require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
+    $userStorage = new \App\Storage\Db\User($dbConnection);
+} else {
+    require_once DOCUMENT_ROOT."/app/models/Storage/File/Alert.php";
+    require_once DOCUMENT_ROOT."/app/models/Storage/File/User.php";
+    $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
+}
+
+$daemon = isset($_SERVER["argv"]) && is_array($_SERVER["argv"])
+    && in_array("--daemon", $_SERVER["argv"]);
+
+$main = new Main($config, $client, $userStorage);
 
 if (!$daemon) {
     $main->check();

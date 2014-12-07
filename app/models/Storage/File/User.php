@@ -1,13 +1,12 @@
 <?php
 
-namespace App\User;
+namespace App\Storage\File;
 
 require_once DOCUMENT_ROOT."/app/models/User/User.php";
+require_once __DIR__."/../User.php";
 
-class Storage
+class User implements \App\Storage\User
 {
-    protected $_filename;
-
     public function __construct($filename)
     {
         $this->_filename = $filename;
@@ -21,7 +20,7 @@ class Storage
             $fopen = fopen($this->_filename, "r");
             while (false !== $value = fgets($fopen)) {
                 $value = trim($value);
-                $user = new User();
+                $user = new \App\User\User();
                 $user->setPassword(substr($value, 0, 40))
                     ->setUsername(substr($value, 40));
                 $this->_loadUserOptions($user);
@@ -40,7 +39,7 @@ class Storage
             while (false !== $value = fgets($fopen)) {
                 $value = trim($value);
                 if (substr($value, 40) == $username) {
-                    $user = new User();
+                    $user = new \App\User\User();
                     $user->setPassword(substr($value, 0, 40))
                         ->setUsername($username);
                     $this->_loadUserOptions($user);
@@ -52,7 +51,7 @@ class Storage
         return $user;
     }
 
-    public function save(User $user)
+    public function save(\App\User\User $user)
     {
         if (!$this->fetchByUsername($user->getUsername()) || !is_file($this->_filename)) {
             $fopen = fopen($this->_filename, "a");
@@ -78,7 +77,7 @@ class Storage
         return $this;
     }
 
-    public function delete(User $user)
+    public function delete(\App\User\User $user)
     {
         if (is_file($this->_filename)) {
             $fopen = fopen($this->_filename, "r");
@@ -113,7 +112,7 @@ class Storage
         }
     }
 
-    protected function _loadUserOptions(User $user)
+    protected function _loadUserOptions(\App\User\User $user)
     {
         $dir = DOCUMENT_ROOT.DS."var".DS."configs";
         $filename = $dir.DS."user_".$user->getUsername().".json";
@@ -126,7 +125,7 @@ class Storage
         return $this;
     }
 
-    protected function _saveUserOptions(User $user)
+    protected function _saveUserOptions(\App\User\User $user)
     {
         $dir = DOCUMENT_ROOT.DS."var".DS."configs";
         if (!is_dir($dir)) {
@@ -137,7 +136,7 @@ class Storage
         return $this;
     }
 
-    protected function _deleteUserOptions($user)
+    protected function _deleteUserOptions(\App\User\User $user)
     {
         $dir = DOCUMENT_ROOT.DS."var".DS."configs";
         $filename = $dir.DS."user_".$user->getUsername().".json";

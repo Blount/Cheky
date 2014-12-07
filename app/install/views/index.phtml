@@ -20,6 +20,50 @@
                 <p class="error"><?php echo $formErrors["confirmPassword"]; ?></p>
                 <?php endif; ?>
             </dd>
+        </dl>
+        <h2>Stockage des données</h2>
+        <p>
+            Par défaut, les données (utilisateurs, alertes, etc.)
+            sont stockées dans des fichiers. Si vous souhaitez utiliser une
+            base de données MySQL, entrez les informations ci-dessous :
+        </p>
+        <dl>
+            <dt>Hôte :</dt>
+            <dd>
+                <input type="text" name="db[host]" value="<?php
+                    echo isset($_POST["db"]["host"]) ? htmlspecialchars($_POST["db"]["host"]) : "localhost"
+                ?>" />
+                <?php if (!empty($formErrors["db"]["host"])) : ?>
+                <p class="error"><?php echo $formErrors["db"]["host"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>Utilisateur :</dt>
+            <dd>
+                <input type="text" name="db[user]" value="<?php
+                    echo isset($_POST["db"]["user"]) ? htmlspecialchars($_POST["db"]["user"]) : ""
+                ?>" />
+                <?php if (!empty($formErrors["db"]["user"])) : ?>
+                <p class="error"><?php echo $formErrors["db"]["user"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>Mot de passe :</dt>
+            <dd>
+                <input type="password" name="db[password]" value="<?php
+                    echo isset($_POST["db"]["password"]) ? htmlspecialchars($_POST["db"]["password"]) : ""
+                ?>" />
+                <?php if (!empty($formErrors["db"]["password"])) : ?>
+                <p class="error"><?php echo $formErrors["db"]["password"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt>Nom de la base de données :</dt>
+            <dd>
+                <input type="text" name="db[dbname]" value="<?php
+                    echo isset($_POST["db"]["dbname"]) ? htmlspecialchars($_POST["db"]["dbname"]) : ""
+                ?>" />
+                <?php if (!empty($formErrors["db"]["dbname"])) : ?>
+                <p class="error"><?php echo $formErrors["db"]["dbname"]; ?></p>
+                <?php endif; ?>
+            </dd>
             <dt>Cliquez sur le bouton suivant pour lancer l'installation.</dt>
             <dd><input type="submit" value="Installer" /></dd>
         </dl>

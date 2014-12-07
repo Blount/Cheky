@@ -82,6 +82,7 @@ class Bootstrap
         $this->_config->set("general", "check_start", 7);
         $this->_config->set("general", "check_end", 24);
         $this->_config->set("general", "version", 0);
+        $this->_config->set("storage", "type", "files");
 
         // lit la configuration du fichier.
         try {
@@ -132,6 +133,19 @@ $userAuthed = null;
 
 // initialise le client HTTP.
 $client = $bootstrap->getClient();
+
+// si stockage en base de données, on initialise la connexion
+if ("db" == $config->get("storage", "type")) {
+    $options = array_merge(array(
+        "host" => "",
+        "user" => "",
+        "password" => "",
+        "dbname" => ""
+    ), $config->get("storage", "options"));
+    $dbConnection = new mysqli($options["host"], $options["user"],
+        $options["password"], $options["dbname"]);
+    unset($options);
+}
 
 
 ### Fonctions ###

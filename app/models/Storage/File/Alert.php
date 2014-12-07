@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Mail;
+namespace App\Storage\Db;
 
 require_once DOCUMENT_ROOT."/app/models/Mail/Alert.php";
+require_once __DIR__."/../Alert.php";
 
-class Storage
+class Alert implements \App\Storage\Alert
 {
     protected $_filename;
 
@@ -28,7 +29,7 @@ class Storage
             $fopen = fopen($this->_filename, "r");
             if ($header = fgetcsv($fopen, 0, ",", '"')) {
                 while (false !== $values = fgetcsv($fopen, 0, ",", '"')) {
-                    $alert = new Alert();
+                    $alert = new \App\Mail\Alert();
                     $alert->fromArray(array_combine($header, $values));
                     $alerts[$alert->id] = $alert;
                 }
@@ -47,7 +48,7 @@ class Storage
                 while (false !== $values = fgetcsv($fopen, 0, ",", '"')) {
                     $options = array_combine($header, $values);
                     if ($options["id"] == $id) {
-                        $alert = new Alert();
+                        $alert = new \App\Mail\Alert();
                         $alert->fromArray($options);
                         break;
                     }
@@ -58,7 +59,7 @@ class Storage
         return $alert;
     }
 
-    public function save(Alert $alert)
+    public function save(\App\Mail\Alert $alert)
     {
         $alerts = $this->fetchAll();
         $fopen = fopen($this->_filename, "a");
@@ -87,7 +88,7 @@ class Storage
         return $this;
     }
 
-    public function delete(Alert $alert)
+    public function delete(\App\Mail\Alert $alert)
     {
         $alerts = $this->fetchAll();
         $fopen = fopen($this->_filename, "a");

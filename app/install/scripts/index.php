@@ -15,6 +15,27 @@ if (!$errors && $_SERVER["REQUEST_METHOD"] == "POST") {
         $formErrors["confirmPassword"] = "Les mots de passe ne sont pas identiques.";
     }
 
+    if (!empty($_POST["db"]["user"]) || !empty($_POST["db"]["dbname"])) {
+        if (empty($_POST["db"]["host"])) {
+            $formErrors["db"]["host"] = "Nom d'hôte invalide.";
+        }
+        if (empty($_POST["db"]["user"])) {
+            $formErrors["db"]["user"] = "Spécifiez un nom d'utilisateur.";
+        }
+        if (empty($_POST["db"]["dbname"])) {
+            $formErrors["db"]["dbname"] = "Spécifiez une base de données.";
+        }
+        if (!empty($_POST["db"]["user"]) && !empty($_POST["db"]["dbname"])) {
+            // test de connexion
+            $dbConnection = new mysqli(
+                $_POST["db"]["host"], $_POST["db"]["user"],
+                $_POST["db"]["password"], $_POST["db"]["dbname"]);
+            if ($dbConnection->connect_error) {
+                $formErrors["db"]["host"] = "Connexion impossible à la base de données.";
+            }
+        }
+    }
+
     if (!$formErrors) {
         if (!is_dir(DOCUMENT_ROOT."/var/configs")) {
             mkdir(DOCUMENT_ROOT."/var/configs");
@@ -26,10 +47,30 @@ if (!$errors && $_SERVER["REQUEST_METHOD"] == "POST") {
             mkdir(DOCUMENT_ROOT."/var/log");
         }
         $config->set("general", "version", APPLICATION_VERSION);
+        if (isset($dbConnection)) {
+            $config->set("storage", "type", "db");
+            $config->set("storage", "options", array(
+                "host" => $_POST["db"]["host"],
+                "user" => $_POST["db"]["user"],
+                "password" => $_POST["db"]["password"],
+                "dbname" => $_POST["db"]["dbname"],
+            ));
+        } else {
+            $config->set("storage", "type", "files");
+        }
         $config->save();
 
-        require_once DOCUMENT_ROOT."/app/models/User/Storage.php";
-        $userStorage = new App\User\Storage(DOCUMENT_ROOT."/var/users.db");
+        $storageType = $config->get("storage", "type");
+        if ($storageType == "db") {
+            // installation de la base
+            require DOCUMENT_ROOT."/var/install/schema.php";
+
+            require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
+            $userStorage = new \App\Storage\Db\User($dbConnection);
+        } else {
+            require_once DOCUMENT_ROOT."/app/models/Storage/File/User.php";
+            $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
+        }
 
         // table utilisateurs
         $user = new \App\User\User(array(

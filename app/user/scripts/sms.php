@@ -1,6 +1,5 @@
 <?php
 
-require_once DOCUMENT_ROOT."/app/models/User/Storage.php";
 require_once "SMS/FreeMobile.php";
 
 $params = array(

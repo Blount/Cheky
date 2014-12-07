@@ -4,6 +4,7 @@ namespace App\User;
 
 class User
 {
+    protected $_id;
     protected $_username;
     protected $_password;
     protected $_options = array(
@@ -14,12 +15,33 @@ class User
 
     public function __construct(array $options = array())
     {
+        if (isset($options["id"])) {
+            $this->setUsername($options["id"]);
+        }
         if (isset($options["username"])) {
             $this->setUsername($options["username"]);
         }
         if (isset($options["password"])) {
             $this->setPassword($options["password"]);
         }
+    }
+
+    /**
+    * @param int $id
+    * @return User
+    */
+    public function setId($id)
+    {
+        $this->_id = $id;
+        return $this;
+    }
+
+    /**
+    * @return int
+    */
+    public function getId()
+    {
+        return $this->_id;
     }
 
     /**
