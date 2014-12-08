@@ -6,6 +6,6 @@ if ($action != "check") {
         $storage = new \App\Storage\Db\Alert($dbConnection, $userAuthed);
     } else {
         require_once DOCUMENT_ROOT."/app/models/Storage/File/Alert.php";
-        $storage = new \App\Storage\Db\Alert(DOCUMENT_ROOT."/var/configs/".$auth->getUsername().".csv");
+        $storage = new \App\Storage\File\Alert(DOCUMENT_ROOT."/var/configs/".$auth->getUsername().".csv");
     }
 }
