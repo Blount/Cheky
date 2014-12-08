@@ -65,7 +65,7 @@
                 <p class="error"><?php echo $errors["dbname"]; ?></p>
                 <?php endif; ?>
             </dd>
-            <?php if (is_dir(DOCUMENT_ROOT."/var/configs")) : ?>
+            <?php if (is_dir(DOCUMENT_ROOT."/var/configs") && 2 < count(scandir(DOCUMENT_ROOT."/var/configs"))) : ?>
             <dt class="storage-db-options">
                 <label for="importtodb"><input type="checkbox" id="importtodb" name="importtodb" value="1"<?php
                     echo isset($_POST["importtodb"]) ? ' checked="checked"' : ""
