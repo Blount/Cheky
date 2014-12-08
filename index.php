@@ -21,7 +21,7 @@ if (!$config->get("general", "version")) {
 }
 
 if ($module != "install") {
-    $storageType = $config->get("storage", "type");
+    $storageType = $config->get("storage", "type", "files");
     if ($storageType == "db") {
         require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
         $userStorage = new \App\Storage\Db\User($dbConnection);

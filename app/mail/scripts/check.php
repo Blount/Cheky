@@ -377,7 +377,7 @@ require_once "PHPMailer/class.phpmailer.php";
 require_once "SMS/FreeMobile.php";
 
 // modèle
-$storageType = $config->get("storage", "type");
+$storageType = $config->get("storage", "type", "files");
 if ($storageType == "db") {
     require_once DOCUMENT_ROOT."/app/models/Storage/Db/Alert.php";
     require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";

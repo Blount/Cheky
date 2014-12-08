@@ -60,7 +60,7 @@ if (!$errors && $_SERVER["REQUEST_METHOD"] == "POST") {
         }
         $config->save();
 
-        $storageType = $config->get("storage", "type");
+        $storageType = $config->get("storage", "type", "files");
         if ($storageType == "db") {
             // installation de la base
             require DOCUMENT_ROOT."/var/install/schema.php";

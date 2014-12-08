@@ -1,6 +1,6 @@
 <?php
 if ($action != "check") {
-    $storageType = $config->get("storage", "type");
+    $storageType = $config->get("storage", "type", "files");
     if ($storageType == "db") {
         require_once DOCUMENT_ROOT."/app/models/Storage/Db/Alert.php";
         $storage = new \App\Storage\Db\Alert($dbConnection, $userAuthed);

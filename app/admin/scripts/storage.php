@@ -1,6 +1,6 @@
 <?php
 
-$storageType = $config->get("storage", "type");
+$storageType = $config->get("storage", "type", "files");
 
 $currentStorage = array(
     "type" => $config->get("storage", "type", "files"),

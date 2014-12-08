@@ -135,7 +135,7 @@ $userAuthed = null;
 $client = $bootstrap->getClient();
 
 // si stockage en base de données, on initialise la connexion
-if ("db" == $config->get("storage", "type")) {
+if ("db" == $config->get("storage", "type", "files")) {
     $options = array_merge(array(
         "host" => "",
         "user" => "",
