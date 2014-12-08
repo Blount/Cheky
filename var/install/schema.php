@@ -14,7 +14,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_User` (
 
 $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_Alert` (
     `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `idstr` VARCHAR(40) NOT NULL,
+    `idstr` CHAR(40) NOT NULL UNIQUE,
     `email` VARCHAR(100) COLLATE utf8_general_ci NOT NULL,
     `date_created` DATETIME NOT NULL,
     `title` VARCHAR(255) COLLATE utf8_general_ci NOT NULL,
