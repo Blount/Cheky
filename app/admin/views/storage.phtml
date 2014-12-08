@@ -65,6 +65,17 @@
                 <p class="error"><?php echo $errors["dbname"]; ?></p>
                 <?php endif; ?>
             </dd>
+            <?php if (is_dir(DOCUMENT_ROOT."/var/configs")) : ?>
+            <dt class="storage-db-options">
+                <label for="importtodb"><input type="checkbox" id="importtodb" name="importtodb" value="1"<?php
+                    echo isset($_POST["importtodb"]) ? ' checked="checked"' : ""
+                ?>" /> importer les données existantes dans la base de données.</label>
+                <?php if (!empty($errors["dbname"])) : ?>
+                <p class="error"><?php echo $errors["dbname"]; ?></p>
+                <?php endif; ?>
+            </dt>
+            <dd></dd>
+            <?php endif; ?>
             <dd><input type="submit" value="Enregistrer" /></dd>
         </dl>
     </fieldset>

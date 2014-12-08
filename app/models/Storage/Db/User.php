@@ -61,9 +61,12 @@ class User implements \App\Storage\User
     {
         if (!$this->fetchByUsername($user->getUsername())) {
             $this->_connection->query("INSERT INTO ".$this->_table.
-                " (username, password) VALUES ('".
-                $this->_connection->real_escape_string($user->getUsername()).
-                "', '".$this->_connection->real_escape_string($user->getPassword())."')");
+                " (username, password, free_mobile_user, free_mobile_key) VALUES (
+                    '".$this->_connection->real_escape_string($user->getUsername())."',
+                    '".$this->_connection->real_escape_string($user->getPassword())."',
+                    '".$this->_connection->real_escape_string($user->getOption("free_mobile_user"))."',
+                    '".$this->_connection->real_escape_string($user->getOption("free_mobile_key"))."'
+                )");
         } else {
             $this->_connection->query("UPDATE ".$this->_table." SET
                 password = '".$this->_connection->real_escape_string($user->getPassword())."',

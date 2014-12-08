@@ -54,15 +54,16 @@ class Alert implements \App\Storage\Alert
         return $alert;
     }
 
-    public function save(\App\Mail\Alert $alert)
+    public function save(\App\Mail\Alert $alert, $forceInsert = false)
     {
         $options = $alert->toArray();
-
-        if (!$alert->id) {
+        if (!$alert->id || $forceInsert) {
             $options["user_id"] = $this->_user->getId();
-            $id = sha1(uniqid());
-            $alert->id = $id;
-            $options["idstr"] = $id;
+            if (!$alert->id) {
+                $id = sha1(uniqid());
+                $alert->id = $id;
+            }
+            $options["idstr"] = $alert->id;
             unset($options["id"]);
             $sqlOptions = array();
             foreach ($options AS $name => $value) {
@@ -77,7 +78,7 @@ class Alert implements \App\Storage\Alert
             }
             $this->_connection->query("INSERT INTO ".$this->_table.
                 " (`".implode("`, `", array_keys($options)).
-                "`) VALUES (".implode(", ", $sqlOptions).")");
+                "`, `date_created`) VALUES (".implode(", ", $sqlOptions).", NOW())");
         } else {
             $idStr = $options["id"];
             $sqlOptions = array();

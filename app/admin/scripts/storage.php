@@ -59,6 +59,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         $config->save();
 
+        if ($_POST["type"] == "db" && !empty($_POST["importtodb"])) {
+            require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
+            require_once DOCUMENT_ROOT."/app/models/Storage/File/User.php";
+            require_once DOCUMENT_ROOT."/app/models/Storage/Db/Alert.php";
+            require_once DOCUMENT_ROOT."/app/models/Storage/File/Alert.php";
+
+            // installation de la base
+            require DOCUMENT_ROOT."/var/install/schema.php";
+
+            $userStorageDb = new \App\Storage\Db\User($dbConnection);
+
+            $users = array();
+            $usersDb = $userStorageDb->fetchAll(); // utilisateurs actuellement en BDD
+            foreach ($usersDb AS $user) {
+                $users[$user->getUsername()] = $user;
+            }
+            unset($usersDb);
+
+
+            $userStorageFiles = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
+            $usersFiles = $userStorageFiles->fetchAll();
+            foreach ($usersFiles AS $user) {
+                if (!isset($users[$user->getUsername()])) {
+                    $userStorageDb->save($user);
+                }
+            }
+
+            $users = $userStorageDb->fetchAll();
+            foreach ($users AS $user) {
+                $file = DOCUMENT_ROOT."/var/configs/".$user->getUsername().".csv";
+                if (!is_file($file)) {
+                    continue;
+                }
+                $storageFiles = new \App\Storage\File\Alert($file);
+                $storageDb = new \App\Storage\Db\Alert($userStorageDb->getDbConnection(), $user);
+                $alerts = $storageFiles->fetchAll();
+                foreach ($alerts AS $alert) {
+                    $storageDb->save($alert, $forceinsert=true);
+                }
+            }
+        }
+
         header("LOCATION: ?mod=admin&a=storage&success=1");
         exit;
     }
