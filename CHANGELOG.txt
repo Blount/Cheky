@@ -1,4 +1,10 @@
 
+## Version 2.5
+
+ * ajout: possibilité d'utiliser une base de données (MySQL) pour stocker les informations.
+ * ajout: configuration du stockage des données dans l'administration.
+ * ajout: possibilité de changer le type de stockage avec prise en charge d'une migration (seulement fichier > BDD).
+
 ## Version 2.4.1
 
  * correction: faute orthographe dans nom de méthode.
