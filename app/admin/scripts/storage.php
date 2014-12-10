@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             require_once DOCUMENT_ROOT."/app/models/Storage/File/Alert.php";
 
             // installation de la base
-            require DOCUMENT_ROOT."/var/install/schema.php";
+            require DOCUMENT_ROOT."/others/install/schema.php";
 
             $userStorageDb = new \App\Storage\Db\User($dbConnection);
 

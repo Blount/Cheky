@@ -63,7 +63,7 @@ if (!$errors && $_SERVER["REQUEST_METHOD"] == "POST") {
         $storageType = $config->get("storage", "type", "files");
         if ($storageType == "db") {
             // installation de la base
-            require DOCUMENT_ROOT."/var/install/schema.php";
+            require DOCUMENT_ROOT."/var/others/schema.php";
 
             require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
             $userStorage = new \App\Storage\Db\User($dbConnection);
