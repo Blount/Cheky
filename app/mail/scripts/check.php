@@ -189,13 +189,13 @@ class Main
                 if (!isset($alert->time_updated)) {
                     $alert->time_updated = 0;
                 }
-                $this->_logger->info("Contrôle de l'alerte ".$alert->url);
-                $this->_logger->debug("Dernière mise à jour : ".(!empty($alert->time_updated)?date("d/m/Y H:i", (int)$alert->time_updated):"inconnue"));
-                $this->_logger->debug("Dernière annonce : ".(!empty($alert->time_last_ad)?date("d/m/Y H:i", (int)$alert->time_last_ad):"inconnue"));
                 if (((int)$alert->time_updated + (int)$alert->interval*60) > $currentTime
                     || $alert->suspend) {
                     continue;
                 }
+                $this->_logger->info("Contrôle de l'alerte ".$alert->url);
+                $this->_logger->debug("Dernière mise à jour : ".(!empty($alert->time_updated)?date("d/m/Y H:i", (int)$alert->time_updated):"inconnue"));
+                $this->_logger->debug("Dernière annonce : ".(!empty($alert->time_last_ad)?date("d/m/Y H:i", (int)$alert->time_last_ad):"inconnue"));
                 $alert->time_updated = $currentTime;
                 if (!$content = $this->_httpClient->request($alert->url)) {
                     $this->_logger->error("Curl Error : ".$this->_httpClient->getError());
