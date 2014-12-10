@@ -171,7 +171,7 @@ class Main
                     continue;
                 }
                 $storage = new \App\Storage\File\Alert($file);
-                $this->_logger->info("Fichier config: ".$file);
+                $this->_logger->debug("Fichier config: ".$file);
             }
 
             // configuration SMS
