@@ -82,6 +82,7 @@ class Alert implements \App\Storage\Alert
         } else {
             $idStr = $options["id"];
             $sqlOptions = array();
+            unset($options["id"]);
             foreach ($options AS $name => $value) {
                 if ($value === null) {
                     $value = "NULL";
