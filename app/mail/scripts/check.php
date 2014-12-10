@@ -159,7 +159,7 @@ class Main
         // pour envoi de SMS
         $sms = new \SMS\FreeMobile();
 
-        $storageType = $this->_config->get("storage", "type");
+        $storageType = $this->_config->get("storage", "type", "files");
 
         foreach ($users AS $user) {
             if ($storageType == "db") {
