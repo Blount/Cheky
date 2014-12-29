@@ -21,8 +21,12 @@
             ?><img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;<?php
                 endif; ?><a href="?mod=mail&amp;sort=title">Titre</a></th>
             <th style="width: 100px">Intervalle</th>
+            <?php if ($showPrice) : ?>
             <th style="width: 100px">Prix</th>
+            <?php endif; ?>
+            <?php if ($showCities) : ?>
             <th style="width: 200px">Villes</th>
+            <?php endif; ?>
             <th style="width: 140px">Envoyer par email</th>
             <th style="width: 140px">Envoyer par SMS</th>
             <th style="width: 70px">Actif</th>
@@ -37,6 +41,7 @@
             <td class="title"><a href="<?php echo htmlspecialchars($alert->url); ?>" target="_blank"><?php
                 echo $alert->title?htmlspecialchars($alert->title):"-"; ?></a></td>
             <td class="intervalle"><?php echo (int)$alert->interval; ?> mins</td>
+            <?php if ($showPrice) : ?>
             <td>
                 <?php if ($alert->price_min != -1 && $alert->price_max != -1) : ?>
                 entre <?php echo $alert->price_min; ?>€ et <?php echo $alert->price_max; ?>€
@@ -48,6 +53,8 @@
                 -
                 <?php endif; ?>
             </td>
+            <?php endif; ?>
+            <?php if ($showCities) : ?>
             <td>
                 <?php if ($alert->cities) : ?>
                 <ul style="margin: 0; padding: 0 0 0 15px;"><li>
@@ -57,6 +64,7 @@
                 -
                 <?php endif; ?>
             </td>
+            <?php endif; ?>
             <td>
                 <a href="?mod=mail&amp;a=toggle_status&amp;s=send_mail&amp;id=<?php echo $alert->id;
                     ?>"><img src="static/images/<?php
