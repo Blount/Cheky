@@ -3,12 +3,12 @@ $user = new \App\User\User();
 $errors = array();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!isset($_POST["username"]) || !trim($_POST["username"])) {
-        $errors["username"] = "Veillez indiquer un nom d'utilisateur.";
+        $errors["username"] = "Veuillez indiquer un nom d'utilisateur.";
     } else {
         $user->setUsername(trim($_POST["username"]));
     }
     if (empty($_POST["password"])) {
-        $errors["password"] = "Veillez indiquer un nom d'utilisateur.";
+        $errors["password"] = "Veuillez indiquer un mot de passe.";
     } elseif (empty($_POST["password"]) || $_POST["password"] != $_POST["confirmPassword"]) {
         $errors["confirmPassword"] = "Les deux mots de passe ne correspondent pas.";
     }

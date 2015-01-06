@@ -24,6 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($alert->email)) {
         $errors["email"] = "Ce champ est obligatoire.";
     }
+    if (empty($alert->title)) {
+        $errors["title"] = "Ce champ est obligatoire.";
+    }
     if (empty($alert->price_min)) {
         $alert->price_min = -1;
     }
