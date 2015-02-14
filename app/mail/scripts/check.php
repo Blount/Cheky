@@ -184,6 +184,7 @@ class Main
             if (count($alerts) == 0) {
                 continue;
             }
+            $unique_ads = $user->getOption("unique_ads");
             foreach ($alerts AS $i => $alert) {
                 $currentTime = time();
                 if (!isset($alert->time_updated)) {
@@ -206,7 +207,8 @@ class Main
                     "price_max" => $alert->price_max,
                     "cities" => $alert->cities,
                     "price_strict" => (bool)$alert->price_strict,
-                    "categories" => $alert->getCategories()
+                    "categories" => $alert->getCategories(),
+                    "min_id" => $unique_ads ? $alert->last_id : 0
                 ));
                 $countAds = count($ads);
                 if ($countAds == 0) {
@@ -220,6 +222,9 @@ class Main
                         $newAds[$ad->getId()] = require DOCUMENT_ROOT."/app/mail/views/mail-ad.phtml";
                         if ($alert->time_last_ad < $ad->getDate()) {
                             $alert->time_last_ad = $ad->getDate();
+                        }
+                        if ($unique_ads && $ad->getId() > $alert->last_id) {
+                            $alert->last_id = $ad->getId();
                         }
                     }
                 }

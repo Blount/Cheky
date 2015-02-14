@@ -9,7 +9,8 @@ class User
     protected $_password;
     protected $_options = array(
         "free_mobile_user" => "",
-        "free_mobile_key" => ""
+        "free_mobile_key" => "",
+        "unique_ads" => false
     );
     protected $_optionsLoaded = false;
 
@@ -99,6 +100,7 @@ class User
         if (array_key_exists($name, $this->_options)) {
             $this->_options[$name] = $value;
         }
+        $this->_options["unique_ads"] = (bool) $this->_options["unique_ads"];
         return $this;
     }
 
@@ -111,6 +113,7 @@ class User
     {
         $this->_options = array_merge($this->_options,
                 array_intersect_key($options, $this->_options));
+        $this->_options["unique_ads"] = (bool) $this->_options["unique_ads"];
         return $this;
     }
 }

@@ -10,7 +10,7 @@ class Parser
         }
         $filters = array_merge(array(
             "price_min" => -1, "price_max" => -1, "price_strict" => false,
-            "cities" => "", "categories" => array()
+            "cities" => "", "categories" => array(), "min_id" => 0
         ), $filters);
         if (trim($filters["cities"])) {
             $filters["cities"] = array_map("trim", explode("\n", mb_strtolower($filters["cities"])));
@@ -52,6 +52,9 @@ class Parser
                 $a = $aTags->item(0);
             }
             if (!preg_match('/([0-9]+)\.htm.*/', $a->getAttribute("href"), $m)) {
+                continue;
+            }
+            if ($m[1] <= $filters["min_id"]) { // permet d'éliminer les annonces déjà envoyées.
                 continue;
             }
             $ad->setLink($a->getAttribute("href"))

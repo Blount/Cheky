@@ -30,7 +30,8 @@ class User implements \App\Storage\User
                 ->setUsername($userDb->username)
                 ->setOptions(array(
                     "free_mobile_user" => $userDb->free_mobile_user,
-                    "free_mobile_key" => $userDb->free_mobile_key
+                    "free_mobile_key" => $userDb->free_mobile_key,
+                    "unique_ads" => $userDb->unique_ads
                 ));
             $users[] = $user;
         }
@@ -51,7 +52,8 @@ class User implements \App\Storage\User
                 ->setUsername($userDb->username)
                 ->setOptions(array(
                     "free_mobile_user" => $userDb->free_mobile_user,
-                    "free_mobile_key" => $userDb->free_mobile_key
+                    "free_mobile_key" => $userDb->free_mobile_key,
+                    "unique_ads" => $userDb->unique_ads
                 ));
         }
         return $user;
@@ -61,17 +63,19 @@ class User implements \App\Storage\User
     {
         if (!$this->fetchByUsername($user->getUsername())) {
             $this->_connection->query("INSERT INTO ".$this->_table.
-                " (username, password, free_mobile_user, free_mobile_key) VALUES (
+                " (username, password, free_mobile_user, free_mobile_key, unique_ads) VALUES (
                     '".$this->_connection->real_escape_string($user->getUsername())."',
                     '".$this->_connection->real_escape_string($user->getPassword())."',
                     '".$this->_connection->real_escape_string($user->getOption("free_mobile_user"))."',
-                    '".$this->_connection->real_escape_string($user->getOption("free_mobile_key"))."'
+                    '".$this->_connection->real_escape_string($user->getOption("free_mobile_key"))."',
+                    '".$this->_connection->real_escape_string((int) $user->getOption("unique_ads"))."'
                 )");
         } else {
             $this->_connection->query("UPDATE ".$this->_table." SET
                 password = '".$this->_connection->real_escape_string($user->getPassword())."',
                 free_mobile_user = '".$this->_connection->real_escape_string($user->getOption("free_mobile_user"))."',
-                free_mobile_key = '".$this->_connection->real_escape_string($user->getOption("free_mobile_key"))."'
+                free_mobile_key = '".$this->_connection->real_escape_string($user->getOption("free_mobile_key"))."',
+                unique_ads = '".$this->_connection->real_escape_string((int) $user->getOption("unique_ads"))."'
             WHERE id = ".$user->getId());
         }
         return $this;
