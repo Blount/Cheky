@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mise à jour en cours.</title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <?php if ($userAuthed && $userAuthed->isAdmin()) : ?>
+        <p><a href="">Cliquez-ici afin d'achever la mise à jour.</a></p>
+        <?php else: ?>
+        <p>Mise à jour en cours, veuillez patienter quelques instants …</p>
+        <?php endif; ?>
+    </body>
+</html>

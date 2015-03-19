@@ -1,0 +1,43 @@
+<?php if ($upgradeStarted) : ?>
+
+<form action="" method="post">
+    <p>
+        Cliquer sur "Mettre à jour" afin de terminer la mise à jour.
+    </p>
+    <p>
+        <input type="hidden" name="upgrade" value="1" />
+        <input type="submit" value="Mettre à jour" />
+    </p>
+</form>
+
+<?php else: ?>
+<p>
+    <?php if ($upgradeAvailable) : ?>
+    Une mise à jour est disponible
+    <?php else : ?>
+    Vous utilisez déjà la dernière version.
+    <?php endif; ?>
+</p>
+<?php if ($upgradeAvailable) : ?>
+<p>
+    Vous utilisez actuellement la version <?php echo APPLICATION_VERSION; ?>.
+    La version <?php echo $lastVersion; ?> est disponible.
+</p>
+<form action="" method="post">
+    <p>
+        <input type="hidden" name="upgrade" value="1" />
+        <input type="submit" value="Mettre à jour" />
+    </p>
+</form>
+<?php else : ?>
+<form action="" method="post">
+    <p>
+        Dernière vérification effectuée le <?php echo date("d/m/Y H:i", $_SESSION["lbcLastVersionTime"]); ?>
+    </p>
+    <p>
+        <input type="hidden" name="checkVersion" value="1" />
+        <input type="submit" value="Vérifier à nouveau" />
+    </p>
+</form>
+<?php endif; ?>
+<?php endif; ?>

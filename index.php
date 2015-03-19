@@ -11,7 +11,7 @@ if (isset($_GET["a"])) {
     $action = $_GET["a"];
 }
 
-if (!$config->get("general", "version")) {
+if (!$currentVersion = $config->get("general", "version")) {
     if ($module != "install") {
         $module = "install";
     }
@@ -51,6 +51,19 @@ if ($module != "install") {
             $module = "default";
             $action = "login";
         }
+    }
+}
+
+$upgradeStarted = version_compare($currentVersion, APPLICATION_VERSION, "<");
+if ($upgradeStarted) {
+    if ($userAuthed && $userAuthed->isAdmin()) {
+        if ($module != "admin" || $action != "upgrade") {
+            header("LOCATION: ./?mod=admin&a=upgrade");
+            exit;
+        }
+    } elseif ($action != "login") {
+        require DOCUMENT_ROOT."/app/default/views/upgrade.phtml";
+        return;
     }
 }
 
