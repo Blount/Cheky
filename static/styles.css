@@ -1,6 +1,7 @@
 
 html {
-	font-size: 13px;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 14px;
 	background: #FFFFFF;
     padding: 0;
 }
@@ -66,26 +67,110 @@ table img {
     margin: 0;
 }
 form {
-	width: 800px;
+	width: 100%;
+	max-width: 800px;
+}
+form input,
+form textarea {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1em;
 }
 form fieldset {
     padding: 10px 30px;
-}
-form input[type=text] {
-    max-width: 700px;
+    margin-bottom: 40px;
 }
 form legend {
 	font-size: 1.5em;
+}
+form > h2 {
+    padding: 5px 10px;
+    font-size: 1.2em;
+    
+    background: #FFFFFF;
+    background: linear-gradient(bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
+    background: linear-gradient(to bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
+    color: #AB0000;
+    border-left: 1px solid #BBBBBB;
+    border: 1px solid #BBBBBB;
+    margin: 10px 0 0 0;
+}
+form dl {
+    background: #FDFDFD;
+    border: 1px solid #BBBBBB;
+    padding: 10px;
+    margin: 0;
+}
+form h2 + dl {
+    border-top: 1px solid #DDDDDD;
 }
 form dt {
     font-weight: bold;
 }
 form dd {
     margin: 0 0 20px 0;
+    
+    border: 1px solid #E5E5E5;
+    padding: 0;
+    line-height: 30px;
 }
 form .form-more {
-    margin: 0;
+    margin: 0 1%;
     color: #424242;
+}
+
+form dt label {
+	background: #F5F5F5;
+    background: linear-gradient(to bottom, #E5E5E5, #F0F0F0);
+    color: #000000;
+	padding: 0 1%;
+	line-height: 250%;
+	display: block;
+}
+form input[type=text],
+form input[type=password],
+form textarea {
+	border: none;
+	padding: 0;
+	margin: 0;
+	height: 26px;
+	vertical-align: middle;
+	width: 98%;
+	padding: 0 1%;
+	background: #424242;
+	color: #FFF;
+}
+form textarea {
+    height: 260px;
+}
+form input[type=checkbox] {
+	padding: 0;
+	margin: 0;
+	vertical-align: middle;
+}
+form dd label {
+	padding: 0;
+	margin: 0 40px 0 1%;
+    cursor: pointer;
+}
+form input[type=submit] {
+    padding: 0 10px;
+    font-size: 1.2em;
+    background: #FFFFFF;
+    background: linear-gradient(bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
+    background: linear-gradient(to bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
+    color: #000000;
+    border: 1px solid #BBBBBB;
+    margin-right: 10px;
+    cursor: pointer;
+    height: 36px;
+    transition: all linear 200ms;
+}
+form input[type=submit]:hover {
+    box-shadow: 0 0 5px #AAA;
+}
+form .description {
+	margin: 0 0 0 1%;
+	color: #333333;
 }
 
 header {
@@ -165,13 +250,49 @@ footer {
     position: relative;
     z-index: 1;
 }
+.content > h2 {
+	margin-top: 0;
+	font-size: 1.3em;
+}
+
+.formbox {
+	cursor: pointer;
+    font-size: .95em;
+}
+.formbox span {
+	font-size: .7em;
+	text-transform: none;
+}
+
+form input[name=price_min],
+form input[name=price_max] {
+	width: 100px;
+}
+
+form .categories {
+	overflow: auto;
+	height: 200px;
+}
+form .categories h3 {
+	margin: 0 1%;
+}
+form .categories label {
+	margin: 0 1%;
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 150%;
+	white-space: nowrap;
+}
+form .categories input[type=checkbox] {
+	margin: 0 5px 0 0;
+}
+
 
 /* Log */
 .lastlog {
 	background: #FAFAFA;
 	border: 1px solid #DDDDDD;
 	height: 500px;
-/* 	width: 700px; */
 	list-style: none;
 	padding: 10px;
 	margin: 0;

@@ -42,6 +42,10 @@ if (isset($_SESSION["mail"]["order"]) && $_SESSION["mail"]["order"] == "desc") {
     $alerts = array_reverse($alerts);
 }
 
+// configuration du tableau d'affichage
+$showCities = false;
+$showPrice = false;
+
 // trie les alertes par groupes
 $alertsByGroup = array();
 $groups = array();
@@ -49,6 +53,12 @@ foreach ($alerts AS $alert) {
     $group = $alert->group?$alert->group:"Sans groupe";
     $groups[] = $group;
     $alertsByGroup[$group][] = $alert;
+    if (-1 != $alert->price_min || -1 != $alert->price_max) {
+        $showPrice = true;
+    }
+    if ($alert->cities) {
+        $showCities = true;
+    }
 }
 $groups = array_unique($groups);
 sort($groups);

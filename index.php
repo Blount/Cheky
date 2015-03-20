@@ -11,7 +11,7 @@ if (isset($_GET["a"])) {
     $action = $_GET["a"];
 }
 
-if (!$config->get("general", "version")) {
+if (!$currentVersion = $config->get("general", "version")) {
     if ($module != "install") {
         $module = "install";
     }
@@ -21,8 +21,14 @@ if (!$config->get("general", "version")) {
 }
 
 if ($module != "install") {
-    require_once DOCUMENT_ROOT."/app/models/User/Storage.php";
-    $userStorage = new App\User\Storage(DOCUMENT_ROOT."/var/users.db");
+    $storageType = $config->get("storage", "type", "files");
+    if ($storageType == "db") {
+        require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
+        $userStorage = new \App\Storage\Db\User($dbConnection);
+    } else {
+        require_once DOCUMENT_ROOT."/app/models/Storage/File/User.php";
+        $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
+    }
 
     // identification nécessaire
     if ($module == "rss" && $action == "refresh") {
@@ -45,6 +51,19 @@ if ($module != "install") {
             $module = "default";
             $action = "login";
         }
+    }
+}
+
+$upgradeStarted = version_compare($currentVersion, APPLICATION_VERSION, "<");
+if ($upgradeStarted) {
+    if ($userAuthed && $userAuthed->isAdmin()) {
+        if ($module != "admin" || $action != "upgrade") {
+            header("LOCATION: ./?mod=admin&a=upgrade");
+            exit;
+        }
+    } elseif ($action != "login") {
+        require DOCUMENT_ROOT."/app/default/views/upgrade.phtml";
+        return;
     }
 }
 

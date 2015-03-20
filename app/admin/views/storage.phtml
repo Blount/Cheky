@@ -1,0 +1,102 @@
+
+
+        <?php if (isset($_GET["success"])) : ?>
+        <p style="color: #001FA6;"><strong>Mise à jour de la configuration effectuée.</strong></p>
+        <?php endif; ?>
+
+        <p>Vous pouvez choisir de stocker les données de l'application
+            (utilisateurs, alertes, options, etc.)
+            dans des fichiers ou en base de données (MySQL).</p>
+<form action="?mod=admin&amp;a=storage" method="post" autocomplete="off">
+    <h2>Configuration du stockage des données</h2>
+
+    <dl>
+        <dt><label>Type de stockage :</label></dt>
+        <dd>
+            <label for="typefiles">
+                <input type="radio" id="typefiles" name="type" value="files"<?php
+                    echo "files" == $currentStorage["type"] ? ' checked="checked"' : ""
+                ?> />
+                fichiers
+            </label>
+            <label for="typedb" style="margin-left: 40px;">
+                <input type="radio" id="typedb" name="type" value="db"<?php
+                    echo "db" == $currentStorage["type"] ? ' checked="checked"' : ""
+                ?> />
+                base de données MySQL
+            </label>
+            <?php if (!empty($errors["type"])) : ?>
+            <p class="error"><?php echo $errors["type"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt class="storage-db-options"><label for="options-host">Adresse du serveur</label></dt>
+        <dd class="storage-db-options">
+            <input type="text" id="options-host" name="options[host]" value="<?php
+                echo isset($currentStorage["options"]["host"]) ? htmlspecialchars($currentStorage["options"]["host"]) : "localhost"
+            ?>" />
+            <?php if (!empty($errors["host"])) : ?>
+            <p class="error"><?php echo $errors["host"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt class="storage-db-options"><label for="options-user">Utilisateur</label></dt>
+        <dd class="storage-db-options">
+            <input type="text" id="options-user" name="options[user]" value="<?php
+                echo isset($currentStorage["options"]["user"]) ? htmlspecialchars($currentStorage["options"]["user"]) : ""
+            ?>" />
+            <?php if (!empty($errors["user"])) : ?>
+            <p class="error"><?php echo $errors["user"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt class="storage-db-options"><label for="options-password">Mot de passe</label></dt>
+        <dd class="storage-db-options">
+            <input type="password" id="options-password" name="options[password]" value="<?php
+                echo isset($currentStorage["options"]["password"]) ? htmlspecialchars($currentStorage["options"]["password"]) : ""
+            ?>" />
+            <?php if (!empty($errors["password"])) : ?>
+            <p class="error"><?php echo $errors["password"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt class="storage-db-options"><label for="options-base">Nom de la base de données</label></dt>
+        <dd class="storage-db-options">
+            <input type="text" id="options-base" name="options[dbname]" value="<?php
+                echo isset($currentStorage["options"]["dbname"]) ? htmlspecialchars($currentStorage["options"]["dbname"]) : ""
+            ?>" />
+            <?php if (!empty($errors["dbname"])) : ?>
+            <p class="error"><?php echo $errors["dbname"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <?php if (is_dir(DOCUMENT_ROOT."/var/configs") && 2 < count(scandir(DOCUMENT_ROOT."/var/configs"))) : ?>
+        <dt class="storage-db-options">
+            <label for="importtodb"><input type="checkbox" id="importtodb" name="importtodb" value="1"<?php
+                echo isset($_POST["importtodb"]) ? ' checked="checked"' : ""
+            ?>" /> importer les données existantes dans la base de données.</label>
+            <?php if (!empty($errors["dbname"])) : ?>
+            <p class="error"><?php echo $errors["dbname"]; ?></p>
+            <?php endif; ?>
+        </dt>
+        <?php endif; ?>
+    </dl>
+    <p><input type="submit" value="Enregistrer" /></p>
+</form>
+<script type="text/javascript">
+if (document.querySelectorAll) {
+    var elements = document.querySelectorAll(".storage-db-options");
+    var buttons = document.querySelectorAll("input[name=type]");
+    var fnCheck = function () {
+        var display = document.querySelector("input[value=db]").checked ? "block" : "none";
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.display = display;
+        }
+    };
+    for (var j = 0; j < buttons.length; j++) {
+        buttons[j].addEventListener("change", fnCheck);
+    }
+    fnCheck();
+}
+</script>
+
+
+
+
+
+

@@ -9,11 +9,11 @@ abstract class AuthAbstract
 
     /**
      *
-     * @var \App\User\Storage
+     * @var App\Storage\User
      */
     protected $_storage;
 
-    public function __construct(\App\User\Storage $storage)
+    public function __construct(\App\Storage\User $storage)
     {
         $this->_storage = $storage;
     }

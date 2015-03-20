@@ -4,6 +4,7 @@
         <title>Alerte mail pour Leboncoin.fr</title>
         <meta charset="utf-8">
         <meta name="robots" content="none">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="static/styles.css?v=<?php echo APPLICATION_VERSION; ?>" />
     </head>
     <body>
@@ -12,8 +13,10 @@
             <h1><a href="./">Système d'alerte Leboncoin</a></h1>
             <ul class="topmenu">
                 <li<?php echo $action === "users"?' class="active"':''; ?>><a href="?mod=admin&amp;a=users">Utilisateurs</a></li>
+                <li<?php echo $action === "storage"?' class="active"':''; ?>><a href="?mod=admin&amp;a=storage">Stockage</a></li>
                 <li<?php echo $action === "proxy"?' class="active"':''; ?>><a href="?mod=admin&amp;a=proxy">Proxy</a></li>
                 <li<?php echo $action === "mail"?' class="active"':''; ?>><a href="?mod=admin&amp;a=mail">Mail</a></li>
+                <li<?php echo $action === "upgrade"?' class="active"':''; ?>><a href="?mod=admin&amp;a=upgrade">Mise à jour</a></li>
                 <li<?php echo $action === "log"?' class="active"':''; ?>><a href="?mod=admin&amp;a=log">Log</a></li>
                 <li style="float: right;"><a href="?a=logout">Déconnexion <span>(<?php echo htmlspecialchars($userAuthed->getUsername()); ?>)</span></a></li>
             </ul>

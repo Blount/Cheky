@@ -1,39 +1,30 @@
 <form action="" method="post" autocomplete="off">
-    <fieldset>
-        <legend>Ajouter un utilisateur</legend>
-        <dl>
-            <dt>
-                <label for="username">Nom d'utilisateur</label>
-            </dt>
-            <dd>
-                <input type="text" id="username" name="username" value="<?php
-                    echo htmlspecialchars($user->getUsername());
-                ?>" />
-                <?php if (isset($errors["username"])) : ?>
-                <p class="error"><?php echo $errors["username"]; ?></p>
-                <?php endif; ?>
-            </dd>
-            <dt>
-                <label for="title">Mot de passe</label>
-            </dt>
-            <dd>
-                <input type="password" id="password" name="password" />
-                <?php if (isset($errors["password"])) : ?>
-                <p class="error"><?php echo $errors["password"]; ?></p>
-                <?php endif; ?>
-            </dd>
-            <dt>
-                <label for="title">Confirmez le mot de passe</label>
-            </dt>
-            <dd>
-                <input type="password" id="confirmPassword" name="confirmPassword" />
-                <?php if (isset($errors["confirmPassword"])) : ?>
-                <p class="error"><?php echo $errors["confirmPassword"]; ?></p>
-                <?php endif; ?>
-            </dd>
-            <dt>&nbsp;</dt>
-            <dd><input type="submit" value="Enregistrer" />
-                | <a href="?mod=admin&amp;a=users">annuler</a></dd>
-        </dl>
-    </fieldset>
+    <h2>Ajouter un utilisateur</h2>
+    <dl>
+        <dt><label for="username">Nom d'utilisateur</label></dt>
+        <dd>
+            <input type="text" id="username" name="username" value="<?php
+                echo htmlspecialchars($user->getUsername());
+            ?>" />
+            <?php if (isset($errors["username"])) : ?>
+            <p class="error"><?php echo $errors["username"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt><label for="password">Mot de passe</label></dt>
+        <dd>
+            <input type="password" id="password" name="password" />
+            <?php if (isset($errors["password"])) : ?>
+            <p class="error"><?php echo $errors["password"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt><label for="confirmPassword">Confirmez le mot de passe</label></dt>
+        <dd>
+            <input type="password" id="confirmPassword" name="confirmPassword" />
+            <?php if (isset($errors["confirmPassword"])) : ?>
+            <p class="error"><?php echo $errors["confirmPassword"]; ?></p>
+            <?php endif; ?>
+        </dd>
+    </dl>
+    <p><input type="submit" value="Enregistrer" />
+        | <a href="?mod=admin&amp;a=users">annuler</a></p>
 </form>

@@ -1,53 +1,65 @@
 <form action="" method="post" style="width: 600px;">
-    <fieldset>
-        <legend>Génération d'un flux RSS</legend>
-        <dl>
-            <dt><label for="url">
-                Indiquer l'adresse de recherche Leboncoin</label></dt>
-            <dd><input type="text" id="url" name="url" value="<?php
-                echo $values["url"]; ?>" size="75" /></dd>
-            <dt>
-                <label>Filtre sur le prix</label>
-            <dt>
-            <dd>
-                <label for="price_min">
-                    Prix min :
-                    <input type="text" id="price_min" name="price_min" value="<?php
-                        echo $values["price_min"]; ?>" size="6" />
-                </label>
-                <label for="price_max">
-                    Prix max :
-                    <input type="text" id="price_max" name="price_max" value="<?php
-                        echo $values["price_max"]; ?>" size="6" />
-                </label>
-                <?php if (isset($errors["price"])) : ?>
-                <p class="error"><?php echo $errors["price"]; ?></p>
-                <?php endif; ?>
-                <br />
-                <label for="price_strict"><input type="checkbox"
-                    id="price_strict" name="price_strict" value="1"<?php
-                    echo $values["price_strict"]?' checked="checked"':"";
-                ?> /> cochez cette case pour exclure les annonces sans prix d'indiqué de votre recherche.</label>
-            </dd>
-            <dt><label for="cities">Filtre sur les villes ou départements (un par ligne)</label></dt>
-            <dd>
-                <textarea id="cities" name="cities" cols="30" rows="10"><?php
-                    echo htmlspecialchars($values["cities"]) ?></textarea>
-            </dd>
-            <dt><label>Filtre multi-catégorie</label></dt>
-            <dd style="overflow: auto; height: 150px;">
-                <?php foreach ($categoryCollection->fetchAll() AS $group => $categories) : ?>
-                <?php echo htmlspecialchars($group); ?><br />
-                <?php foreach ($categories AS $id => $category) : ?>
-                <label for="category-<?php echo $id; ?>"><input id="category-<?php
-                    echo $id; ?>" type="checkbox" name="categories[]" value="<?php
-                    echo htmlspecialchars($category); ?>" /><?php
-                    echo htmlspecialchars($category); ?></label><br />
-                <?php endforeach; ?>
-                <?php endforeach; ?>
-            </dd>
-            <dt>&nbsp;</dt>
-            <dd><input type="submit" value="Générer le flux" /></dd>
-        </dl>
-    </fieldset>
+    <h2>Génération d'un flux RSS</h2>
+    <dl>
+        <dt><label for="url">
+            Indiquer l'adresse de recherche Leboncoin</label></dt>
+        <dd><input type="text" id="url" name="url" value="<?php
+            echo $values["url"]; ?>" size="75" placeholder="Ex: <?php
+                echo htmlspecialchars("http://www.leboncoin.fr/ventes_immobilieres/offres/champagne_ardenne/?f=a&th=1&pe=7&ret=1");
+            ?>" /></dd>
+    </dl>
+    <?php $isOpen = $values["price_min"] || $values["price_max"]
+            || $values["price_strict"] || !empty($values["cities"]); ?>
+    <h2 id="morefilters" class="formbox">Filtres supplémentaires <span>(cliquez pour <?php
+        echo $isOpen ? "fermer" : "ouvrir"
+    ?>)</span></h2>
+    <dl id="morefilters-content" style="display: <?php
+        echo $isOpen ? "block" : "none"
+    ?>;">
+        <dt>
+            <label>Filtre sur le prix</label>
+        <dt>
+        <dd>
+            <label for="price_min">
+                Prix min :
+                <input type="text" id="price_min" name="price_min" value="<?php
+                    echo $values["price_min"]; ?>" size="6" />
+            </label>
+            <label for="price_max">
+                Prix max :
+                <input type="text" id="price_max" name="price_max" value="<?php
+                    echo $values["price_max"]; ?>" size="6" />
+            </label>
+            <?php if (isset($errors["price"])) : ?>
+            <p class="error"><?php echo $errors["price"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt style="margin-bottom: 10px;">
+            <input type="hidden" name="price_strict" value="0" />
+            <label for="price_strict">
+                <input type="checkbox" id="price_strict" name="price_strict" value="1"<?php
+                    echo $values["price_strict"]?' checked="checked"':''
+                ?> style="margin-left: 0;" />
+                cochez cette case pour exclure les annonces sans prix d'indiqué de votre recherche.
+            </label>
+        </dt>
+        <dt><label for="cities">Filtre sur les villes ou départements (un par ligne)</label></dt>
+        <dd>
+            <textarea id="cities" name="cities" cols="30" rows="10"><?php
+                echo htmlspecialchars($values["cities"]) ?></textarea>
+        </dd>
+        <dt><label>Filtre multi-catégorie</label></dt>
+        <dd class="categories">
+            <?php foreach ($categoryCollection->fetchAll() AS $group => $categories) : ?>
+            <h3><?php echo htmlspecialchars($group); ?></h3>
+            <?php foreach ($categories AS $id => $category) : ?>
+            <label for="category-<?php echo $id; ?>"><input id="category-<?php
+                echo $id; ?>" type="checkbox" name="categories[]" value="<?php
+                echo htmlspecialchars($category); ?>" /><?php
+                echo htmlspecialchars($category); ?></label>
+            <?php endforeach; ?>
+            <?php endforeach; ?>
+        </dd>
+    </dl>
+    <p><input type="submit" value="Générer le flux" /></p>
 </form>

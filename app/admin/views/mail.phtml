@@ -1,85 +1,84 @@
-<?php if (isset($_POST["testSMTP"])) : ?>
+<?php if (empty($errors) && isset($_POST["testSMTP"])) : ?>
 <div style="width: 680px; border: 1px solid #666666; margin-bottom: 10px; padding: 10px;">
     <h2>Test d'envoi de mail</h2>
     <?php if (isset($testSended)) : ?>
     <p style="font-weight: bold; color: #333399;">Vous devriez recevoir un mail de test à l'adresse suivante : <?php
         echo htmlspecialchars($options["testMail"]);
-    ?>.</p>
+    ?></p>
     <?php elseif (isset($testError)): ?>
     <p style="font-weight: bold; color: #993333;">Erreur de l'envoi du mail : <?php
         echo htmlspecialchars($testError);
-    ?>.</p>
+    ?></p>
     <?php endif; ?>
 </div>
 <?php endif; ?>
 <form action="" method="post" autocomplete="off">
-    <fieldset>
-        <legend>Configuration de l'envoi des mails</legend>
-        <dl>
-            <dt style="clear: both;"><label for="from">Adresse e-mail à indiquer comme expéditeur</label></dt>
-            <dd>
-                <input type="text" id="from" name="from" value="<?php
-                    echo htmlspecialchars($options["from"]);
-                ?>" size="40" />
-            </dd>
-            <dt style="margin-bottom: 5px;">
-                <label for="host">Serveur SMTP externe</label>
-            </dt>
-            <dd style="float: left;">
-                Hôte / IP:<br /><input type="text" id="host" name="host" value="<?php
-                    echo htmlspecialchars($options["host"]);
-                ?>" />
-            </dd>
-            <dd style="float: left; margin-left: 10px;">
-                Port:<br /><input type="text" id="port" name="port" value="<?php
-                    echo htmlspecialchars($options["port"]);
-                ?>" size="7" />
-                <?php if (isset($errors["server"])) : ?>
-                <p class="error"><?php echo $errors["server"]; ?></p>
-                <?php endif; ?>
-            </dd>
-            <dt style="clear: both; margin-bottom: 5px;">
-                <label>Utilisateur et mot de passe SMTP si identification nécessaire</label>
-            </dt>
-            <dd style="float: left;">
-                Utilisateur:<br /><input type="text" id="username" name="username" value="<?php
-                    echo htmlspecialchars($options["username"]);
-                ?>" />
-            </dd>
-            <dd style="float: left; margin-left: 10px;">
-                Mot de passe:<br />
-                <input type="password" id="password" name="password" value="<?php
-                    echo htmlspecialchars($options["password"]);
-                ?>" />
-                <?php if (isset($errors["password"])) : ?>
-                <p class="error"><?php echo $errors["password"]; ?></p>
-                <?php endif; ?>
-            </dd>
-            <dt style="clear: both;"><label for="secure">Sécurité de la connexion</label></dt>
-            <dd>
-                <select name="secure">
-                    <option value=""<?php echo empty($options["secure"])?' selected="selected"':''; ?>>Aucune</option>
-                    <option value="tls"<?php echo $options["secure"] == "tls"?' selected="selected"':''; ?>>TLS</option>
-                    <option value="ssl"<?php echo $options["secure"] == "ssl"?' selected="selected"':''; ?>>SSL</option>
-                </select>
-            </dd>
-            <dt style="clear: both;">
-                <label for="secure">Pour tester l'envoi des mails, entrez une adresse et cliquez sur "Tester"</label><br />
-                <span style="font-weight: normal;">Un mail de test sera envoyé à cette adresse.</span>
-            </dt>
-            <dd>
-                <input type="text" id="testMail" name="testMail" value="<?php
-                    echo htmlspecialchars($options["testMail"]);
-                ?>" size="40" />
-                <?php if (isset($errors["testMail"])) : ?>
-                <p class="error"><?php echo $errors["testMail"]; ?></p>
-                <?php endif; ?>
-            </dd>
-            <dt style="clear: both;">&nbsp;</dt>
-            <dd>
-                <input type="submit" value="Enregistrer" />
-                <input type="submit" name="testSMTP" value="Tester" />
-            </dd>
-        </dl>
-    </fieldset>
+    <h2>Configuration de l'envoi des mails</h2>
+    <dl>
+        <dt style="clear: both;"><label for="from">Adresse e-mail à indiquer comme expéditeur</label></dt>
+        <dd>
+            <input type="text" id="from" name="from" value="<?php
+                echo htmlspecialchars($options["from"]);
+            ?>" size="40" />
+        </dd>
+        <dt style="margin-bottom: 5px;"><label>Serveur SMTP externe</label></dt>
+        <dd style="float: left;">
+            &nbsp;<label for="host">Hôte / IP :</label><br />
+            <input type="text" id="host" name="host" value="<?php
+                echo htmlspecialchars($options["host"]);
+            ?>" />
+        </dd>
+        <dd style="float: left; margin-left: 10px;">
+            &nbsp;<label for="port">Port :</label><br />
+            <input type="text" id="port" name="port" value="<?php
+                echo htmlspecialchars($options["port"]);
+            ?>" size="10" />
+            <?php if (isset($errors["server"])) : ?>
+            <p class="error"><?php echo $errors["server"]; ?></p>
+            <?php endif; ?>
+        </dd>
+
+        <dt style="clear: both; margin-bottom: 5px;">
+            <label>Utilisateur et mot de passe SMTP si une identification est nécessaire</label>
+        </dt>
+        <dd style="float: left;">
+            &nbsp;<label for="username">Utilisateur :</label><br />
+            <input type="text" id="username" name="username" value="<?php
+                echo htmlspecialchars($options["username"]);
+            ?>" />
+        </dd>
+        <dd style="float: left; margin-left: 10px;">
+            &nbsp;<label for="password">Mot de passe :</label><br />
+            <input type="password" id="password" name="password" value="<?php
+                echo htmlspecialchars($options["password"]);
+            ?>" />
+            <?php if (isset($errors["password"])) : ?>
+            <p class="error"><?php echo $errors["password"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt style="clear: both;"><label for="secure">Sécurité de la connexion</label></dt>
+        <dd>
+            <select name="secure">
+                <option value=""<?php echo empty($options["secure"])?' selected="selected"':''; ?>>Aucune</option>
+                <option value="tls"<?php echo $options["secure"] == "tls"?' selected="selected"':''; ?>>TLS</option>
+                <option value="ssl"<?php echo $options["secure"] == "ssl"?' selected="selected"':''; ?>>SSL</option>
+            </select>
+        </dd>
+        <dt style="clear: both;">
+            <label for="testMail">Pour tester l'envoi des mails, entrez une adresse et cliquez sur "Tester"</label>
+        </dt>
+        <dd>
+            <input type="text" id="testMail" name="testMail" value="<?php
+                echo htmlspecialchars($options["testMail"]);
+            ?>" size="40" />
+            <?php if (isset($errors["testMail"])) : ?>
+            <p class="error"><?php echo $errors["testMail"]; ?></p>
+            <?php endif; ?>
+            <p class="description">Un mail de test sera envoyé à cette adresse</p>
+        </dd>
+    </dl>
+    <p>
+        <input type="submit" value="Enregistrer" />
+        <input type="submit" name="testSMTP" value="Tester" />
+    </p>
 </form>

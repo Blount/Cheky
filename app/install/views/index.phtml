@@ -20,6 +20,71 @@
                 <p class="error"><?php echo $formErrors["confirmPassword"]; ?></p>
                 <?php endif; ?>
             </dd>
+        </dl>
+        <h2>Stockage des données</h2>
+        <p>
+            Par défaut, les données (utilisateurs, alertes, etc.)
+            sont stockées dans des fichiers. C'est l'installation la plus simple
+            et rapide ne nécessiantant que peu de connaissance.</p>
+        <p>
+            Toutefois, si vous le souhaitez vous pouvez enregistrer les données
+            dans une base de données MySQL (plus adapté et plus fiable).
+        </p>
+        <dl>
+            <dt>Type de stockage :</dt>
+            <dd>
+                <label for="typefiles">
+                    <input type="radio" id="typefiles" name="type" value="files"<?php
+                        echo isset($_POST["type"]) && "files" == $_POST["type"] ? ' checked="checked"' : ""
+                    ?> />
+                    fichiers
+                </label>
+                <label for="typedb" style="margin-left: 40px;">
+                    <input type="radio" id="typedb" name="type" value="db"<?php
+                        echo isset($_POST["type"]) && "db" == $_POST["type"] ? ' checked="checked"' : ""
+                    ?> />
+                    base de données MySQL
+                </label>
+                <?php if (!empty($errors["type"])) : ?>
+                <p class="error"><?php echo $errors["type"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt class="storage-db-options">Hôte :</dt>
+            <dd class="storage-db-options">
+                <input type="text" name="db[host]" value="<?php
+                    echo isset($_POST["db"]["host"]) ? htmlspecialchars($_POST["db"]["host"]) : "localhost"
+                ?>" />
+                <?php if (!empty($formErrors["db"]["host"])) : ?>
+                <p class="error"><?php echo $formErrors["db"]["host"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt class="storage-db-options">Utilisateur :</dt>
+            <dd class="storage-db-options">
+                <input type="text" name="db[user]" value="<?php
+                    echo isset($_POST["db"]["user"]) ? htmlspecialchars($_POST["db"]["user"]) : ""
+                ?>" />
+                <?php if (!empty($formErrors["db"]["user"])) : ?>
+                <p class="error"><?php echo $formErrors["db"]["user"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt class="storage-db-options">Mot de passe :</dt>
+            <dd class="storage-db-options">
+                <input type="password" name="db[password]" value="<?php
+                    echo isset($_POST["db"]["password"]) ? htmlspecialchars($_POST["db"]["password"]) : ""
+                ?>" />
+                <?php if (!empty($formErrors["db"]["password"])) : ?>
+                <p class="error"><?php echo $formErrors["db"]["password"]; ?></p>
+                <?php endif; ?>
+            </dd>
+            <dt class="storage-db-options">Nom de la base de données :</dt>
+            <dd class="storage-db-options">
+                <input type="text" name="db[dbname]" value="<?php
+                    echo isset($_POST["db"]["dbname"]) ? htmlspecialchars($_POST["db"]["dbname"]) : ""
+                ?>" />
+                <?php if (!empty($formErrors["db"]["dbname"])) : ?>
+                <p class="error"><?php echo $formErrors["db"]["dbname"]; ?></p>
+                <?php endif; ?>
+            </dd>
             <dt>Cliquez sur le bouton suivant pour lancer l'installation.</dt>
             <dd><input type="submit" value="Installer" /></dd>
         </dl>
@@ -32,4 +97,20 @@
         <?php endif; ?>
     </fieldset>
 </form>
+<script type="text/javascript">
+if (document.querySelectorAll) {
+    var elements = document.querySelectorAll(".storage-db-options");
+    var buttons = document.querySelectorAll("input[name=type]");
+    var fnCheck = function () {
+        var display = document.querySelector("input[value=db]").checked ? "block" : "none";
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.display = display;
+        }
+    };
+    for (var j = 0; j < buttons.length; j++) {
+        buttons[j].addEventListener("change", fnCheck);
+    }
+    fnCheck();
+}
+</script>
 <?php endif; ?>

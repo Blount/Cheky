@@ -1,7 +1,8 @@
 <form action="" method="post">
+    <h2>Identifiez-vous</h2>
     <dl>
         <dt>
-            <label for="email">Utilisateur</label>
+            <label for="username">Nom d'utilisateur</label>
         </dt>
         <dd>
             <input type="text" id="username" name="username" value="<?php
@@ -20,7 +21,6 @@
             <p class="error"><?php echo $errors["password"]; ?></p>
             <?php endif; ?>
         </dd>
-        <dt>&nbsp;</dt>
-        <dd><input type="submit" value="Connexion" /></dd>
     </dl>
+    <p><input type="submit" value="Connexion" /></p>
 </form>
