@@ -15,7 +15,7 @@ if (isset($_POST["checkVersion"])) {
     header("LOCATION: ?mod=admin&a=upgrade");
     exit;
 }
-if (empty($_SESSION["lbcLastVersion"]) || empty($_SESSION["lbcLastVersionTime"])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" || empty($_SESSION["lbcLastVersion"]) || empty($_SESSION["lbcLastVersionTime"])) {
     try {
         $_SESSION["lbcLastVersion"] = $updater->getLastVersion();
         $_SESSION["lbcLastVersionTime"] = time();
