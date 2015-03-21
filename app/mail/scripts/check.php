@@ -158,7 +158,7 @@ class Main
         curl_setopt($curlTinyurl, CURLOPT_RETURNTRANSFER, 1);
 
         // pour envoi de SMS
-        $sms = new \SMS\FreeMobile();
+        $sms = new \Message\SMS\FreeMobile();
 
         $storageType = $this->_config->get("storage", "type", "files");
 
@@ -380,7 +380,7 @@ require dirname(__FILE__)."/../../../bootstrap.php";
 
 // lib
 require_once "PHPMailer/class.phpmailer.php";
-require_once "SMS/FreeMobile.php";
+require_once "Message/SMS/FreeMobile.php";
 
 // modèle
 $storageType = $config->get("storage", "type", "files");

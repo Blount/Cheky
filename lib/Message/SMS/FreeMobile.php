@@ -1,8 +1,10 @@
 <?php
 
-namespace SMS;
+namespace Message\SMS;
 
-class FreeMobile
+require_once __DIR__."/../Abstract.php";
+
+class FreeMobile extends \Message\Message_Abstract
 {
     protected $_url = "https://smsapi.free-mobile.fr/sendmsg";
     protected $_user;
@@ -10,10 +12,11 @@ class FreeMobile
 
     protected $_curl;
 
-    public function __construct()
+    public function __construct(array $options = array())
     {
         $this->_curl = curl_init();
         curl_setopt($this->_curl, CURLOPT_SSL_VERIFYPEER, false);
+        parent::__construct($options);
     }
 
     public function __destruct()
@@ -51,7 +54,7 @@ class FreeMobile
 
     /**
     * @param string $user
-    * @return \SMS\FreeMobile
+    * @return \Message\SMS\FreeMobile
     */
     public function setUser($user)
     {
@@ -69,7 +72,7 @@ class FreeMobile
 
     /**
     * @param string $key
-    * @return \SMS\FreeMobile
+    * @return \Message\SMS\FreeMobile
     */
     public function setKey($key)
     {
