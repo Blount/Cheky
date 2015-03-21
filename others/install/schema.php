@@ -7,9 +7,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_User` (
     `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(100) COLLATE utf8_general_ci NOT NULL UNIQUE,
     `password` VARCHAR(40) NOT NULL,
-    `free_mobile_user` VARCHAR(40) DEFAULT NULL,
-    `free_mobile_key` VARCHAR(40) DEFAULT NULL,
-    `unique_ads` BOOLEAN NOT NULL DEFAULT FALSE,
+    `options` TEXT DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin");
 

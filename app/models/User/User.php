@@ -7,11 +7,7 @@ class User
     protected $_id;
     protected $_username;
     protected $_password;
-    protected $_options = array(
-        "free_mobile_user" => "",
-        "free_mobile_key" => "",
-        "unique_ads" => false
-    );
+    protected $_options = array();
     protected $_optionsLoaded = false;
 
     public function __construct(array $options = array())
@@ -90,17 +86,40 @@ class User
         return $this->getUsername() == "admin";
     }
 
-    public function getOption($name)
+    public function getOption($name, $default = null)
     {
-        return isset($this->_options[$name])?$this->_options[$name]:null;
+        if (strpos($name, ".")) {
+            $options = explode(".", $name);
+            $nbOptions = count($options);
+            $current = $this->_options;
+            for ($i = 0; $i < $nbOptions; $i++) {
+                if (is_array($current) && isset($current[$options[$i]])) {
+                    $current = $current[$options[$i]];
+                } else {
+                    break;
+                }
+            }
+            if ($i == $nbOptions) {
+                return $current;
+            }
+            return $default;
+        }
+        return isset($this->_options[$name])?$this->_options[$name]:$default;
     }
 
     public function setOption($name, $value)
     {
-        if (array_key_exists($name, $this->_options)) {
+        if (strpos($name, ".")) {
+            $options = explode(".", $name);
+            $nbOptions = count($options);
+            $current = $value;
+            for ($i = $nbOptions - 1; $i >= 0; $i--) {
+                $current = array($options[$i] => $current);
+            }
+            $this->_options = array_replace_recursive($this->_options, $current);
+        } else {
             $this->_options[$name] = $value;
         }
-        $this->_options["unique_ads"] = (bool) $this->_options["unique_ads"];
         return $this;
     }
 
@@ -111,9 +130,13 @@ class User
 
     public function setOptions(array $options)
     {
-        $this->_options = array_merge($this->_options,
-                array_intersect_key($options, $this->_options));
-        $this->_options["unique_ads"] = (bool) $this->_options["unique_ads"];
+        $this->_options = $options;
+        return $this;
+    }
+
+    public function mergeOptions(array $options)
+    {
+        $this->_options = array_replace_recursive($this->_options, $options);
         return $this;
     }
 }

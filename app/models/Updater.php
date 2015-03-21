@@ -143,7 +143,7 @@ class Updater
             $filenames = scandir($directory);
             $filenames_php = array();
             foreach ($filenames AS $filename) {
-                if (false !== strpos($filename, ".php")) {
+                if ($filename != "update.php" && false !== strpos($filename, ".php")) {
                     $filenames_php[basename($filename, ".php")] = $filename;
                 }
             }

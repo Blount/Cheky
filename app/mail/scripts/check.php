@@ -176,8 +176,8 @@ class Main
             }
 
             // configuration SMS
-            $sms->setKey($user->getOption("free_mobile_key"))
-                ->setUser($user->getOption("free_mobile_user"));
+            $sms->setKey($user->getOption("freeMobile.key"))
+                ->setUser($user->getOption("freeMobile.user"));
 
             $alerts = $storage->fetchAll();
             $this->_logger->info(count($alerts)." alerte".

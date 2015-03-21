@@ -27,12 +27,13 @@ class User implements \App\Storage\User
             $user = new \App\User\User();
             $user->setId($userDb->id)
                 ->setPassword($userDb->password)
-                ->setUsername($userDb->username)
-                ->setOptions(array(
-                    "free_mobile_user" => $userDb->free_mobile_user,
-                    "free_mobile_key" => $userDb->free_mobile_key,
-                    "unique_ads" => $userDb->unique_ads
-                ));
+                ->setUsername($userDb->username);
+            if (!empty($userDb->options)) {
+                $options = json_decode($userDb->options, true);
+                if (is_array($options)) {
+                    $user->setOptions($options);
+                }
+            }
             $users[] = $user;
         }
         return $users;
@@ -49,12 +50,13 @@ class User implements \App\Storage\User
             $user = new \App\User\User();
             $user->setId($userDb->id)
                 ->setPassword($userDb->password)
-                ->setUsername($userDb->username)
-                ->setOptions(array(
-                    "free_mobile_user" => $userDb->free_mobile_user,
-                    "free_mobile_key" => $userDb->free_mobile_key,
-                    "unique_ads" => $userDb->unique_ads
-                ));
+                ->setUsername($userDb->username);
+            if (!empty($userDb->options)) {
+                $options = json_decode($userDb->options, true);
+                if (is_array($options)) {
+                    $user->setOptions($options);
+                }
+            }
         }
         return $user;
     }
@@ -62,20 +64,16 @@ class User implements \App\Storage\User
     public function save(\App\User\User $user)
     {
         if (!$this->fetchByUsername($user->getUsername())) {
-            $this->_connection->query("INSERT INTO ".$this->_table.
-                " (username, password, free_mobile_user, free_mobile_key, unique_ads) VALUES (
+            $this->_connection->query("INSERT INTO `".$this->_table.
+                "` (`username`, `password`, `options`) VALUES (
                     '".$this->_connection->real_escape_string($user->getUsername())."',
                     '".$this->_connection->real_escape_string($user->getPassword())."',
-                    '".$this->_connection->real_escape_string($user->getOption("free_mobile_user"))."',
-                    '".$this->_connection->real_escape_string($user->getOption("free_mobile_key"))."',
-                    '".$this->_connection->real_escape_string((int) $user->getOption("unique_ads"))."'
+                    '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
                 )");
         } else {
-            $this->_connection->query("UPDATE ".$this->_table." SET
-                password = '".$this->_connection->real_escape_string($user->getPassword())."',
-                free_mobile_user = '".$this->_connection->real_escape_string($user->getOption("free_mobile_user"))."',
-                free_mobile_key = '".$this->_connection->real_escape_string($user->getOption("free_mobile_key"))."',
-                unique_ads = '".$this->_connection->real_escape_string((int) $user->getOption("unique_ads"))."'
+            $this->_connection->query("UPDATE `".$this->_table."` SET
+                `password` = '".$this->_connection->real_escape_string($user->getPassword())."',
+                `options` = '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
             WHERE id = ".$user->getId());
         }
         return $this;
