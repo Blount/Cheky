@@ -1,17 +1,19 @@
 <form action="" method="post" autocomplete="off">
-    <?php if (empty($errors) && !empty($_POST["test"])) : ?>
-    <?php if (isset($error)) : ?>
-    <p style="font-weight: bold; color: #993333;"><?php
-        echo htmlspecialchars($error);
-    ?></p>
-    <?php else: ?>
-    <p style="font-weight: bold; color: #333399;">Vous devriez recevoir un SMS contenant le message suivant:
-        « La notification SMS est fonctionnelle ».</p>
-    <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
-    <?php endif; ?>
-    <?php endif; ?>
-    <h2>Configuration SMS via Free Mobile</h2>
+    <h2>Options générales</h2>
     <dl>
+        <dt style="margin-bottom: 10px;">
+            <input type="hidden" name="unique_ads" value="0" />
+            <label for="unique_ads">
+                <input type="checkbox" id="unique_ads" name="unique_ads" value="1"<?php
+                    echo $params["unique_ads"] ?' checked="checked"':''
+                ?> style="margin-left: 0;" />
+                Cochez la case pour ne pas recevoir les annonces remontées (évite les doublons).
+            </label>
+        </dt>
+    </dl>
+
+    <h2 id="configFreeMobile" class="formbox">Configuration SMS via Free Mobile</h2>
+    <dl id="configFreeMobile-content" style="display: <?php echo !empty($params["notification"]["freeMobile"]) ? "block" : "none"; ?>;">
         <dt>
             <label for="free_mobile_user">ID utilisateur</label>
         </dt>
@@ -34,8 +36,23 @@
             <p class="error"><?php echo $errors["notification"]["freeMobile"]["key"]; ?></p>
             <?php endif; ?>
         </dd>
+        <dt style="border: none;">
+            <input type="submit" name="testFreeMobile" value="Effectuer un test d'envoie SMS" />
+        </dt>
+        <?php if (empty($errors) && !empty($_POST["testFreeMobile"])) : ?>
+        <dd>
+        <?php if (isset($error)) : ?>
+        <p style="font-weight: bold; color: #993333;"><?php
+            echo htmlspecialchars($error);
+        ?></p>
+        <?php else: ?>
+        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir un SMS contenant le message suivant:
+            « La notification SMS est fonctionnelle ».</p>
+        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
+        <?php endif; ?>
+        </dd>
+        <?php endif; ?>
     </dl>
     <p><input type="submit" value="Enregistrer" />
-        <input type="submit" name="test" value="Effectuer un test" />
-        | <a href="?mod=admin&amp;a=users">annuler</a></p>
+        | <a href="?mod=user&amp;a=settings">annuler les modifications</a></p>
 </form>

@@ -3,19 +3,25 @@
 $params = array(
     "notification" => array(
         "freeMobile" => $userAuthed->getOption("notification.freeMobile")
-    )
+    ),
+    "unique_ads" => $userAuthed->getOption("unique_ads", false)
 );
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (empty($_POST["notification"]["freeMobile"]["user"])) {
-        $errors["notification"]["freeMobile"]["user"] = "Veuillez renseigner l'ID utilisateur. ";
-    }
-    if (empty($_POST["notification"]["freeMobile"]["key"])) {
-        $errors["notification"]["freeMobile"]["key"] = "Veuillez renseigner la clé d'identification. ";
+    $params = array_merge($params, array_intersect_key($_POST, $params));
+    if (!empty($_POST["notification"]["freeMobile"]["user"])
+        || !empty($_POST["notification"]["freeMobile"]["key"])) {
+        if (empty($_POST["notification"]["freeMobile"]["user"])) {
+            $errors["notification"]["freeMobile"]["user"] = "Veuillez renseigner l'ID utilisateur. ";
+        }
+        if (empty($_POST["notification"]["freeMobile"]["key"])) {
+            $errors["notification"]["freeMobile"]["key"] = "Veuillez renseigner la clé d'identification. ";
+        }
+    } else {
+        $params["notification"]["freeMobile"] = false;
     }
     if (empty($errors)) {
-        $params = array_merge($params, array_intersect_key($_POST, $params));
-        if (!empty($_POST["test"])) {
+        if (!empty($_POST["testFreeMobile"])) {
             require_once "SMS/FreeMobile.php";
             $sms = new \SMS\FreeMobile();
             $sms->setKey($params["notification"]["freeMobile"]["key"])
