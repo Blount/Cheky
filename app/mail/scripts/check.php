@@ -157,9 +157,6 @@ class Main
         $curlTinyurl = curl_init();
         curl_setopt($curlTinyurl, CURLOPT_RETURNTRANSFER, 1);
 
-        // pour envoi de SMS
-        $sms = new \Message\SMS\FreeMobile();
-
         $storageType = $this->_config->get("storage", "type", "files");
 
         foreach ($users AS $user) {
@@ -175,9 +172,20 @@ class Main
                 $this->_logger->debug("Fichier config: ".$file);
             }
 
-            // configuration SMS
-            $sms->setKey($user->getOption("freeMobile.key"))
-                ->setUser($user->getOption("freeMobile.user"));
+            // configuration des notifications.
+            $notifications = array();
+            if ($options = $user->getOption("notification.freeMobile")) {
+                $notifications["freeMobile"] = new \Message\SMS\FreeMobile($options);
+                $this->_logger->debug("notification SMS Free Mobile activée");
+            }
+            if ($options = $user->getOption("notification.ovh")) {
+                $notifications["ovh"] = new \Message\SMS\Ovh($options);
+                $this->_logger->debug("notification SMS OVH activée");
+            }
+            if ($options = $user->getOption("notification.pushbullet")) {
+                $notifications["pushbullet"] = new \Message\Pushbullet($options);
+                $this->_logger->debug("notification Pushbullet activée");
+            }
 
             $alerts = $storage->fetchAll();
             $this->_logger->info(count($alerts)." alerte".
@@ -279,7 +287,7 @@ class Main
                             }
                         }
                     }
-                    if ($alert->send_sms_free_mobile) {
+                    if ($notifications && ($alert->send_sms_free_mobile || $alert->send_sms_ovh || $alert->send_pushbullet)) {
                         if ($countAds < 5) { // limite à 5 SMS
                             foreach ($newAds AS $id => $ad) {
                                 $ad = $ads[$id]; // récupère l'objet.'
@@ -300,10 +308,26 @@ class Main
                                         $msg .= " (".implode(", ", $others).")";
                                     }
                                     $msg .= ": ".$url;
-                                    try {
-                                        $sms->send($msg);
-                                    } catch (Exception $e) {
-                                        $this->_logger->warn("Erreur sur envoi de SMS: (".$e->getCode().") ".$e->getMessage());
+                                    if ($alert->send_sms_free_mobile && isset($notifications["freeMobile"])) {
+                                        try {
+                                            $notifications["freeMobile"]->send($msg);
+                                        } catch (Exception $e) {
+                                            $this->_logger->warn("Erreur sur envoi via SMS Free Mobile: (".$e->getCode().") ".$e->getMessage());
+                                        }
+                                    }
+                                    if ($alert->send_sms_ovh && isset($notifications["ovh"])) {
+                                        try {
+                                            $notifications["ovh"]->send($msg);
+                                        } catch (Exception $e) {
+                                            $this->_logger->warn("Erreur sur envoi via SMS OVH: (".$e->getCode().") ".$e->getMessage());
+                                        }
+                                    }
+                                    if ($alert->send_pushbullet && isset($notifications["pushbullet"])) {
+                                        try {
+                                            $notifications["pushbullet"]->send($msg);
+                                        } catch (Exception $e) {
+                                            $this->_logger->warn("Erreur sur envoi via Pushbullet: (".$e->getCode().") ".$e->getMessage());
+                                        }
                                     }
                                 }
                             }
@@ -312,10 +336,26 @@ class Main
                             if ($url = curl_exec($curlTinyurl)) {
                                 $msg  = "Il y a ".$countAds." nouvelles annonces pour votre alerte '".($alert->title?$alert->title:"sans nom")."'";
                                 $msg .= ": ".$url;
-                                try {
-                                    $sms->send($msg);
-                                } catch (Exception $e) {
-                                    $this->_logger->warn("Erreur sur envoi de SMS: (".$e->getCode().") ".$e->getMessage());
+                                if ($alert->send_sms_free_mobile && isset($notifications["freeMobile"])) {
+                                    try {
+                                        $notifications["freeMobile"]->send($msg);
+                                    } catch (Exception $e) {
+                                        $this->_logger->warn("Erreur sur envoi via SMS Free Mobile: (".$e->getCode().") ".$e->getMessage());
+                                    }
+                                }
+                                if ($alert->send_sms_ovh && isset($notifications["ovh"])) {
+                                    try {
+                                        $notifications["ovh"]->send($msg);
+                                    } catch (Exception $e) {
+                                        $this->_logger->warn("Erreur sur envoi via SMS OVH: (".$e->getCode().") ".$e->getMessage());
+                                    }
+                                }
+                                if ($alert->send_pushbullet && isset($notifications["pushbullet"])) {
+                                    try {
+                                        $notifications["pushbullet"]->send($msg);
+                                    } catch (Exception $e) {
+                                        $this->_logger->warn("Erreur sur envoi via Pushbullet: (".$e->getCode().") ".$e->getMessage());
+                                    }
                                 }
                             }
                         }
@@ -381,6 +421,8 @@ require dirname(__FILE__)."/../../../bootstrap.php";
 // lib
 require_once "PHPMailer/class.phpmailer.php";
 require_once "Message/SMS/FreeMobile.php";
+require_once "Message/SMS/Ovh.php";
+require_once "Message/Pushbullet.php";
 
 // modèle
 $storageType = $config->get("storage", "type", "files");
