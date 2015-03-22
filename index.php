@@ -52,20 +52,21 @@ if ($module != "install") {
             $action = "login";
         }
     }
-}
 
-$upgradeStarted = version_compare($currentVersion, APPLICATION_VERSION, "<");
-if ($upgradeStarted) {
-    if ($userAuthed && $userAuthed->isAdmin()) {
-        if ($module != "admin" || $action != "upgrade") {
-            header("LOCATION: ./?mod=admin&a=upgrade");
-            exit;
+    $upgradeStarted = version_compare($currentVersion, APPLICATION_VERSION, "<");
+    if ($upgradeStarted) {
+        if ($userAuthed && $userAuthed->isAdmin()) {
+            if ($module != "admin" || $action != "upgrade") {
+                header("LOCATION: ./?mod=admin&a=upgrade");
+                exit;
+            }
+        } elseif ($action != "login") {
+            require DOCUMENT_ROOT."/app/default/views/upgrade.phtml";
+            return;
         }
-    } elseif ($action != "login") {
-        require DOCUMENT_ROOT."/app/default/views/upgrade.phtml";
-        return;
     }
 }
+
 
 $init = DOCUMENT_ROOT."/app/".$module."/init.php";
 $script = DOCUMENT_ROOT."/app/".$module."/scripts/".$action.".php";
