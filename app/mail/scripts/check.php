@@ -279,7 +279,7 @@ class Main
                             }
                         }
                     }
-                    if ($alert->send_sms) {
+                    if ($alert->send_sms_free_mobile) {
                         if ($countAds < 5) { // limite à 5 SMS
                             foreach ($newAds AS $id => $ad) {
                                 $ad = $ads[$id]; // récupère l'objet.'

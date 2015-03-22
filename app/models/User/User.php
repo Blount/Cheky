@@ -78,6 +78,33 @@ class User
     }
 
     /**
+     * Retourne vrai si la notification SMS Free Mobile est activée.
+     * @return boolean
+     */
+    public function hasSMSFreeMobile()
+    {
+        return false != $this->getOption("notification.freeMobile");
+    }
+
+    /**
+     * Retourne vrai si la notification SMS OVH est activée.
+     * @return boolean
+     */
+    public function hasSMSOvh()
+    {
+        return false != $this->getOption("notification.ovh");
+    }
+
+    /**
+     * Retourne vrai si la notification Pushbullet est activée.
+     * @return boolean
+     */
+    public function hasPushbullet()
+    {
+        return false != $this->getOption("notification.pushbullet");
+    }
+
+    /**
      * Indique si l'utilisateur est administrateur.
      * @return boolean
      */

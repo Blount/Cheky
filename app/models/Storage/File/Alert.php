@@ -13,7 +13,8 @@ class Alert implements \App\Storage\Alert
         "email", "id", "title", "url", "interval", "time_last_ad",
         "time_updated", "price_min", "price_max", "price_strict",
         "cities", "suspend", "group", "group_ads", "categories",
-        "send_mail", "send_sms", "last_id"
+        "send_mail", "send_sms_free_mobile", "last_id", "send_sms_ovh",
+        "send_pushbullet"
     );
 
     public function __construct($filename)
