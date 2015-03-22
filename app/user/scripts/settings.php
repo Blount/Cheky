@@ -16,34 +16,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $params = array_merge($params, array_intersect_key($_POST, $params));
 
     // test config Free Mobile
-    if (isset($params["notification"]["freeMobile"]) && is_array($params["notification"]["freeMobile"])) {
-        $hasValue = false;
-        foreach ($params["notification"]["freeMobile"] AS $name => $value) {
-            if (empty($value)) {
-                $errors["notification"]["freeMobile"][$name] = "Ce champ doit être renseigné.";
-            } else {
-                $hasValue = true;
+    foreach (array("freeMobile", "ovh", "pushbullet") AS $section) {
+        if (isset($params["notification"][$section]) && is_array($params["notification"][$section])) {
+            $hasValue = false;
+            foreach ($params["notification"][$section] AS $name => $value) {
+                if (empty($value)) {
+                    $errors["notification"][$section][$name] = "Ce champ doit être renseigné.";
+                } else {
+                    $hasValue = true;
+                }
             }
-        }
-        if (!$hasValue) {
-            unset($errors["notification"]["freeMobile"]);
-            $params["notification"]["freeMobile"] = false;
+            if (!$hasValue) {
+                unset($errors["notification"][$section]);
+                $params["notification"][$section] = false;
+            }
         }
     }
-
-    // test config OVH
-    if (isset($params["notification"]["ovh"]) && is_array($params["notification"]["ovh"])) {
-        $hasValue = false;
-        foreach ($params["notification"]["ovh"] AS $name => $value) {
-            if (empty($value)) {
-                $errors["notification"]["ovh"][$name] = "Ce champ doit être renseigné.";
-            } else {
-                $hasValue = true;
-            }
-        }
-        if (!$hasValue) {
-            unset($errors["notification"]["ovh"]);
-        }
+    if (empty($errors["notification"])) {
+        unset($errors["notification"]);
     }
 
     if (empty($errors)) {
@@ -82,4 +72,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
