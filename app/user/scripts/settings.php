@@ -68,7 +68,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $userAuthed->mergeOptions($params);
             $userStorage->save($userAuthed);
+            $_SESSION["userSettingsSaved"] = true;
             header("LOCATION: ./?mod=user&a=settings"); exit;
         }
     }
 }
+
+$userSettingsSaved = isset($_SESSION["userSettingsSaved"]) && true === $_SESSION["userSettingsSaved"];
+unset($_SESSION["userSettingsSaved"]);

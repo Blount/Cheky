@@ -5,6 +5,9 @@
     <?php elseif (!empty($errorsTest)) : ?>
     <p class="error" style="font-size: 1.3em; background: #AB0000; color: #FFF; text-align: center; line-height: 200%;">
         Le test d'envoi a échoué. Voir ci-dessous pour le message d'erreur.</p>
+    <?php elseif ($userSettingsSaved) : ?>
+    <p style="font-size: 1.3em; background: #00AB00; color: #FFF; text-align: center; line-height: 200%;">
+        Les paramètres ont été enregistrés.</p>
     <?php endif;?>
 
     <h2>Options générales</h2>
