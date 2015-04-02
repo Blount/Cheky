@@ -121,7 +121,7 @@ class Updater
         if (!is_file($tmpZip) && !copy($archive, $tmpZip)) {
             throw new \Exception("Impossible de récupérer l'archive.");
         }
-        $zip = new ZipArchive();
+        $zip = new \ZipArchive();
         if (!$zip->open($tmpZip)) {
             throw new \Exception("L'archive semble erronée.");
         }
@@ -130,8 +130,8 @@ class Updater
         $zip->close();
 
         // mise à jour des fichiers.
-        $this->_copyFiles($this->_tmp_dir."/LBCAlerte-master", $this->_destination);
-        rmdir($this->_tmp_dir."/LBCAlerte-master");
+        $this->_copyFiles($this->_tmp_dir."/LBCAlerte-".$version, $this->_destination);
+        rmdir($this->_tmp_dir."/LBCAlerte-".$version);
         unlink($tmpZip);
     }
 

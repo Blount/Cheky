@@ -1,3 +1,7 @@
+## Version 2.6.1
+
+ * correction: crash mise à jour.
+
 ## Version 2.6
 
  * ajout: option pour ne pas recevoir les annonces remontées (évite les doublons)
