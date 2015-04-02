@@ -114,6 +114,11 @@ class Parser
                     }
                 }
             }
+            $h2Tags = $result->getElementsByTagName("h2");
+            if ($h2Tags->length) {
+                $h2 = $h2Tags->item(0);
+                $ad->setTitle(trim($h2->nodeValue));
+            }
             if (!$ad->getPrice() && $filters["price_strict"]) {
                 continue;
             }
