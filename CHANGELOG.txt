@@ -1,3 +1,8 @@
+## Version 2.6.2
+
+ * ajout: oublie d'ajout d'une colonne en BDD.
+ * correction: modification du parser d'annonce suite à modif sur Leboncoin.
+
 ## Version 2.6.1
 
  * correction: crash mise à jour.
