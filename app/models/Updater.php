@@ -121,7 +121,7 @@ class Updater
         if (!is_file($tmpZip) && !copy($archive, $tmpZip)) {
             throw new \Exception("Impossible de récupérer l'archive.");
         }
-        $zip = new ZipArchive();
+        $zip = new \ZipArchive();
         if (!$zip->open($tmpZip)) {
             throw new \Exception("L'archive semble erronée.");
         }
