@@ -130,8 +130,8 @@ class Updater
         $zip->close();
 
         // mise à jour des fichiers.
-        $this->_copyFiles($this->_tmp_dir."/LBCAlerte-master", $this->_destination);
-        rmdir($this->_tmp_dir."/LBCAlerte-master");
+        $this->_copyFiles($this->_tmp_dir."/LBCAlerte-".$version, $this->_destination);
+        rmdir($this->_tmp_dir."/LBCAlerte-".$version);
         unlink($tmpZip);
     }
 
