@@ -1,3 +1,9 @@
+## Version 2.6
+
+ * ajout: option pour ne pas recevoir les annonces remontées (évite les doublons)
+ * ajout: prise en charge des notifications SMS OVH et Pushbullet.
+ * correction: installation bloquée par le système de mise à jour automatique.
+ * correction: définir la propriété Sender de PHPMailer afin d'éviter de passer en spam.
 
 ## Version 2.5
 
