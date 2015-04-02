@@ -1,0 +1,177 @@
+<form action="" method="post" autocomplete="off">
+    <?php if (!empty($errors)) : ?>
+    <p class="error" style="font-size: 1.3em; background: #AB0000; color: #FFF; text-align: center; line-height: 200%;">
+        Il y a au moins une erreur présente dans le formulaire.</p>
+    <?php elseif (!empty($errorsTest)) : ?>
+    <p class="error" style="font-size: 1.3em; background: #AB0000; color: #FFF; text-align: center; line-height: 200%;">
+        Le test d'envoi a échoué. Voir ci-dessous pour le message d'erreur.</p>
+    <?php elseif ($userSettingsSaved) : ?>
+    <p style="font-size: 1.3em; background: #00AB00; color: #FFF; text-align: center; line-height: 200%;">
+        Les paramètres ont été enregistrés.</p>
+    <?php endif;?>
+
+    <h2>Options générales</h2>
+    <dl>
+        <dt style="margin-bottom: 10px;">
+            <input type="hidden" name="unique_ads" value="0" />
+            <label for="unique_ads">
+                <input type="checkbox" id="unique_ads" name="unique_ads" value="1"<?php
+                    echo $params["unique_ads"] ?' checked="checked"':''
+                ?> style="margin-left: 0;" />
+                Cochez la case pour ne pas recevoir les annonces remontées (évite les doublons).
+            </label>
+        </dt>
+    </dl>
+
+    <h2 id="configFreeMobile" class="formbox">Configuration SMS via Free Mobile</h2>
+    <dl id="configFreeMobile-content" style="display: <?php echo !empty($params["notification"]["freeMobile"]) ? "block" : "none"; ?>;">
+        <dt>
+            <label for="free_mobile_user">ID utilisateur</label>
+        </dt>
+        <dd>
+            <input type="text" id="free_mobile_user" name="notification[freeMobile][user]" value="<?php
+                echo htmlspecialchars($params["notification"]["freeMobile"]["user"]);
+            ?>" />
+            <?php if (isset($errors["notification"]["freeMobile"]["user"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["freeMobile"]["user"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="free_mobile_key">Clé d'identification</label>
+        </dt>
+        <dd>
+            <input type="text" id="free_mobile_key" name="notification[freeMobile][key]" value="<?php
+                echo htmlspecialchars($params["notification"]["freeMobile"]["key"]);
+            ?>" />
+            <?php if (isset($errors["notification"]["freeMobile"]["key"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["freeMobile"]["key"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt style="border: none;">
+            <input type="submit" name="testFreeMobile" value="Effectuer un test d'envoi SMS" />
+        </dt>
+        <?php if (empty($errors) && !empty($_POST["testFreeMobile"])) : ?>
+        <dd>
+        <?php if (isset($errorsTest["freeMobile"])) : ?>
+        <p style="font-weight: bold; color: #AB0000;"><?php
+            echo htmlspecialchars($errorsTest["freeMobile"]);
+        ?></p>
+        <?php else: ?>
+        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir un SMS contenant le message suivant:
+            « La notification SMS est fonctionnelle ».</p>
+        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
+        <?php endif; ?>
+        </dd>
+        <?php endif; ?>
+    </dl>
+
+    <h2 id="configPushbullet" class="formbox">Configuration alerte via Pushbullet</h2>
+    <dl id="configPushbullet-content" style="display: <?php echo !empty($params["notification"]["pushbullet"]["token"]) ? "block" : "none"; ?>;">
+        <dt>
+            <label for="pushbullet_token">Clé du service</label>
+        </dt>
+        <dd>
+            <input type="text" id="pushbullet_token" name="notification[pushbullet][token]" value="<?php
+                echo htmlspecialchars($params["notification"]["pushbullet"]["token"]);
+            ?>" />
+            <?php if (isset($errors["notification"]["pushbullet"]["token"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["pushbullet"]["token"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt style="border: none;">
+            <input type="submit" name="testPushbullet" value="Effectuer un test d'envoi de message" />
+        </dt>
+        <?php if (empty($errors) && !empty($_POST["testPushbullet"])) : ?>
+        <dd>
+        <?php if (isset($errorsTest["pushbullet"])) : ?>
+        <p style="font-weight: bold; color: #AB0000;"><?php
+            echo htmlspecialchars($errorsTest["pushbullet"]);
+        ?></p>
+        <?php else: ?>
+        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir une notification contenant le message suivant:
+            « La notification Pushbullet est fonctionnelle ».</p>
+        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
+        <?php endif; ?>
+        </dd>
+        <?php endif; ?>
+    </dl>
+
+    <h2 id="configOvh" class="formbox">Configuration SMS via OVH Telecom</h2>
+    <dl id="configOvh-content" style="display: <?php echo !empty($params["notification"]["ovh"]) ? "block" : "none"; ?>;">
+        <dt>
+            <label for="ovh_account">Numéro de compte</label>
+        </dt>
+        <dd>
+            <input type="text" id="ovh_account" name="notification[ovh][account]" value="<?php
+                echo htmlspecialchars($params["notification"]["ovh"]["account"]);
+            ?>" placeholder="De la forme : sms-xxxxxxxx-x" />
+            <?php if (isset($errors["notification"]["ovh"]["account"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["ovh"]["account"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="ovh_login">Utilisateur</label>
+        </dt>
+        <dd>
+            <input type="text" id="ovh_login" name="notification[ovh][login]" value="<?php
+                echo htmlspecialchars($params["notification"]["ovh"]["login"]);
+            ?>" />
+            <?php if (isset($errors["notification"]["ovh"]["login"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["ovh"]["login"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="ovh_password">Mot de passe</label>
+        </dt>
+        <dd>
+            <input type="text" id="ovh_password" name="notification[ovh][password]" value="<?php
+                echo htmlspecialchars($params["notification"]["ovh"]["password"]);
+            ?>" />
+            <?php if (isset($errors["notification"]["ovh"]["password"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["ovh"]["password"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="ovh_from">Expéditeur</label>
+        </dt>
+        <dd>
+            <input type="text" id="ovh_from" name="notification[ovh][from]" value="<?php
+                echo htmlspecialchars($params["notification"]["ovh"]["from"]);
+            ?>" />
+            <?php if (isset($errors["notification"]["ovh"]["from"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["ovh"]["from"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="ovh_to">Destinataire</label>
+        </dt>
+        <dd>
+            <input type="text" id="ovh_to" name="notification[ovh][to]" value="<?php
+                echo htmlspecialchars($params["notification"]["ovh"]["to"]);
+            ?>" placeholder="Forme international (Ex: +33605040301)" />
+            <?php if (isset($errors["notification"]["ovh"]["to"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["ovh"]["to"]; ?></p>
+            <?php endif; ?>
+        </dd>
+
+        <dt style="border: none;">
+            <input type="submit" name="testOvh" value="Effectuer un test d'envoi SMS" />
+        </dt>
+        <?php if (empty($errors) && !empty($_POST["testOvh"])) : ?>
+        <dd>
+        <?php if (isset($errorsTest["ovh"])) : ?>
+        <p style="font-weight: bold; color: #AB0000;"><?php
+            echo htmlspecialchars($errorsTest["ovh"]);
+        ?></p>
+        <?php else: ?>
+        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir un SMS contenant le message suivant:
+            « La notification SMS est fonctionnelle ».</p>
+        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
+        <?php endif; ?>
+        </dd>
+        <?php endif; ?>
+    </dl>
+
+    <p><input type="submit" value="Enregistrer" />
+        | <a href="?mod=user&amp;a=settings">annuler les modifications</a></p>
+</form>

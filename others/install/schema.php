@@ -7,9 +7,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_User` (
     `id` MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(100) COLLATE utf8_general_ci NOT NULL UNIQUE,
     `password` VARCHAR(40) NOT NULL,
-    `free_mobile_user` VARCHAR(40) DEFAULT NULL,
-    `free_mobile_key` VARCHAR(40) DEFAULT NULL,
-    `unique_ads` BOOLEAN NOT NULL DEFAULT FALSE,
+    `options` TEXT DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin");
 
@@ -32,7 +30,9 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_Alert` (
     `group_ads` BOOLEAN NOT NULL,
     `categories` TEXT DEFAULT NULL,
     `send_mail` BOOLEAN NOT NULL,
-    `send_sms` BOOLEAN NOT NULL,
+    `send_sms_free_mobile` BOOLEAN NOT NULL,
+    `send_sms_ovh` BOOLEAN NOT NULL,
+    `send_pushbullet` BOOLEAN NOT NULL,
     `last_id` INTEGER UNSIGNED NOT NULL DEFAULT '0',
     `user_id` MEDIUMINT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),

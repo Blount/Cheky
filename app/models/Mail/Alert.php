@@ -20,8 +20,10 @@ class Alert
     public $group = "";
     public $group_ads = 1;
     public $send_mail = 1;
-    public $send_sms = 0;
+    public $send_sms_free_mobile = 0;
     public $last_id = 0;
+    public $send_sms_ovh = 0;
+    public $send_pushbullet = 0;
 
     public function fromArray(array $values)
     {
@@ -60,8 +62,10 @@ class Alert
             "group_ads" => $this->group_ads,
             "categories" => $this->categories,
             "send_mail" => $this->send_mail,
-            "send_sms" => $this->send_sms,
-            "last_id" => (int) $this->last_id
+            "send_sms_free_mobile" => $this->send_sms_free_mobile,
+            "last_id" => (int) $this->last_id,
+            "send_sms_ovh" => $this->send_sms_ovh,
+            "send_pushbullet" => $this->send_pushbullet
         );
     }
 }

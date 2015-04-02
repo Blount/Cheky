@@ -44,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mailer->SMTPSecure = $options["secure"];
         }
         if (!empty($options["from"])) {
+            $mailer->Sender = $options["from"];
             $mailer->From = $options["from"];
         }
         if (empty($_POST["testMail"])) {

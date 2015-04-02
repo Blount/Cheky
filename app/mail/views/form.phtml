@@ -29,28 +29,52 @@ $alertCategories = $alert->getCategories();
             <p class="error"><?php echo $errors["title"]; ?></p>
             <?php endif; ?>
         </dd>
+        <?php if ($userAuthed->hasSMSFreeMobile() || $userAuthed->hasSMSOvh() || $userAuthed->hasPushbullet()) : ?>
         <dt>
             <label>Comment souhaitez-vous recevoir les alertes</label>
         </dt>
         <dd>
             <input type="hidden" name="send_mail" value="0" />
-            <input type="hidden" name="send_sms" value="0" />
+            <input type="hidden" name="send_sms_free_mobile" value="0" />
+            <input type="hidden" name="send_sms_ovh" value="0" />
+            <input type="hidden" name="send_pushbullet" value="0" />
             <label for="alert_mail">
                 <input id="alert_mail" type="checkbox" name="send_mail" value="1"<?php
                     echo $alert->send_mail?' checked="checked"':''
                 ?> />
                 par email
             </label>
-            <label for="alert_sms">
-                <input id="alert_sms" type="checkbox" name="send_sms" value="1"<?php
-                    echo $alert->send_sms?' checked="checked"':''
+            <?php if ($userAuthed->hasSMSFreeMobile()) : ?>
+            <label for="alert_sms_free">
+                <input id="alert_sms_free" type="checkbox" name="send_sms_free_mobile" value="1"<?php
+                    echo $alert->send_sms_free_mobile?' checked="checked"':''
                 ?> />
-                par SMS
+                par SMS Free Mobile
             </label>
+            <?php endif; ?>
+            <?php if ($userAuthed->hasSMSOvh()) : ?>
+            <label for="alert_sms_ovh">
+                <input id="alert_sms_ovh" type="checkbox" name="send_sms_ovh" value="1"<?php
+                    echo $alert->send_sms_ovh?' checked="checked"':''
+                ?> />
+                par SMS OVH
+            </label>
+            <?php endif; ?>
+            <?php if ($userAuthed->hasPushbullet()) : ?>
+            <label for="alert_pushbullet">
+                <input id="alert_pushbullet" type="checkbox" name="send_pushbullet" value="1"<?php
+                    echo $alert->send_pushbullet?' checked="checked"':''
+                ?> />
+                par Pushbullet
+            </label>
+            <?php endif; ?>
             <?php if (isset($errors["send_type"])) : ?>
             <p class="error"><?php echo $errors["send_type"]; ?></p>
             <?php endif; ?>
         </dd>
+        <?php else: ?>
+        <dt><input type="hidden" name="send_mail" value="1" /></dt>
+        <?php endif; ?>
         <dt>
             <label for="email">Entrez une adresse email valide</label>
         </dt>

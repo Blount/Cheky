@@ -27,8 +27,18 @@
             <?php if ($showCities) : ?>
             <th style="width: 200px">Villes</th>
             <?php endif; ?>
+            <?php if ($notification["freeMobile"] || $notification["ovh"] || $notification["pushbullet"]) : ?>
             <th style="width: 140px">Envoyer par email</th>
-            <th style="width: 140px">Envoyer par SMS</th>
+            <?php if ($notification["freeMobile"]) : ?>
+            <th style="width: 140px">SMS Free Mobile</th>
+            <?php endif; ?>
+            <?php if ($notification["ovh"]) : ?>
+            <th style="width: 140px">SMS OVH</th>
+            <?php endif; ?>
+            <?php if ($notification["pushbullet"]) : ?>
+            <th style="width: 140px">Pushbullet</th>
+            <?php endif; ?>
+            <?php endif; ?>
             <th style="width: 70px">Actif</th>
             <th style="width: 170px">&nbsp;</th>
         </tr>
@@ -65,16 +75,34 @@
                 <?php endif; ?>
             </td>
             <?php endif; ?>
+            <?php if ($notification["freeMobile"] || $notification["ovh"] || $notification["pushbullet"]) : ?>
             <td>
                 <a href="?mod=mail&amp;a=toggle_status&amp;s=send_mail&amp;id=<?php echo $alert->id;
                     ?>"><img src="static/images/<?php
                     echo !$alert->send_mail?"disable":"enable"; ?>.png" alt="" /></a>
             </td>
+            <?php endif; ?>
+            <?php if ($notification["freeMobile"]) : ?>
             <td>
-                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_sms&amp;id=<?php echo $alert->id;
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_sms_free_mobile&amp;id=<?php echo $alert->id;
                     ?>"><img src="static/images/<?php
-                    echo !$alert->send_sms?"disable":"enable"; ?>.png" alt="" /></a>
+                    echo !$alert->send_sms_free_mobile?"disable":"enable"; ?>.png" alt="" /></a>
             </td>
+            <?php endif; ?>
+            <?php if ($notification["ovh"]) : ?>
+            <td>
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_sms_ovh&amp;id=<?php echo $alert->id;
+                    ?>"><img src="static/images/<?php
+                    echo !$alert->send_sms_ovh?"disable":"enable"; ?>.png" alt="" /></a>
+            </td>
+            <?php endif; ?>
+            <?php if ($notification["pushbullet"]) : ?>
+            <td>
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_pushbullet&amp;id=<?php echo $alert->id;
+                    ?>"><img src="static/images/<?php
+                    echo !$alert->send_pushbullet?"disable":"enable"; ?>.png" alt="" /></a>
+            </td>
+            <?php endif; ?>
             <td>
                 <a href="?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id=<?php echo $alert->id;
                     ?>"><img src="static/images/<?php
