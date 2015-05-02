@@ -87,7 +87,7 @@ class Olx extends AbstractParser
             // image
             $img = $columns->item(1)->getElementsByTagName("img");
             if ($img->length) {
-                $ad->setThumbnailLink(str_replace("94x72", "1000x700", $img->item(0)->getAttribute("src")));
+                $ad->setThumbnailLink(str_replace("94x72", "644x461", $img->item(0)->getAttribute("src")));
             }
 
             $spans = $columns->item(2)->getElementsByTagName("span");
@@ -123,7 +123,6 @@ class Olx extends AbstractParser
             }
 
             $ads[$ad->getId()] = $ad;
-//             var_dump($ad, date("d-m-Y H:i", $ad->getDate()));
         }
 
         return $ads;
