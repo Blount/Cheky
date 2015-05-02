@@ -15,6 +15,8 @@ class SiteConfigFactory
     {
         if (false !== strpos($url, "leboncoin.fr")) {
             $className = 'AdService\SiteConfig\Lbc';
+        } elseif (false !== strpos($url, "olx.ua")) {
+            $className = 'AdService\SiteConfig\Olx';
         } else {
             throw new Exception("No config found");
         }
