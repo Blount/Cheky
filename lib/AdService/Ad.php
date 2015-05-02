@@ -1,17 +1,18 @@
 <?php
 
-namespace Lbc;
+namespace AdService;
 
-class Item
+class Ad
 {
     protected $_id;
     protected $_link;
     protected $_title;
     protected $_description;
     protected $_price;
+    protected $_currency = "€";
     protected $_date;
     protected $_category;
-    protected $_county;
+    protected $_country;
     protected $_city;
     protected $_professional;
     protected $_thumbnail_link;
@@ -20,7 +21,7 @@ class Item
 
     /**
     * @param int $id
-    * @return Lbc_Ad
+    * @return \AdService\Ad
     */
     public function setId($id)
     {
@@ -39,7 +40,7 @@ class Item
 
     /**
      * @param string $link
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
     public function setLink($link)
     {
@@ -58,7 +59,7 @@ class Item
 
     /**
      * @param string $title
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
     public function setTitle($title)
     {
@@ -77,7 +78,7 @@ class Item
 
     /**
      * @param string $description
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
     public function setDescription($description)
     {
@@ -96,11 +97,12 @@ class Item
 
     /**
      * @param int $price
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
     public function setPrice($price)
     {
-        $this->_price = (int) preg_replace('/[^0-9]*/', '', $price);
+//         $this->_price = (int) preg_replace('/[^0-9]*/', '', $price);
+        $this->_price = $price;
         return $this;
     }
 
@@ -112,10 +114,28 @@ class Item
         return $this->_price;
     }
 
+    /**
+    * @param string $currency
+    * @return Ad
+    */
+    public function setCurrency($currency)
+    {
+        $this->_currency = $currency;
+        return $this;
+    }
+
+    /**
+    * @return string
+    */
+    public function getCurrency()
+    {
+        return $this->_currency;
+    }
+
 
     /**
      * @param Zend_Date $date
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
     public function setDate($date)
     {
@@ -134,7 +154,7 @@ class Item
 
     /**
      * @param string $category
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
     public function setCategory($category)
     {
@@ -153,11 +173,11 @@ class Item
 
     /**
      * @param string $county
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
-    public function setCounty($county)
+    public function setCountry($county)
     {
-        $this->_county = $county;
+        $this->_country = $county;
         return $this;
     }
 
@@ -166,13 +186,13 @@ class Item
      */
     public function getCountry()
     {
-        return $this->_county;
+        return $this->_country;
     }
 
 
     /**
      * @param string $city
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
     public function setCity($city)
     {
@@ -191,7 +211,7 @@ class Item
 
     /**
      * @param bool $professional
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
     public function setProfessional($professional)
     {
@@ -210,7 +230,7 @@ class Item
 
     /**
      * @param string $thumbail
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
     public function setThumbnailLink($thumbail)
     {
@@ -229,7 +249,7 @@ class Item
 
     /**
      * @param bool $urgent
-     * @return Lbc_Ad
+     * @return \AdService\Ad
      */
     public function setUrgent($urgent)
     {
@@ -245,5 +265,3 @@ class Item
         return $this->_urgent;
     }
 }
-
-

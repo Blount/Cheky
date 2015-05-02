@@ -22,11 +22,6 @@ class Main
     protected $_config;
 
     /**
-     * @var \Lbc\Parser
-     */
-    protected $_parser;
-
-    /**
      * @var PHPMailer
      */
     protected $_mailer;
@@ -66,8 +61,6 @@ class Main
 
         $this->_logger = Logger::getLogger("main");
         $this->_logger->info("Démon démarré");
-
-        $this->_parser = new \Lbc\Parser();
 
         $this->_mailer = new PHPMailer($exceptions=true);
         $this->_mailer->setLanguage("fr", DOCUMENT_ROOT."/lib/PHPMailer/language/");
@@ -204,6 +197,13 @@ class Main
                     continue;
                 }
                 $this->_logger->info("Contrôle de l'alerte ".$alert->url);
+                try {
+                    $parser = \AdService\ParserFactory::factory($alert->url);
+                } catch (\AdService\Exception $e) {
+                    $this->_logger->info("\t".$e->getMessage());
+                    continue;
+                }
+
                 $this->_logger->debug("Dernière mise à jour : ".(!empty($alert->time_updated)?date("d/m/Y H:i", (int)$alert->time_updated):"inconnue"));
                 $this->_logger->debug("Dernière annonce : ".(!empty($alert->time_last_ad)?date("d/m/Y H:i", (int)$alert->time_last_ad):"inconnue"));
                 $alert->time_updated = $currentTime;
@@ -211,19 +211,25 @@ class Main
                     $this->_logger->error("Curl Error : ".$this->_httpClient->getError());
                     continue;
                 }
-                $ads = $this->_parser->process($content, array(
+                $cities = array();
+                if ($alert->cities) {
+                    $cities = array_map("trim", explode("\n", mb_strtolower($alert->cities)));
+                }
+                $filter = new \AdService\Filter(array(
                     "price_min" => $alert->price_min,
                     "price_max" => $alert->price_max,
-                    "cities" => $alert->cities,
+                    "cities" => $cities,
                     "price_strict" => (bool)$alert->price_strict,
                     "categories" => $alert->getCategories(),
                     "min_id" => $unique_ads ? $alert->last_id : 0
                 ));
+                $ads = $parser->process($content, $filter);
                 $countAds = count($ads);
                 if ($countAds == 0) {
                     $storage->save($alert);
                     continue;
                 }
+                $siteConfig = \AdService\SiteConfigFactory::factory($alert->url);
                 $newAds = array();
                 $time_last_ad = (int)$alert->time_last_ad;
                 foreach ($ads AS $ad) {
@@ -255,7 +261,7 @@ class Main
                         }
                         if (!$error) {
                             if ($alert->group_ads) {
-                                $subject = "Alert LeBonCoin : ".$alert->title;
+                                $subject = "Alert ".$siteConfig->getOption("site_name")." : ".$alert->title;
                                 $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
                                 <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
                                 <p>Liste des nouvelles annonces :</p><hr /><br />'.
@@ -290,14 +296,17 @@ class Main
                     if ($notifications && ($alert->send_sms_free_mobile || $alert->send_sms_ovh || $alert->send_pushbullet)) {
                         if ($countAds < 5) { // limite à 5 SMS
                             foreach ($newAds AS $id => $ad) {
-                                $ad = $ads[$id]; // récupère l'objet.'
-                                $url = "http://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
+                                $ad = $ads[$id]; // récupère l'objet.
+                                $url = $ad->getLink();
+                                if (false !== strpos($url, "leboncoin")) {
+                                    $url = "http://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
+                                }
                                 curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$url);
                                 if ($url = curl_exec($curlTinyurl)) {
                                     $msg  = "Nouvelle annonce ".($alert->title?$alert->title." : ":"").$ad->getTitle();
                                     $others = array();
                                     if ($ad->getPrice()) {
-                                        $others[] = number_format($ad->getPrice(), 0, ',', ' ')."€";
+                                        $others[] = number_format($ad->getPrice(), 0, ',', ' ').$ad->getCurrency();
                                     }
                                     if ($ad->getCity()) {
                                         $others[] = $ad->getCity();

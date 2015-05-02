@@ -1,45 +1,35 @@
 <?php
 
-namespace Lbc;
+namespace AdService\Parser;
 
-class Parser
+use AdService\Filter;
+use AdService\Ad;
+
+class Lbc extends AbstractParser
 {
-    public function process($content, array $filters = array()) {
+    protected static $months = array(
+        "jan" => 1, "fév" => 2, "mars" => 3, "avr" => 4,
+        "mai" => 5, "juin" => 6, "juillet" => 7, "août" => 8,
+        "sept" => 9, "oct" => 10, "nov" => 11,
+        "déc" => 12
+    );
+
+    public function process($content, Filter $filter = null) {
         if (!$content) {
             return;
         }
-        $filters = array_merge(array(
-            "price_min" => -1, "price_max" => -1, "price_strict" => false,
-            "cities" => "", "categories" => array(), "min_id" => 0
-        ), $filters);
-        if (trim($filters["cities"])) {
-            $filters["cities"] = array_map("trim", explode("\n", mb_strtolower($filters["cities"])));
-        }
-        if (!is_array($filters["categories"])) {
-            $filters["categories"] = array();
-        }
+        $this->loadHTML($content);
+
         $timeToday = strtotime(date("Y-m-d")." 23:59:59");
         $dateYesterday = $timeToday - 24*3600;
-
-        libxml_use_internal_errors(true);
-        $dom = new \DOMDocument();
-        $dom->loadHTML($content);
-        $divsAd = $dom->getElementsByTagName("div");
+        $divsAd = $this->getElementsByTagName("div");
         $ads = array();
-
-        // date mapping
-        $months = array(
-            "jan" => 1, "fév" => 2, "mars" => 3, "avr" => 4,
-            "mai" => 5, "juin" => 6, "juillet" => 7, "août" => 8,
-            "sept" => 9, "oct" => 10, "nov" => 11,
-            "déc" => 12
-        );
 
         foreach ($divsAd AS $result) {
             if (false === strpos($result->getAttribute("class"), "lbc")) {
                 continue;
             }
-            $ad = new Item();
+            $ad = new Ad();
             $ad->setProfessional(false)->setUrgent(false);
             $parent = $result->parentNode;
             if ($parent->tagName == "a") {
@@ -54,11 +44,15 @@ class Parser
             if (!preg_match('/([0-9]+)\.htm.*/', $a->getAttribute("href"), $m)) {
                 continue;
             }
-            if ($m[1] <= $filters["min_id"]) { // permet d'éliminer les annonces déjà envoyées.
+
+            // permet d'éliminer les annonces déjà envoyées.
+            if ($filter && $m[1] <= $filter->getMinId()) {
                 continue;
             }
+
             $ad->setLink($a->getAttribute("href"))
                 ->setId($m[1]);
+
             foreach ($result->getElementsByTagName("div") AS $node) {
                 if ($node->hasAttribute("class")) {
                     $class = $node->getAttribute("class");
@@ -71,10 +65,10 @@ class Parser
                             $time = strtotime(date("Y-m-d")." 00:00:00");
                             $time = strtotime("-1 day", $time);
                         } else {
-                            if (!isset($months[$aDate[1]])) {
+                            if (!isset(self::$months[$aDate[1]])) {
                                 continue;
                             }
-                            $time = strtotime(date("Y")."-".$months[$aDate[1]]."-".$aDate[0]);
+                            $time = strtotime(date("Y")."-".self::$months[$aDate[1]]."-".$aDate[0]);
                         }
                         $aTime = explode(":", $aDate[count($aDate) - 1]);
                         $time += (int)$aTime[0] * 3600 + (int)$aTime[1] * 60;
@@ -119,23 +113,11 @@ class Parser
                 $h2 = $h2Tags->item(0);
                 $ad->setTitle(trim($h2->nodeValue));
             }
-            if (!$ad->getPrice() && $filters["price_strict"]) {
+
+            if ($filter && !$filter->isValid($ad)) {
                 continue;
             }
-            if ($ad->getPrice()) {
-                if ($filters["price_min"] != -1 && $ad->getPrice() < $filters["price_min"]
-                    || $filters["price_max"] != -1 && $ad->getPrice() > $filters["price_max"]) {
-                    continue;
-                }
-            }
-            $city = mb_strtolower($ad->getCity());
-            $country = mb_strtolower($ad->getCountry());
-            if ($filters["cities"] && !in_array($city, $filters["cities"]) && !in_array($country, $filters["cities"])) {
-                continue;
-            }
-            if ($filters["categories"] && !in_array($ad->getCategory(), $filters["categories"])) {
-                continue;
-            }
+
             if ($ad->getDate()) {
                 $ads[$ad->getId()] = $ad;
             }

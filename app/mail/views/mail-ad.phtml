@@ -5,7 +5,7 @@
 
     <strong>Nom</strong> : <a href="<?php echo $ad->getLink(); ?>"><?php echo $ad->getTitle(); ?></a>
     <?php if ($ad->getPrice()) : ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>Prix</strong> : <?php echo number_format($ad->getPrice(), 0, ',', ' '); ?> €
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>Prix</strong> : <?php echo number_format($ad->getPrice(), 0, ',', ' '); ?> <?php echo $ad->getCurrency(); ?>
     <?php endif; ?>
 
     <?php if ($ad->getCategory()) : ?>
@@ -21,7 +21,9 @@
         echo htmlspecialchars($ad->getCountry().' '.$ad->getCity());
     ?>" title="Localiser sur Google Map"><?php echo $ad->getCity(); ?></a>
     <?php endif; ?>
+    <?php if ($siteConfig->getOption("pro_visible")) : ?>
     <br />Annonce de <?php echo $ad->getProfessional()?'professionnel':'particulier.'; ?>
+    <?php endif; ?>
     <br />
     <?php if ($ad->getUrgent()) : ?>
     <strong style="color: #FF8900;">urgent</strong>
