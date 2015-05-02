@@ -49,11 +49,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($alert->url)) {
         $errors["url"] = "Ce champ est obligatoire.";
     } else {
-        $aUrl = parse_url($alert->url);
-        if (!isset($aUrl["host"]) || $aUrl["host"] != "www.leboncoin.fr") {
-            $errors["url"] = "Cette adresse ne semble pas valide.";
-        } else {
+        try {
+            $siteConfig = \AdService\SiteConfigFactory::factory($alert->url);
             $alert->url = preg_replace("#o=[0-9]*&?#", "", $alert->url);
+        } catch (\AdService\Exception $e) {
+            $errors["url"] = "Cette adresse ne semble pas valide.";
         }
     }
     $alert->interval = (int)$alert->interval;
