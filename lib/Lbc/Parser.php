@@ -40,7 +40,7 @@ class Parser
                 continue;
             }
             $ad = new Item();
-            $ad->setProfessionnal(false)->setUrgent(false);
+            $ad->setProfessional(false)->setUrgent(false);
             $parent = $result->parentNode;
             if ($parent->tagName == "a") {
                 $a = $parent;
@@ -94,15 +94,15 @@ class Parser
                         $placement = $node->nodeValue;
                         if (false !== strpos($placement, "/")) {
                             $placement = explode("/", $placement);
-                            $ad->setCounty(trim($placement[1]))
+                            $ad->setCountry(trim($placement[1]))
                                 ->setCity(trim($placement[0]));
                         } else {
-                            $ad->setCounty(trim($placement));
+                            $ad->setCountry(trim($placement));
                         }
                     } elseif ($class == "category") {
                         $category = $node->nodeValue;
                         if (false !== strpos($category, "(pro)")) {
-                            $ad->setProfessionnal(true);
+                            $ad->setProfessional(true);
                         }
                         $ad->setCategory(trim(str_replace("(pro)", "", $category)));
                     } elseif ($class == "price") {

@@ -190,21 +190,21 @@ class Item
 
 
     /**
-     * @param bool $professionnal
+     * @param bool $professional
      * @return Lbc_Ad
      */
-    public function setProfessionnal($professionnal)
+    public function setProfessional($professional)
     {
-        $this->_professionnal = $professionnal;
+        $this->_professional = $professional;
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function getProfessionnal()
+    public function getProfessional()
     {
-        return $this->_professionnal;
+        return $this->_professional;
     }
 
 

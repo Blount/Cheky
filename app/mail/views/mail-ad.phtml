@@ -21,7 +21,7 @@
         echo htmlspecialchars($ad->getCountry().' '.$ad->getCity());
     ?>" title="Localiser sur Google Map"><?php echo $ad->getCity(); ?></a>
     <?php endif; ?>
-    <br />Annonce de <?php echo $ad->getProfessionnal()?'professionnel':'particulier.'; ?>
+    <br />Annonce de <?php echo $ad->getProfessional()?'professionnel':'particulier.'; ?>
     <br />
     <?php if ($ad->getUrgent()) : ?>
     <strong style="color: #FF8900;">urgent</strong>
