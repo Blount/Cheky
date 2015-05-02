@@ -15,9 +15,10 @@
     <br />
     <?php if ($ad->getCountry()) : ?>
     <strong>Département</strong> : <?php echo $ad->getCountry(); ?>
+    &nbsp;&nbsp;&nbsp;&nbsp;
     <?php endif; ?>
     <?php if ($ad->getCity()) : ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>Ville</strong> : <a href="http://maps.google.fr/?z=9&q=<?php
+    <strong>Ville</strong> : <a href="http://maps.google.fr/?z=9&q=<?php
         echo htmlspecialchars($ad->getCountry().' '.$ad->getCity());
     ?>" title="Localiser sur Google Map"><?php echo $ad->getCity(); ?></a>
     <?php endif; ?>
@@ -29,9 +30,11 @@
     <strong style="color: #FF8900;">urgent</strong>
     <?php endif; ?>
     <?php if ($ad->getThumbnailLink()) : ?>
-    <br /><img src="<?php echo str_replace('/thumbs/', '/images/', $ad->getThumbnailLink()); ?>" alt="" style="max-width: 100%; overflow:hidden;" />
+    <br /><img src="<?php echo str_replace('/thumbs/', '/images/', $ad->getThumbnailLink()); ?>" alt=""
+        style="max-width: 100%; overflow:hidden;" />
     <?php else : ?>
     <br />Pas de photo disponible.
     <?php endif; ?>
 </div>
-<?php return ob_get_clean(); ?>
+<?php
+return ob_get_clean();

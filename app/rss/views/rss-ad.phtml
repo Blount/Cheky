@@ -34,8 +34,10 @@ Publié le <strong><?php echo date("d/m/Y H:i", $ad->getDate()); ?></strong>
 
 
 <?php if ($ad->getThumbnailLink()) : ?>
-<br /><img src="<?php echo str_replace('/thumbs/', '/images/', $ad->getThumbnailLink()); ?>" alt="" style="float: left; display: block;" />
+<br /><img src="<?php echo str_replace('/thumbs/', '/images/', $ad->getThumbnailLink()); ?>"
+    alt="" style="max-width: 600px; float: left; display: block;" />
 <?php else : ?>
 <br />Pas de photo disponible.
 <?php endif; ?>
-<?php return ob_get_clean(); ?>
+<?php
+return ob_get_clean();
