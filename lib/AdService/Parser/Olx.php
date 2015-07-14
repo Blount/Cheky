@@ -55,10 +55,14 @@ class Olx extends AbstractParser
 //                 continue;
 //             }
 
+            $rows = $adNode->getElementsByTagName("tr");
             $columns = $adNode->getElementsByTagName("td");
 
+            $row2_td = $rows->item(1)->getElementsByTagName("td");
+            $row2_p = $rows->item(1)->getElementsByTagName("p");
+
             // analyse de la date
-            $dateStr = preg_replace("#\s+#", " ", trim($columns->item(0)->nodeValue));
+            $dateStr = preg_replace("#\s+#", " ", trim($row2_p->item(1)->nodeValue));
             if (!$dateStr) {
                 continue;
             }
@@ -85,34 +89,35 @@ class Olx extends AbstractParser
             $ad->setDate($time);
 
             // image
-            $img = $columns->item(1)->getElementsByTagName("img");
+            $img = $columns->item(0)->getElementsByTagName("img");
             if ($img->length) {
                 $ad->setThumbnailLink(str_replace("94x72", "644x461", $img->item(0)->getAttribute("src")));
             }
 
-            $spans = $columns->item(2)->getElementsByTagName("span");
-            foreach ($spans AS $span) {
-                $className = (string) $span->getAttribute("class");
-                if (false !== strpos($className, "label-promoted2")
-                    && false !== strpos($span->nodeValue, "Срочно")) { // Срочно = urgent
-                    $ad->setUrgent(true);
-                } elseif (strtolower($span->parentNode->tagName) == "a") {
-                    // titre et lien
-                    $ad->setTitle(trim($span->nodeValue));
-                    $ad->setLink($span->parentNode->getAttribute("href"));
-                } elseif (strtolower($span->parentNode->tagName) == "small") {
-                    // catégorie et lieu
-                    $ad->setCity(trim($span->nodeValue));
-                    $ad->setCategory(trim(str_replace($ad->getCity(), "", $span->parentNode->nodeValue)));
-                }
+            // titre + lien
+            $link = $adNode->getElementsByTagName("h3")->item(0)->getElementsByTagName("a")->item(0);
+            if ($link) {
+                $ad->setTitle(trim($link->nodeValue));
+                $ad->setLink($link->getAttribute("href"));
             }
+
+            // urgent
+            if (false !== strpos($adNode->nodeValue, "Срочно")) {
+                $ad->setUrgent(true);
+            }
+
+            // lieu
+            $ad->setCity(trim($row2_p->item(0)->nodeValue));
+
+            // catégorie
+            $ad->setCategory(trim($columns->item(1)->getElementsByTagName("p")->item(0)->nodeValue));
 
             if (!preg_match("#ID([^.]+)\.html#", $ad->getLink(), $m)) {
                 continue;
             }
             $ad->setId(base_convert($m[1], 32, 10));
 
-            $priceColumn = trim($columns->item(3)->nodeValue);
+            $priceColumn = trim($columns->item(2)->nodeValue);
             if (preg_match('#(?<price>[0-9\s]+)\s+(?<currency>грн|\$|€)#imsU', $priceColumn, $m)) {
                 $ad->setPrice((int) str_replace(" ", "", $m["price"]))
                     ->setCurrency($m["currency"]);
