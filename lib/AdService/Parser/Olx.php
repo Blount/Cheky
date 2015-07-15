@@ -56,9 +56,11 @@ class Olx extends AbstractParser
 //             }
 
             $rows = $adNode->getElementsByTagName("tr");
+            if (0 == $rows->length) {
+                continue;
+            }
             $columns = $adNode->getElementsByTagName("td");
 
-            $row2_td = $rows->item(1)->getElementsByTagName("td");
             $row2_p = $rows->item(1)->getElementsByTagName("p");
 
             // analyse de la date
