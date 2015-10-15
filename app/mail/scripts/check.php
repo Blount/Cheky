@@ -37,6 +37,7 @@ class Main
     protected $_logger;
     protected $_timer = 5;
     protected $_countError = 0;
+    protected $_running = false;
 
     public function __construct(
         \Config_Lite $config,
@@ -55,11 +56,12 @@ class Main
 
         $this->_httpClient = $client;
         $this->_userStorage = $userStorage;
-
-        $this->_lockFile = DOCUMENT_ROOT."/var/.lock";
-        $this->_lock();
-
         $this->_logger = Logger::getLogger("main");
+        $this->_lockFile = DOCUMENT_ROOT."/var/.lock";
+
+        $this->_lock();
+        $this->_running = true;
+
         $this->_logger->info("Démon démarré");
 
         $this->_mailer = new PHPMailer($exceptions=true);
@@ -382,7 +384,7 @@ class Main
     public function shutdown()
     {
         $this->_loop = false;
-        if (is_file($this->_lockFile)) {
+        if ($this->_running && is_file($this->_lockFile)) {
             unlink($this->_lockFile);
         }
     }
@@ -415,12 +417,9 @@ class Main
     protected function _lock()
     {
         if (is_file($this->_lockFile)) {
-            $currentTime = (int) file_get_contents($this->_lockFile);
-            if ((time() - $currentTime) < (10 * 60)) {
-                throw new Exception("Impossible de lancer le contrôle des alertes.");
-            }
+            throw new Exception("Un processus est en cours d'exécution.");
         }
-        file_put_contents($this->_lockFile, time());
+        file_put_contents($this->_lockFile, time()."\n".getmypid());
         return $this;
     }
 }
@@ -448,7 +447,12 @@ if ($storageType == "db") {
 $daemon = isset($_SERVER["argv"]) && is_array($_SERVER["argv"])
     && in_array("--daemon", $_SERVER["argv"]);
 
-$main = new Main($config, $client, $userStorage);
+try {
+    $main = new Main($config, $client, $userStorage);
+} catch (\Exception $e) {
+    Logger::getLogger("main")->info($e->getMessage());
+    return;
+}
 
 if (!$daemon) {
     $main->check();
