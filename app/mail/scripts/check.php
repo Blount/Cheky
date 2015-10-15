@@ -32,11 +32,7 @@ class Main
     protected $_userStorage;
 
     protected $_lockFile;
-    protected $_loop;
-    protected $_sleeping;
     protected $_logger;
-    protected $_timer = 5;
-    protected $_countError = 0;
     protected $_running = false;
 
     public function __construct(
@@ -45,9 +41,6 @@ class Main
         \App\Storage\User $userStorage)
     {
         $this->_config = $config;
-
-        $this->_loop = true;
-        $this->_sleeping = false;
 
         if (function_exists("pcntl_signal")) {
             pcntl_signal(SIGTERM, array($this, "sigHandler"));
@@ -62,7 +55,7 @@ class Main
         $this->_lock();
         $this->_running = true;
 
-        $this->_logger->info("Démon démarré");
+        $this->_logger->info("Vérification des alertes.");
 
         $this->_mailer = new PHPMailer($exceptions=true);
         $this->_mailer->setLanguage("fr", DOCUMENT_ROOT."/lib/PHPMailer/language/");
@@ -103,21 +96,6 @@ class Main
         $this->shutdown();
     }
 
-    public function loop()
-    {
-        $this->_loop = true;
-        $this->_sleeping = false;
-        while ($this->_loop) {
-            $this->check();
-            $this->_logger->info("Prochain contrôle dans ".$this->_timer." minute".($this->_timer > 1?"s":""));
-            if ($this->_loop) {
-                $this->_sleeping = true;
-                sleep($this->_timer * 60);
-                $this->_sleeping = false;
-            }
-        }
-    }
-
     public function check()
     {
         $checkStart = (int)$this->_config->get("general", "check_start", 7);
@@ -134,18 +112,7 @@ class Main
             return;
         }
         $this->_logger->info("Contrôle des alertes.");
-        try {
-            $this->_checkConnection();
-        } catch (Exception $e) {
-            if ($this->_countError < 6) {
-                $this->_countError++;
-            }
-            $this->_timer = $this->_countError * 10;
-            $this->_logger->warn($e->getMessage());
-            return;
-        }
-        $this->_countError = 0;
-        $this->_timer = 5;
+        $this->_checkConnection();
         $users = $this->_userStorage->fetchAll();
 
         // génération d'URL court pour les SMS
@@ -383,7 +350,6 @@ class Main
 
     public function shutdown()
     {
-        $this->_loop = false;
         if ($this->_running && is_file($this->_lockFile)) {
             unlink($this->_lockFile);
         }
@@ -394,9 +360,7 @@ class Main
         if (in_array($no, array(SIGTERM, SIGINT))) {
             $this->_logger->info("QUIT (".$no.")");
             $this->shutdown();
-            if (!$this->_sleeping) {
-                exit;
-            }
+            exit;
         }
     }
 
@@ -444,9 +408,6 @@ if ($storageType == "db") {
     $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
 }
 
-$daemon = isset($_SERVER["argv"]) && is_array($_SERVER["argv"])
-    && in_array("--daemon", $_SERVER["argv"]);
-
 try {
     $main = new Main($config, $client, $userStorage);
 } catch (\Exception $e) {
@@ -454,12 +415,11 @@ try {
     return;
 }
 
-if (!$daemon) {
+try {
     $main->check();
-    $main->shutdown();
-    return;
+} catch (\Exception $e) {
+    Logger::getLogger("main")->warn($e->getMessage());
 }
-$main->loop();
 $main->shutdown();
 
 
