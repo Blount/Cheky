@@ -12,8 +12,6 @@ require_once "FeedWriter/Feed.php";
 require_once "FeedWriter/RSS2.php";
 use \FeedWriter\RSS2;
 
-$aUrl = parse_url($_GET["url"]);
-
 try {
     $parser = \AdService\ParserFactory::factory($_GET["url"]);
 } catch (\AdService\Exception $e) {
