@@ -22,15 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mailer = new PHPMailer($exceptions=true);
         $mailer->setLanguage("fr", DOCUMENT_ROOT."/lib/PHPMailer/language/");
         $mailer->CharSet = "utf-8";
-        if (!empty($options["host"]) || !empty($options["port"])
-            || !empty($options["username"]) || !empty($options["password"])) {
-            $mailer->isSMTP();
-        }
         if (!empty($options["host"])) {
             $mailer->Host = $options["host"];
+            $mailer->isSMTP();
         }
         if (!empty($options["port"])) {
             $mailer->Port = $options["port"];
+            $mailer->isSMTP();
         }
         if (!empty($options["username"])) {
             $mailer->SMTPAuth = true;

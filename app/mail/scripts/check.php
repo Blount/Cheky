@@ -63,12 +63,12 @@ class Main
         if ($config->hasSection("mailer")) {
             if ($smtp = $config->get("mailer", "smtp", array())) {
                 $this->_mailer->SMTPKeepAlive = true;
-                $this->_mailer->isSMTP();
                 if (!empty($smtp["host"])) {
                     $this->_mailer->Host = $smtp["host"];
-                }
-                if (!empty($smtp["port"])) {
-                    $this->_mailer->Port = $smtp["port"];
+                    if (!empty($smtp["port"])) {
+                        $this->_mailer->Port = $smtp["port"];
+                    }
+                    $this->_mailer->isSMTP();
                 }
                 if (!empty($smtp["username"])) {
                     $this->_mailer->SMTPAuth = true;
