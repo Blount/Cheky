@@ -51,7 +51,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         try {
             $siteConfig = \AdService\SiteConfigFactory::factory($alert->url);
-            $alert->url = preg_replace("#o=[0-9]*&?#", "", $alert->url);
+            if (false !== strpos($alert->url, "leboncoin.fr")) {
+                $alert->url = rtrim(preg_replace("#(o|sp)=[0-9]*&?#", "", $alert->url), "?&");
+            }
         } catch (\AdService\Exception $e) {
             $errors["url"] = "Cette adresse ne semble pas valide.";
         }

@@ -19,7 +19,9 @@ try {
      exit;
 }
 
-$_GET["url"] = preg_replace("#o=[0-9]*&?#", "", $_GET["url"]);
+if (false !== strpos($_GET["url"], "leboncoin.fr")) {
+    $_GET["url"] = rtrim(preg_replace("#(o|sp)=[0-9]*&?#", "", $_GET["url"]), "?&");
+}
 
 // nettoyage cache
 $files = array_diff(scandir(DOCUMENT_ROOT."/var/feeds"), array(".", ".."));
