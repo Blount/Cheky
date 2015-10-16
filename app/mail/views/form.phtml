@@ -6,7 +6,7 @@ $alertCategories = $alert->getCategories();
     <h2>Options obligatoires</h2>
     <dl>
         <dt>
-            <label for="url">URL de recherche Leboncoin</label>
+            <label for="url">URL de recherche</label>
         </dt>
         <dd>
             <input type="text" id="url" name="url" value="<?php
@@ -160,6 +160,8 @@ $alertCategories = $alert->getCategories();
         </dd>
         <dt><label>Filtre multi-catégorie</label></dt>
         <dd class="categories">
+            <p class="warning"><span>Attention : </span>
+                ce filtre ne doit être utilisé que pour les recherches sur "toutes les catégories".</p>
             <?php foreach ($categoryCollection->fetchAll() AS $group => $categories) : ?>
             <h3><?php echo htmlspecialchars($group); ?></h3>
             <?php foreach ($categories AS $id => $category) : ?>

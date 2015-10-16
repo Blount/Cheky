@@ -5,7 +5,7 @@
 
     <strong>Nom</strong> : <a href="<?php echo $ad->getLink(); ?>"><?php echo $ad->getTitle(); ?></a>
     <?php if ($ad->getPrice()) : ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>Prix</strong> : <?php echo number_format($ad->getPrice(), 0, ',', ' '); ?> €
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>Prix</strong> : <?php echo number_format($ad->getPrice(), 0, ',', ' '); ?> <?php echo $ad->getCurrency(); ?>
     <?php endif; ?>
 
     <?php if ($ad->getCategory()) : ?>
@@ -15,21 +15,26 @@
     <br />
     <?php if ($ad->getCountry()) : ?>
     <strong>Département</strong> : <?php echo $ad->getCountry(); ?>
+    &nbsp;&nbsp;&nbsp;&nbsp;
     <?php endif; ?>
     <?php if ($ad->getCity()) : ?>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>Ville</strong> : <a href="http://maps.google.fr/?z=9&q=<?php
+    <strong>Ville</strong> : <a href="http://maps.google.fr/?z=9&q=<?php
         echo htmlspecialchars($ad->getCountry().' '.$ad->getCity());
     ?>" title="Localiser sur Google Map"><?php echo $ad->getCity(); ?></a>
     <?php endif; ?>
-    <br />Annonce de <?php echo $ad->getProfessionnal()?'professionnel':'particulier.'; ?>
+    <?php if ($siteConfig->getOption("pro_visible")) : ?>
+    <br />Annonce de <?php echo $ad->getProfessional()?'professionnel':'particulier.'; ?>
+    <?php endif; ?>
     <br />
     <?php if ($ad->getUrgent()) : ?>
     <strong style="color: #FF8900;">urgent</strong>
     <?php endif; ?>
     <?php if ($ad->getThumbnailLink()) : ?>
-    <br /><img src="<?php echo str_replace('/thumbs/', '/images/', $ad->getThumbnailLink()); ?>" alt="" style="max-width: 100%; overflow:hidden;" />
+    <br /><img src="<?php echo str_replace('/thumbs/', '/images/', $ad->getThumbnailLink()); ?>" alt=""
+        style="max-width: 100%; overflow:hidden;" />
     <?php else : ?>
     <br />Pas de photo disponible.
     <?php endif; ?>
 </div>
-<?php return ob_get_clean(); ?>
+<?php
+return ob_get_clean();

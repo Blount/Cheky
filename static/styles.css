@@ -287,6 +287,15 @@ form .categories input[type=checkbox] {
 	margin: 0 5px 0 0;
 }
 
+.warning {
+    font-weight: bold;
+    margin: 0 1%;
+    line-height: 130%;
+}
+.warning span {
+    color: #EF0000;
+}
+
 
 /* Log */
 .lastlog {

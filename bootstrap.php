@@ -14,8 +14,8 @@ set_include_path(
     dirname(__FILE__)."/lib".PATH_SEPARATOR.get_include_path()
 );
 
-require_once "Lbc/Item.php";
-require_once "Lbc/Parser.php";
+require __DIR__."/lib/AdService/Autoloader.php";
+
 require_once "Http/Client/Curl.php";
 require_once "Config/Lite.php";
 require_once "Log4php/Logger.php";

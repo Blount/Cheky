@@ -22,11 +22,6 @@ class Main
     protected $_config;
 
     /**
-     * @var \Lbc\Parser
-     */
-    protected $_parser;
-
-    /**
      * @var PHPMailer
      */
     protected $_mailer;
@@ -37,11 +32,8 @@ class Main
     protected $_userStorage;
 
     protected $_lockFile;
-    protected $_loop;
-    protected $_sleeping;
     protected $_logger;
-    protected $_timer = 5;
-    protected $_countError = 0;
+    protected $_running = false;
 
     public function __construct(
         \Config_Lite $config,
@@ -50,9 +42,6 @@ class Main
     {
         $this->_config = $config;
 
-        $this->_loop = true;
-        $this->_sleeping = false;
-
         if (function_exists("pcntl_signal")) {
             pcntl_signal(SIGTERM, array($this, "sigHandler"));
             pcntl_signal(SIGINT, array($this, "sigHandler"));
@@ -60,14 +49,13 @@ class Main
 
         $this->_httpClient = $client;
         $this->_userStorage = $userStorage;
-
-        $this->_lockFile = DOCUMENT_ROOT."/var/.lock";
-        $this->_lock();
-
         $this->_logger = Logger::getLogger("main");
-        $this->_logger->info("Démon démarré");
+        $this->_lockFile = DOCUMENT_ROOT."/var/.lock";
 
-        $this->_parser = new \Lbc\Parser();
+        $this->_lock();
+        $this->_running = true;
+
+        $this->_logger->info("Vérification des alertes.");
 
         $this->_mailer = new PHPMailer($exceptions=true);
         $this->_mailer->setLanguage("fr", DOCUMENT_ROOT."/lib/PHPMailer/language/");
@@ -75,12 +63,12 @@ class Main
         if ($config->hasSection("mailer")) {
             if ($smtp = $config->get("mailer", "smtp", array())) {
                 $this->_mailer->SMTPKeepAlive = true;
-                $this->_mailer->isSMTP();
                 if (!empty($smtp["host"])) {
                     $this->_mailer->Host = $smtp["host"];
-                }
-                if (!empty($smtp["port"])) {
-                    $this->_mailer->Port = $smtp["port"];
+                    if (!empty($smtp["port"])) {
+                        $this->_mailer->Port = $smtp["port"];
+                    }
+                    $this->_mailer->isSMTP();
                 }
                 if (!empty($smtp["username"])) {
                     $this->_mailer->SMTPAuth = true;
@@ -108,21 +96,6 @@ class Main
         $this->shutdown();
     }
 
-    public function loop()
-    {
-        $this->_loop = true;
-        $this->_sleeping = false;
-        while ($this->_loop) {
-            $this->check();
-            $this->_logger->info("Prochain contrôle dans ".$this->_timer." minute".($this->_timer > 1?"s":""));
-            if ($this->_loop) {
-                $this->_sleeping = true;
-                sleep($this->_timer * 60);
-                $this->_sleeping = false;
-            }
-        }
-    }
-
     public function check()
     {
         $checkStart = (int)$this->_config->get("general", "check_start", 7);
@@ -139,18 +112,7 @@ class Main
             return;
         }
         $this->_logger->info("Contrôle des alertes.");
-        try {
-            $this->_checkConnection();
-        } catch (Exception $e) {
-            if ($this->_countError < 6) {
-                $this->_countError++;
-            }
-            $this->_timer = $this->_countError * 10;
-            $this->_logger->warn($e->getMessage());
-            return;
-        }
-        $this->_countError = 0;
-        $this->_timer = 5;
+        $this->_checkConnection();
         $users = $this->_userStorage->fetchAll();
 
         // génération d'URL court pour les SMS
@@ -204,6 +166,13 @@ class Main
                     continue;
                 }
                 $this->_logger->info("Contrôle de l'alerte ".$alert->url);
+                try {
+                    $parser = \AdService\ParserFactory::factory($alert->url);
+                } catch (\AdService\Exception $e) {
+                    $this->_logger->info("\t".$e->getMessage());
+                    continue;
+                }
+
                 $this->_logger->debug("Dernière mise à jour : ".(!empty($alert->time_updated)?date("d/m/Y H:i", (int)$alert->time_updated):"inconnue"));
                 $this->_logger->debug("Dernière annonce : ".(!empty($alert->time_last_ad)?date("d/m/Y H:i", (int)$alert->time_last_ad):"inconnue"));
                 $alert->time_updated = $currentTime;
@@ -211,19 +180,25 @@ class Main
                     $this->_logger->error("Curl Error : ".$this->_httpClient->getError());
                     continue;
                 }
-                $ads = $this->_parser->process($content, array(
+                $cities = array();
+                if ($alert->cities) {
+                    $cities = array_map("trim", explode("\n", mb_strtolower($alert->cities)));
+                }
+                $filter = new \AdService\Filter(array(
                     "price_min" => $alert->price_min,
                     "price_max" => $alert->price_max,
-                    "cities" => $alert->cities,
+                    "cities" => $cities,
                     "price_strict" => (bool)$alert->price_strict,
                     "categories" => $alert->getCategories(),
                     "min_id" => $unique_ads ? $alert->last_id : 0
                 ));
+                $ads = $parser->process($content, $filter);
                 $countAds = count($ads);
                 if ($countAds == 0) {
                     $storage->save($alert);
                     continue;
                 }
+                $siteConfig = \AdService\SiteConfigFactory::factory($alert->url);
                 $newAds = array();
                 $time_last_ad = (int)$alert->time_last_ad;
                 foreach ($ads AS $ad) {
@@ -255,7 +230,7 @@ class Main
                         }
                         if (!$error) {
                             if ($alert->group_ads) {
-                                $subject = "Alert LeBonCoin : ".$alert->title;
+                                $subject = "Alert ".$siteConfig->getOption("site_name")." : ".$alert->title;
                                 $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
                                 <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
                                 <p>Liste des nouvelles annonces :</p><hr /><br />'.
@@ -290,14 +265,17 @@ class Main
                     if ($notifications && ($alert->send_sms_free_mobile || $alert->send_sms_ovh || $alert->send_pushbullet)) {
                         if ($countAds < 5) { // limite à 5 SMS
                             foreach ($newAds AS $id => $ad) {
-                                $ad = $ads[$id]; // récupère l'objet.'
-                                $url = "http://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
+                                $ad = $ads[$id]; // récupère l'objet.
+                                $url = $ad->getLink();
+                                if (false !== strpos($url, "leboncoin")) {
+                                    $url = "http://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
+                                }
                                 curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$url);
                                 if ($url = curl_exec($curlTinyurl)) {
                                     $msg  = "Nouvelle annonce ".($alert->title?$alert->title." : ":"").$ad->getTitle();
                                     $others = array();
                                     if ($ad->getPrice()) {
-                                        $others[] = number_format($ad->getPrice(), 0, ',', ' ')."€";
+                                        $others[] = number_format($ad->getPrice(), 0, ',', ' ').$ad->getCurrency();
                                     }
                                     if ($ad->getCity()) {
                                         $others[] = $ad->getCity();
@@ -372,8 +350,7 @@ class Main
 
     public function shutdown()
     {
-        $this->_loop = false;
-        if (is_file($this->_lockFile)) {
+        if ($this->_running && is_file($this->_lockFile)) {
             unlink($this->_lockFile);
         }
     }
@@ -383,9 +360,7 @@ class Main
         if (in_array($no, array(SIGTERM, SIGINT))) {
             $this->_logger->info("QUIT (".$no.")");
             $this->shutdown();
-            if (!$this->_sleeping) {
-                exit;
-            }
+            exit;
         }
     }
 
@@ -406,12 +381,9 @@ class Main
     protected function _lock()
     {
         if (is_file($this->_lockFile)) {
-            $currentTime = (int) file_get_contents($this->_lockFile);
-            if ((time() - $currentTime) < (10 * 60)) {
-                throw new Exception("Impossible de lancer le contrôle des alertes.");
-            }
+            throw new Exception("Un processus est en cours d'exécution.");
         }
-        file_put_contents($this->_lockFile, time());
+        file_put_contents($this->_lockFile, time()."\n".getmypid());
         return $this;
     }
 }
@@ -436,17 +408,18 @@ if ($storageType == "db") {
     $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
 }
 
-$daemon = isset($_SERVER["argv"]) && is_array($_SERVER["argv"])
-    && in_array("--daemon", $_SERVER["argv"]);
-
-$main = new Main($config, $client, $userStorage);
-
-if (!$daemon) {
-    $main->check();
-    $main->shutdown();
+try {
+    $main = new Main($config, $client, $userStorage);
+} catch (\Exception $e) {
+    Logger::getLogger("main")->info($e->getMessage());
     return;
 }
-$main->loop();
+
+try {
+    $main->check();
+} catch (\Exception $e) {
+    Logger::getLogger("main")->warn($e->getMessage());
+}
 $main->shutdown();
 
 

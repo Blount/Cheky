@@ -1,3 +1,20 @@
+
+## Version 2.7
+
+ * ajout: message "Pas de photo disponible." dans les flux RSS lorsqu'une annonce n'a pas de photo.
+ * ajout: mise en place d'une nouvelle structure de classe pour permettre l'ajout d'autre site d'annonce dans le système.
+ * ajout: prise en charge du site d'annonce Olx.ua
+ * correction: supprimer le trie par prix lors de l'enregistrement des URLs (fixes #30).
+ * correction: configurer correctement l'envoi des mails (fixes #28).
+ * correction: avertissement sur l'utilisation du filtre sur catégorie (fixes #22).
+ * correction: ne pas activer CURLOPT_FOLLOWLOCATION si open_basedir définit (fixes #18).
+ * correction: le fichier lock ne fait pas son boulot et des tâches parallèles s'exécutaient.
+ * correction: enlever la date pour l'ID des éléments de flux (risque de doublon pour Olx)
+ * correction: utiliser \AdService\SiteConfigFactory::factory pour valider l'URL de recherche.
+ * correction: mise en forme du rendu des alertes.
+ * correction: orthographe.
+ * supprimer: système de daemon car non utilisé.
+
 ## Version 2.6.2
 
  * ajout: oublie d'ajout d'une colonne en BDD.

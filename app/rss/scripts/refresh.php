@@ -12,12 +12,16 @@ require_once "FeedWriter/Feed.php";
 require_once "FeedWriter/RSS2.php";
 use \FeedWriter\RSS2;
 
-$aUrl = parse_url($_GET["url"]);
-if (!isset($aUrl["host"]) || $aUrl["host"] != "www.leboncoin.fr") {
+try {
+    $parser = \AdService\ParserFactory::factory($_GET["url"]);
+} catch (\AdService\Exception $e) {
      echo "Cette adresse ne semble pas valide.";
      exit;
 }
-$_GET["url"] = preg_replace("#o=[0-9]*&?#", "", $_GET["url"]);
+
+if (false !== strpos($_GET["url"], "leboncoin.fr")) {
+    $_GET["url"] = rtrim(preg_replace("#(o|sp)=[0-9]*&?#", "", $_GET["url"]), "?&");
+}
 
 // nettoyage cache
 $files = array_diff(scandir(DOCUMENT_ROOT."/var/feeds"), array(".", ".."));
@@ -28,6 +32,7 @@ foreach ($files AS $file) {
         unlink($file);
     }
 }
+header("Content-Type: application/rss+xml", true);
 
 $logger = Logger::getLogger("main");
 
@@ -38,11 +43,19 @@ if (is_file($cache_filename)) {
      return;
 }
 
-$content = $client->request($_GET["url"]);
-$parser = new Lbc\Parser();
-$ads = $parser->process($content, $_GET);
+$params = $_GET;
+if (isset($params["cities"])) {
+    $params["cities"] = array_map("trim", explode("\n", mb_strtolower($params["cities"])));
+}
 
-$title = "LeBonCoin";
+$content = $client->request($_GET["url"]);
+
+$filter = new \AdService\Filter($params);
+$siteConfig = \AdService\SiteConfigFactory::factory($_GET["url"]);
+
+$ads = $parser->process($content, $filter);
+
+$title = $siteConfig->getOption("site_name");
 $urlParams = parse_url($_GET["url"]);
 if (!empty($urlParams["query"])) {
     parse_str($urlParams["query"], $aQuery);
@@ -52,8 +65,8 @@ if (!empty($urlParams["query"])) {
 }
 
 $feeds = new RSS2;
-$feeds->setTitle($title);
-$feeds->setLink("http://www.leboncoin.fr");
+$feeds->setTitle($siteConfig->getOption("site_name"));
+$feeds->setLink($siteConfig->getOption("site_url"));
 $feeds->setSelfLink(
     !empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on"?"https":"http".
     "://".$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"]
@@ -72,7 +85,7 @@ if (count($ads)) {
         $item->setLink($ad->getLink());
         $item->setDescription(require DOCUMENT_ROOT."/app/rss/views/rss-ad.phtml");
         $item->setDate($ad->getDate());
-        $item->setId(md5($ad->getId().$ad->getDate()));
+        $item->setId(md5($ad->getId()));
         $feeds->addItem($item);
     }
 }

@@ -7,7 +7,7 @@ Publié le <strong><?php echo date("d/m/Y H:i", $ad->getDate()); ?></strong>
 
 <strong>Nom</strong> : <?php echo $ad->getTitle(); ?>
 <?php if ($ad->getPrice()) : ?>
-&nbsp;&nbsp;&nbsp;&nbsp;<strong>Prix</strong> : <?php echo number_format($ad->getPrice(), 0, ',', ' '); ?> €
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>Prix</strong> : <?php echo number_format($ad->getPrice(), 0, ',', ' '); ?> <?php echo $ad->getCurrency(); ?>
 <?php endif; ?>
 
 
@@ -18,13 +18,15 @@ Publié le <strong><?php echo date("d/m/Y H:i", $ad->getDate()); ?></strong>
 <br />
 <?php if ($ad->getCountry()) : ?>
 <strong>Département</strong> : <?php echo $ad->getCountry(); ?>
+&nbsp;&nbsp;&nbsp;&nbsp;
 <?php endif; ?>
-<?php if ($ad->getCity()) : ?>
-&nbsp;&nbsp;&nbsp;&nbsp;<strong>Ville</strong> : <a href="http://maps.google.fr/?z=9&q=<?php
+<?php if ($ad->getCity()) : ?><strong>Ville</strong> : <a href="http://maps.google.fr/?z=9&q=<?php
     echo htmlspecialchars($ad->getCountry().' '.$ad->getCity());
 ?>" title="Localiser sur Google Map" target="_blank"><?php echo $ad->getCity(); ?></a>
 <?php endif; ?>
-<br />Annonce de <?php echo $ad->getProfessionnal()?'professionnel':'particulier.'; ?>
+<?php if ($siteConfig->getOption("pro_visible")) : ?>
+<br />Annonce de <?php echo $ad->getProfessional()?'professionnel':'particulier.'; ?>
+<?php endif; ?>
 <br />
 <?php if ($ad->getUrgent()) : ?>
 <strong style="color: #FF8900;">urgent</strong>
@@ -32,6 +34,10 @@ Publié le <strong><?php echo date("d/m/Y H:i", $ad->getDate()); ?></strong>
 
 
 <?php if ($ad->getThumbnailLink()) : ?>
-<br /><img src="<?php echo str_replace('/thumbs/', '/images/', $ad->getThumbnailLink()); ?>" alt="" style="float: left; display: block;" />
+<br /><img src="<?php echo str_replace('/thumbs/', '/images/', $ad->getThumbnailLink()); ?>"
+    alt="" style="max-width: 600px; float: left; display: block;" />
+<?php else : ?>
+<br />Pas de photo disponible.
 <?php endif; ?>
-<?php return ob_get_clean(); ?>
+<?php
+return ob_get_clean();
