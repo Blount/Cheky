@@ -50,6 +50,8 @@
         </dd>
         <dt><label>Filtre multi-catégorie</label></dt>
         <dd class="categories">
+            <p class="warning"><span>Attention : </span>
+                ce filtre ne doit être utilisé que pour les recherches sur "toutes les catégories".</p>
             <?php foreach ($categoryCollection->fetchAll() AS $group => $categories) : ?>
             <h3><?php echo htmlspecialchars($group); ?></h3>
             <?php foreach ($categories AS $id => $category) : ?>
