@@ -30,6 +30,7 @@ foreach ($files AS $file) {
         unlink($file);
     }
 }
+header("Content-Type: application/rss+xml", true);
 
 $logger = Logger::getLogger("main");
 
