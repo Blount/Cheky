@@ -37,7 +37,7 @@ class Alert
 
     public function getCategories()
     {
-        if ($this->categories) {
+        if (is_string($this->categories)) {
             return explode(",", $this->categories);
         }
         return array();
