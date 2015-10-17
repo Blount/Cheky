@@ -1,4 +1,4 @@
-<form action="" method="post" style="width: 600px;">
+<form action="" method="post">
     <h2>Génération d'un flux RSS</h2>
     <dl>
         <dt><label for="url">
@@ -52,14 +52,17 @@
         <dd class="categories">
             <p class="warning"><span>Attention : </span>
                 ce filtre ne doit être utilisé que pour les recherches sur "toutes les catégories".</p>
+            <?php $i = 1; ?>
             <?php foreach ($categoryCollection->fetchAll() AS $group => $categories) : ?>
-            <h3><?php echo htmlspecialchars($group); ?></h3>
-            <?php foreach ($categories AS $id => $category) : ?>
-            <label for="category-<?php echo $id; ?>"><input id="category-<?php
-                echo $id; ?>" type="checkbox" name="categories[]" value="<?php
-                echo htmlspecialchars($category); ?>" /><?php
-                echo htmlspecialchars($category); ?></label>
-            <?php endforeach; ?>
+            <div class="categories-list categories-list-<?php echo $i++; ?>">
+                <h3><?php echo htmlspecialchars($group); ?></h3>
+                <?php foreach ($categories AS $id => $category) : ?>
+                <label for="category-<?php echo $id; ?>"><input id="category-<?php
+                    echo $id; ?>" type="checkbox" name="categories[]" value="<?php
+                    echo htmlspecialchars($category); ?>" /><?php
+                    echo htmlspecialchars($category); ?></label>
+                <?php endforeach; ?>
+            </div>
             <?php endforeach; ?>
         </dd>
     </dl>
