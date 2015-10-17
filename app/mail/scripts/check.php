@@ -230,10 +230,11 @@ class Main
                         }
                         if (!$error) {
                             if ($alert->group_ads) {
+                                $newAdsCount = count($newAds);
                                 $subject = "Alert ".$siteConfig->getOption("site_name")." : ".$alert->title;
-                                $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
+                                $message = '<h2>'.$newAdsCount.' nouvelle'.($newAdsCount > 1?'s':'').' annonce'.($newAdsCount > 1?'s':'').' - '.date("d/m/Y H:i", $currentTime).'</h2>
                                 <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
-                                <p>Liste des nouvelles annonces :</p><hr /><br />'.
+                                <hr /><br />'.
                                 implode("<br /><hr /><br />", $newAds).'<hr /><br />';
 
                                 $this->_mailer->Subject = $subject;
@@ -247,9 +248,9 @@ class Main
                                 $newAds = array_reverse($newAds, true);
                                 foreach ($newAds AS $id => $ad) {
                                     $subject = ($alert->title?$alert->title." : ":"").$ads[$id]->getTitle();
-                                    $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
+                                    $message = '<h2>Nouvelle annonce - '.date("d/m/Y H:i", $currentTime).'</h2>
                                     <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
-                                    <p>Nouvelle annonce :</p><hr /><br />'.$ad.'<hr /><br />';
+                                    <hr /><br />'.$ad.'<hr /><br />';
 
                                     $this->_mailer->Subject = $subject;
                                     $this->_mailer->Body = $message;
