@@ -37,8 +37,11 @@ class Alert
 
     public function getCategories()
     {
-        if (is_string($this->categories)) {
+        if ($this->categories && is_string($this->categories)) {
             return explode(",", $this->categories);
+        }
+        if (is_array($this->categories)) {
+            return $this->categories;
         }
         return array();
     }
