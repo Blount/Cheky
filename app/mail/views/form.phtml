@@ -33,11 +33,12 @@ $alertCategories = $alert->getCategories();
         <dt>
             <label>Comment souhaitez-vous recevoir les alertes</label>
         </dt>
-        <dd>
+        <dd class="notification-list">
             <input type="hidden" name="send_mail" value="0" />
             <input type="hidden" name="send_sms_free_mobile" value="0" />
             <input type="hidden" name="send_sms_ovh" value="0" />
             <input type="hidden" name="send_pushbullet" value="0" />
+            <input type="hidden" name="send_notifymyandroid" value="0" />
             <label for="alert_mail">
                 <input id="alert_mail" type="checkbox" name="send_mail" value="1"<?php
                     echo $alert->send_mail?' checked="checked"':''
@@ -66,6 +67,14 @@ $alertCategories = $alert->getCategories();
                     echo $alert->send_pushbullet?' checked="checked"':''
                 ?> />
                 par Pushbullet
+            </label>
+            <?php endif; ?>
+            <?php if ($userAuthed->hasNotifyMyAndroid()) : ?>
+            <label for="alert_notifymyandroid">
+                <input id="alert_notifymyandroid" type="checkbox" name="send_notifymyandroid" value="1"<?php
+                    echo $alert->send_notifymyandroid?' checked="checked"':''
+                ?> />
+                par NotityMyAndroid
             </label>
             <?php endif; ?>
             <?php if (isset($errors["send_type"])) : ?>

@@ -172,6 +172,37 @@
         <?php endif; ?>
     </dl>
 
+    <h2 id="configNotifyMyAndroid" class="formbox">Configuration alerte via NotifyMyAndroid</h2>
+    <dl id="configNotifyMyAndroid-content" style="display: <?php echo !empty($params["notification"]["notifymyandroid"]["token"]) ? "block" : "none"; ?>;">
+        <dt>
+            <label for="notifymyandroid_token">Clé du service</label>
+        </dt>
+        <dd>
+            <input type="text" id="notifymyandroid_token" name="notification[notifymyandroid][token]" value="<?php
+                echo htmlspecialchars($params["notification"]["notifymyandroid"]["token"]);
+            ?>" />
+            <?php if (isset($errors["notification"]["notifymyandroid"]["token"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["notifymyandroid"]["token"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt style="border: none;">
+            <input type="submit" name="testNotifyMyAndroid" value="Effectuer un test d'envoi de message" />
+        </dt>
+        <?php if (empty($errors) && !empty($_POST["testNotifyMyAndroid"])) : ?>
+        <dd>
+        <?php if (isset($errorsTest["notifymyandroid"])) : ?>
+        <p style="font-weight: bold; color: #AB0000;"><?php
+            echo htmlspecialchars($errorsTest["notifymyandroid"]);
+        ?></p>
+        <?php else: ?>
+        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir une notification contenant le message suivant:
+            « La notification NotifyMyAndroid est fonctionnelle ».</p>
+        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
+        <?php endif; ?>
+        </dd>
+        <?php endif; ?>
+    </dl>
+
     <p><input type="submit" value="Enregistrer" />
         | <a href="?mod=user&amp;a=settings">annuler les modifications</a></p>
 </form>

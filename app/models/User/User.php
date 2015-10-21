@@ -105,6 +105,15 @@ class User
     }
 
     /**
+     * Retourne vrai si la notification NotifyMyAndroid est activée.
+     * @return boolean
+     */
+    public function hasNotifyMyAndroid()
+    {
+        return false != $this->getOption("notification.notifymyandroid");
+    }
+
+    /**
      * Indique si l'utilisateur est administrateur.
      * @return boolean
      */

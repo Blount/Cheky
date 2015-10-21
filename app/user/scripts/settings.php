@@ -4,7 +4,8 @@ $params = array(
     "notification" => array(
         "freeMobile" => $userAuthed->getOption("notification.freeMobile"),
         "ovh" => $userAuthed->getOption("notification.ovh"),
-        "pushbullet" => $userAuthed->getOption("notification.pushbullet")
+        "pushbullet" => $userAuthed->getOption("notification.pushbullet"),
+        "notifymyandroid" => $userAuthed->getOption("notification.notifymyandroid")
     ),
     "unique_ads" => $userAuthed->getOption("unique_ads", false)
 );
@@ -16,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $params = array_merge($params, array_intersect_key($_POST, $params));
 
     // test config Free Mobile
-    foreach (array("freeMobile", "ovh", "pushbullet") AS $section) {
+    foreach (array("freeMobile", "ovh", "pushbullet", "notifymyandroid") AS $section) {
         if (isset($params["notification"][$section]) && is_array($params["notification"][$section])) {
             $hasValue = false;
             foreach ($params["notification"][$section] AS $name => $value) {
@@ -64,6 +65,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $sender->send("La notification SMS est fonctionnelle.");
             } catch (Exception $e) {
                 $errorsTest["ovh"] = "Erreur lors de l'envoi du SMS : (".$e->getCode().") ".$e->getMessage();
+            }
+        } elseif (!empty($_POST["testNotifyMyAndroid"])) {
+            if (empty($_POST["notification"]["notifymyandroid"]["token"])) {
+                $errors["notification"]["notifymyandroid"]["token"] = "Veuillez renseigner la clé d'identification. ";
+            } else {
+                require_once "Message/NotifyMyAndroid.php";
+                $sender = new \Message\NotifyMyAndroid($_POST["notification"]["notifymyandroid"]);
+                try {
+                    $sender->send("La notification NotifyMyAndroid est fonctionnelle");
+                } catch (Exception $e) {
+                    $errorsTest["notifymyandroid"] = "Erreur lors de l'envoi de la notification : (".$e->getCode().") ".$e->getMessage();
+                }
             }
         } else {
             $userAuthed->mergeOptions($params);

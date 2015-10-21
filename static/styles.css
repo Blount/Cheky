@@ -301,6 +301,13 @@ form .categories input[type=checkbox] {
     clear: left;
 }
 
+.notification-list label {
+    display: inline-block;
+    white-space: nowrap;
+    margin: 0 1%;
+    width: 30%;
+}
+
 .warning {
     font-weight: bold;
     margin: 0 1%;
