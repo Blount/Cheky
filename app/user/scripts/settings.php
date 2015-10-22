@@ -5,7 +5,8 @@ $params = array(
         "freeMobile" => $userAuthed->getOption("notification.freeMobile"),
         "ovh" => $userAuthed->getOption("notification.ovh"),
         "pushbullet" => $userAuthed->getOption("notification.pushbullet"),
-        "notifymyandroid" => $userAuthed->getOption("notification.notifymyandroid")
+        "notifymyandroid" => $userAuthed->getOption("notification.notifymyandroid"),
+        "pushover" => $userAuthed->getOption("notification.pushover")
     ),
     "unique_ads" => $userAuthed->getOption("unique_ads", false)
 );
@@ -17,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $params = array_merge($params, array_intersect_key($_POST, $params));
 
     // test config Free Mobile
-    foreach (array("freeMobile", "ovh", "pushbullet", "notifymyandroid") AS $section) {
+    foreach (array("freeMobile", "ovh", "pushbullet", "notifymyandroid", "pushover") AS $section) {
         if (isset($params["notification"][$section]) && is_array($params["notification"][$section])) {
             $hasValue = false;
             foreach ($params["notification"][$section] AS $name => $value) {
@@ -68,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         } elseif (!empty($_POST["testNotifyMyAndroid"])) {
             if (empty($_POST["notification"]["notifymyandroid"]["token"])) {
-                $errors["notification"]["notifymyandroid"]["token"] = "Veuillez renseigner la clé d'identification. ";
+                $errors["notification"]["notifymyandroid"]["token"] = "Veuillez renseigner la clé d'identification.";
             } else {
                 require_once "Message/NotifyMyAndroid.php";
                 $sender = new \Message\NotifyMyAndroid($_POST["notification"]["notifymyandroid"]);
@@ -76,6 +77,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $sender->send("La notification NotifyMyAndroid est fonctionnelle");
                 } catch (Exception $e) {
                     $errorsTest["notifymyandroid"] = "Erreur lors de l'envoi de la notification : (".$e->getCode().") ".$e->getMessage();
+                }
+            }
+        } elseif (!empty($_POST["testPushover"])) {
+            if (empty($_POST["notification"]["pushover"]["token"])) {
+                $errors["notification"]["pushover"]["token"] = "Veuillez renseigner la clé application.";
+            } elseif (empty($_POST["notification"]["pushover"]["userkey"])) {
+                $errors["notification"]["pushover"]["userkey"] = "Veuillez renseigner la clé utilisateur.";
+            } else {
+                require_once "Message/Pushover.php";
+                $sender = new \Message\Pushover($_POST["notification"]["pushover"]);
+                try {
+                    $sender->send("La notification Pushover est fonctionnelle");
+                } catch (Exception $e) {
+                    $errorsTest["pushover"] = "Erreur lors de l'envoi de la notification : (".$e->getCode().") ".$e->getMessage();
                 }
             }
         } else {

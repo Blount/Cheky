@@ -14,7 +14,7 @@ class Alert implements \App\Storage\Alert
         "time_updated", "price_min", "price_max", "price_strict",
         "cities", "suspend", "group", "group_ads", "categories",
         "send_mail", "send_sms_free_mobile", "last_id", "send_sms_ovh",
-        "send_pushbullet", "send_notifymyandroid"
+        "send_pushbullet", "send_notifymyandroid", "send_pushover"
     );
 
     public function __construct($filename)

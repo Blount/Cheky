@@ -114,6 +114,15 @@ class User
     }
 
     /**
+     * Retourne vrai si la notification Pushover est activée.
+     * @return boolean
+     */
+    public function hasPushover()
+    {
+        return false != $this->getOption("notification.pushover");
+    }
+
+    /**
      * Indique si l'utilisateur est administrateur.
      * @return boolean
      */

@@ -16,6 +16,7 @@ class Update_28 extends Update
 
         if ("db" == $this->_storage) {
             $this->_dbConnection->query("ALTER TABLE `LBC_Alert` ADD `send_notifymyandroid` TINYINT(1) NOT NULL AFTER `send_pushbullet`");
+            $this->_dbConnection->query("ALTER TABLE `LBC_Alert` ADD `send_pushover` TINYINT(1) NOT NULL AFTER `send_notifymyandroid`");
         }
     }
 }

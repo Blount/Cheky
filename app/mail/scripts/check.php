@@ -152,6 +152,10 @@ class Main
                 $notifications["notifymyandroid"] = new \Message\NotifyMyAndroid($options);
                 $this->_logger->debug("notification NotifyMyAndroid activée");
             }
+            if ($options = $user->getOption("notification.pushover")) {
+                $notifications["pushover"] = new \Message\Pushover($options);
+                $this->_logger->debug("notification Pushover activée");
+            }
 
             $alerts = $storage->fetchAll();
             $this->_logger->info(count($alerts)." alerte".
@@ -267,7 +271,13 @@ class Main
                             }
                         }
                     }
-                    if ($notifications && ($alert->send_sms_free_mobile || $alert->send_sms_ovh || $alert->send_pushbullet || $alert->send_notifymyandroid)) {
+                    if ($notifications && (
+                           $alert->send_sms_free_mobile
+                        || $alert->send_sms_ovh
+                        || $alert->send_pushbullet
+                        || $alert->send_notifymyandroid
+                        || $alert->send_pushover
+                    )) {
                         if ($countAds < 5) { // limite à 5 SMS
                             foreach ($newAds AS $id => $ad) {
                                 $ad = $ads[$id]; // récupère l'objet.
@@ -322,6 +332,16 @@ class Main
                                             $this->_logger->warn("Erreur sur envoi via NotifyMyAndroid: (".$e->getCode().") ".$e->getMessage());
                                         }
                                     }
+                                    if ($alert->send_pushover && isset($notifications["pushover"])) {
+                                        try {
+                                            $notifications["pushover"]->send($msg, array(
+                                                "title" => "Alerte ".$siteConfig->getOption("site_name"),
+                                                "url" => $url,
+                                            ));
+                                        } catch (Exception $e) {
+                                            $this->_logger->warn("Erreur sur envoi via Pushover: (".$e->getCode().") ".$e->getMessage());
+                                        }
+                                    }
                                 }
                             }
                         } else { // envoi un msg global
@@ -360,6 +380,15 @@ class Main
                                         ));
                                     } catch (Exception $e) {
                                         $this->_logger->warn("Erreur sur envoi via NotifyMyAndroid: (".$e->getCode().") ".$e->getMessage());
+                                    }
+                                }
+                                if ($alert->send_pushover && isset($notifications["pushover"])) {
+                                    try {
+                                        $notifications["pushover"]->send($msg, array(
+                                            "title" => "Alerte ".$siteConfig->getOption("site_name")
+                                        ));
+                                    } catch (Exception $e) {
+                                        $this->_logger->warn("Erreur sur envoi via Pushover: (".$e->getCode().") ".$e->getMessage());
                                     }
                                 }
                             }
@@ -423,6 +452,7 @@ require_once "Message/SMS/FreeMobile.php";
 require_once "Message/SMS/Ovh.php";
 require_once "Message/Pushbullet.php";
 require_once "Message/NotifyMyAndroid.php";
+require_once "Message/Pushover.php";
 
 // modèle
 $storageType = $config->get("storage", "type", "files");

@@ -27,8 +27,12 @@
             <?php if ($showCities) : ?>
             <th style="width: 200px">Villes</th>
             <?php endif; ?>
-            <?php if ($notification["freeMobile"] || $notification["ovh"]
-                || $notification["pushbullet"] || $notification["notifymyandroid"]) : ?>
+            <?php if ($notification["freeMobile"]
+                || $notification["ovh"]
+                || $notification["pushbullet"]
+                || $notification["notifymyandroid"]
+                || $notification["pushover"]
+                ) : ?>
             <th style="width: 140px">Envoyer par email</th>
             <?php if ($notification["freeMobile"]) : ?>
             <th style="width: 140px">SMS Free Mobile</th>
@@ -41,6 +45,9 @@
             <?php endif; ?>
             <?php if ($notification["notifymyandroid"]) : ?>
             <th style="width: 140px">NotityMyAndroid</th>
+            <?php endif; ?>
+            <?php if ($notification["pushover"]) : ?>
+            <th style="width: 140px">Pushover</th>
             <?php endif; ?>
             <?php endif; ?>
             <th style="width: 70px">Actif</th>
@@ -79,8 +86,12 @@
                 <?php endif; ?>
             </td>
             <?php endif; ?>
-            <?php if ($notification["freeMobile"] || $notification["ovh"]
-                || $notification["pushbullet"] || $notification["notifymyandroid"]) : ?>
+            <?php if ($notification["freeMobile"]
+                || $notification["ovh"]
+                || $notification["pushbullet"]
+                || $notification["notifymyandroid"]
+                || $notification["pushover"]
+                ) : ?>
             <td>
                 <a href="?mod=mail&amp;a=toggle_status&amp;s=send_mail&amp;id=<?php echo $alert->id;
                     ?>"><img src="static/images/<?php
@@ -113,6 +124,13 @@
                 <a href="?mod=mail&amp;a=toggle_status&amp;s=send_notifymyandroid&amp;id=<?php echo $alert->id;
                     ?>"><img src="static/images/<?php
                     echo !$alert->send_notifymyandroid?"disable":"enable"; ?>.png" alt="" /></a>
+            </td>
+            <?php endif; ?>
+            <?php if ($notification["pushover"]) : ?>
+            <td>
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_pushover&amp;id=<?php echo $alert->id;
+                    ?>"><img src="static/images/<?php
+                    echo !$alert->send_pushover?"disable":"enable"; ?>.png" alt="" /></a>
             </td>
             <?php endif; ?>
             <td>

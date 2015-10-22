@@ -25,6 +25,7 @@ class Alert
     public $send_sms_ovh = 0;
     public $send_pushbullet = 0;
     public $send_notifymyandroid = 0;
+    public $send_pushover = 0;
 
     public function fromArray(array $values)
     {
@@ -70,7 +71,8 @@ class Alert
             "last_id" => (int) $this->last_id,
             "send_sms_ovh" => $this->send_sms_ovh,
             "send_pushbullet" => $this->send_pushbullet,
-            "send_notifymyandroid" => $this->send_notifymyandroid
+            "send_notifymyandroid" => $this->send_notifymyandroid,
+            "send_pushover" => $this->send_pushover
         );
     }
 }

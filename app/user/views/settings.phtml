@@ -203,6 +203,48 @@
         <?php endif; ?>
     </dl>
 
+    <h2 id="configPushover" class="formbox">Configuration alerte via Pushover</h2>
+    <dl id="configPushover-content" style="display: <?php echo !empty($params["notification"]["pushover"]["token"]) ? "block" : "none"; ?>;">
+        <dt>
+            <label for="pushover_token">Clé application</label>
+        </dt>
+        <dd>
+            <input type="text" id="pushover_token" name="notification[pushover][token]" value="<?php
+                echo htmlspecialchars($params["notification"]["pushover"]["token"]);
+            ?>" />
+            <?php if (isset($errors["notification"]["pushover"]["token"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["pushover"]["token"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="pushover_token">Clé utilisateur</label>
+        </dt>
+        <dd>
+            <input type="text" id="pushover_token" name="notification[pushover][userkey]" value="<?php
+                echo htmlspecialchars($params["notification"]["pushover"]["userkey"]);
+            ?>" />
+            <?php if (isset($errors["notification"]["pushover"]["userkey"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["pushover"]["userkey"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt style="border: none;">
+            <input type="submit" name="testPushover" value="Effectuer un test d'envoi de message" />
+        </dt>
+        <?php if (empty($errors) && !empty($_POST["testPushover"])) : ?>
+        <dd>
+        <?php if (isset($errorsTest["pushover"])) : ?>
+        <p style="font-weight: bold; color: #AB0000;"><?php
+            echo htmlspecialchars($errorsTest["pushover"]);
+        ?></p>
+        <?php else: ?>
+        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir une notification contenant le message suivant:
+            « La notification Pushover est fonctionnelle ».</p>
+        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
+        <?php endif; ?>
+        </dd>
+        <?php endif; ?>
+    </dl>
+
     <p><input type="submit" value="Enregistrer" />
         | <a href="?mod=user&amp;a=settings">annuler les modifications</a></p>
 </form>
