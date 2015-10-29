@@ -1,45 +1,38 @@
 <?php
 
-namespace Message\SMS;
+namespace Message\Adapter;
 
-require_once __DIR__."/../Abstract.php";
-
-class FreeMobile extends \Message\Message_Abstract
+class SmsFreeMobile extends AdapterAbstract
 {
-    protected $_url = "https://smsapi.free-mobile.fr/sendmsg";
-    protected $_user;
-    protected $_key;
+    protected $notify_url = "https://smsapi.free-mobile.fr/sendmsg";
+    protected $user;
+    protected $key;
 
-    protected $_curl;
-
-    public function __construct(array $options = array())
-    {
-        $this->_curl = curl_init();
-        curl_setopt($this->_curl, CURLOPT_SSL_VERIFYPEER, false);
-        parent::__construct($options);
-    }
-
-    public function __destruct()
-    {
-        curl_close($this->_curl);
-    }
+    protected $curl_options = array(
+        CURLOPT_SSL_VERIFYPEER => false
+    );
 
     /**
-     * Envoi un message par SMS.
-     * @param string $msg
+     * @param string $message
      * @throws \Exception
      */
-    public function send($msg)
+    public function send($message, array $options = array())
     {
-        $msg = trim($msg);
-        if (!$this->_user || !$this->_key || empty($msg)) {
+        $this->setOptions($options);
+        if (!$this->user || !$this->key) {
             throw new \Exception("Un des paramètres obligatoires est manquant", 400);
         }
-        curl_setopt($this->_curl, CURLOPT_URL, $this->_url."?user=".$this->_user.
-            "&pass=".$this->_key.
-            "&msg=".urlencode($msg));
-        curl_exec($this->_curl);
-        if (200 != $code = curl_getinfo($this->_curl, CURLINFO_HTTP_CODE)) {
+        $message = trim($message);
+        if ($url = $this->getUrl()) {
+            $message .= ": ".$url;
+        }
+        $curl = $this->getCurl(array(
+            CURLOPT_URL => $this->notify_url."?user=".$this->user.
+                "&pass=".$this->key.
+                "&msg=".urlencode($message)
+        ));
+        curl_exec($curl);
+        if (200 != $code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
             switch ($code) {
                 case 400: $message = "Un des paramètres obligatoires est manquant."; break;
                 case 402: $message = "Trop de SMS ont été envoyés en trop peu de temps."; break;
@@ -58,7 +51,7 @@ class FreeMobile extends \Message\Message_Abstract
     */
     public function setUser($user)
     {
-        $this->_user = $user;
+        $this->user = $user;
         return $this;
     }
 
@@ -67,7 +60,7 @@ class FreeMobile extends \Message\Message_Abstract
     */
     public function getUser()
     {
-        return $this->_user;
+        return $this->user;
     }
 
     /**
@@ -76,7 +69,7 @@ class FreeMobile extends \Message\Message_Abstract
     */
     public function setKey($key)
     {
-        $this->_key = $key;
+        $this->key = $key;
         return $this;
     }
 
@@ -85,6 +78,6 @@ class FreeMobile extends \Message\Message_Abstract
     */
     public function getKey()
     {
-        return $this->_key;
+        return $this->key;
     }
 }

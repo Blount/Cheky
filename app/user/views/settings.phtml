@@ -220,11 +220,11 @@
             <label for="pushover_token">Clé utilisateur</label>
         </dt>
         <dd>
-            <input type="text" id="pushover_token" name="notification[pushover][userkey]" value="<?php
-                echo htmlspecialchars($params["notification"]["pushover"]["userkey"]);
+            <input type="text" id="pushover_token" name="notification[pushover][user_key]" value="<?php
+                echo htmlspecialchars($params["notification"]["pushover"]["user_key"]);
             ?>" />
-            <?php if (isset($errors["notification"]["pushover"]["userkey"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["pushover"]["userkey"]; ?></p>
+            <?php if (isset($errors["notification"]["pushover"]["user_key"])) : ?>
+            <p class="error"><?php echo $errors["notification"]["pushover"]["user_key"]; ?></p>
             <?php endif; ?>
         </dd>
         <dt style="border: none;">

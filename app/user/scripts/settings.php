@@ -1,13 +1,7 @@
 <?php
 
 $params = array(
-    "notification" => array(
-        "freeMobile" => $userAuthed->getOption("notification.freeMobile"),
-        "ovh" => $userAuthed->getOption("notification.ovh"),
-        "pushbullet" => $userAuthed->getOption("notification.pushbullet"),
-        "notifymyandroid" => $userAuthed->getOption("notification.notifymyandroid"),
-        "pushover" => $userAuthed->getOption("notification.pushover")
-    ),
+    "notification" => $userAuthed->getOption("notification"),
     "unique_ads" => $userAuthed->getOption("unique_ads", false)
 );
 
@@ -18,10 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $params = array_merge($params, array_intersect_key($_POST, $params));
 
     // test config Free Mobile
-    foreach (array("freeMobile", "ovh", "pushbullet", "notifymyandroid", "pushover") AS $section) {
-        if (isset($params["notification"][$section]) && is_array($params["notification"][$section])) {
+    foreach ($params["notification"] AS $section => $options) {
+        if (is_array($options)) {
             $hasValue = false;
-            foreach ($params["notification"][$section] AS $name => $value) {
+            foreach ($options AS $name => $value) {
                 if (empty($value)) {
                     $errors["notification"][$section][$name] = "Ce champ doit être renseigné.";
                 } else {
@@ -40,8 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($errors)) {
         if (!empty($_POST["testFreeMobile"])) {
-            require_once "Message/SMS/FreeMobile.php";
-            $sms = new \Message\SMS\FreeMobile($params["notification"]["freeMobile"]);
+            $sms = \Message\AdapterFactory::factory("freeMobile", $params["notification"]["freeMobile"]);
             try {
                 $sms->send("La notification SMS est fonctionnelle.");
             } catch (Exception $e) {
@@ -51,8 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (empty($_POST["notification"]["pushbullet"]["token"])) {
                 $errors["notification"]["pushbullet"]["token"] = "Veuillez renseigner la clé d'identification. ";
             } else {
-                require_once "Message/Pushbullet.php";
-                $sender = new \Message\Pushbullet($_POST["notification"]["pushbullet"]);
+                $sender = \Message\AdapterFactory::factory("pushbullet", $_POST["notification"]["pushbullet"]);
                 try {
                     $sender->send("La notification Pushbullet est fonctionnelle");
                 } catch (Exception $e) {
@@ -60,8 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
         } elseif (!empty($_POST["testOvh"])) {
-            require "Message/SMS/Ovh.php";
-            $sender = new \Message\SMS\Ovh($params["notification"]["ovh"]);
+            $sender = \Message\AdapterFactory::factory("SmsOvh", $params["notification"]["ovh"]);
             try {
                 $sender->send("La notification SMS est fonctionnelle.");
             } catch (Exception $e) {
@@ -71,10 +62,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (empty($_POST["notification"]["notifymyandroid"]["token"])) {
                 $errors["notification"]["notifymyandroid"]["token"] = "Veuillez renseigner la clé d'identification.";
             } else {
-                require_once "Message/NotifyMyAndroid.php";
-                $sender = new \Message\NotifyMyAndroid($_POST["notification"]["notifymyandroid"]);
+                $sender = \Message\AdapterFactory::factory("notifymyandroid", $_POST["notification"]["notifymyandroid"]);
                 try {
-                    $sender->send("La notification NotifyMyAndroid est fonctionnelle");
+                    $sender->send("La notification NotifyMyAndroid est fonctionnelle", array(
+                        "title" => "Test alerte"
+                    ));
                 } catch (Exception $e) {
                     $errorsTest["notifymyandroid"] = "Erreur lors de l'envoi de la notification : (".$e->getCode().") ".$e->getMessage();
                 }
@@ -82,11 +74,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif (!empty($_POST["testPushover"])) {
             if (empty($_POST["notification"]["pushover"]["token"])) {
                 $errors["notification"]["pushover"]["token"] = "Veuillez renseigner la clé application.";
-            } elseif (empty($_POST["notification"]["pushover"]["userkey"])) {
-                $errors["notification"]["pushover"]["userkey"] = "Veuillez renseigner la clé utilisateur.";
+            } elseif (empty($_POST["notification"]["pushover"]["user_key"])) {
+                $errors["notification"]["pushover"]["user_key"] = "Veuillez renseigner la clé utilisateur.";
             } else {
-                require_once "Message/Pushover.php";
-                $sender = new \Message\Pushover($_POST["notification"]["pushover"]);
+                $sender = \Message\AdapterFactory::factory("pushover", $_POST["notification"]["pushover"]);
                 try {
                     $sender->send("La notification Pushover est fonctionnelle");
                 } catch (Exception $e) {

@@ -32,6 +32,16 @@ class Bootstrap
      */
     protected $_client;
 
+    protected function initAutoload()
+    {
+        spl_autoload_register(function ($className) {
+            $filename = __DIR__."/lib/".ltrim(str_replace("\\", "/", $className), "/").".php";
+            if (is_file($filename)) {
+                require_once $filename;
+            }
+        });
+    }
+
     protected function initPHPConfig()
     {
         mb_internal_encoding("UTF-8");
