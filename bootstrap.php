@@ -14,8 +14,6 @@ set_include_path(
     dirname(__FILE__)."/lib".PATH_SEPARATOR.get_include_path()
 );
 
-require __DIR__."/lib/AdService/Autoloader.php";
-
 require_once "Http/Client/Curl.php";
 require_once "Config/Lite.php";
 require_once "Log4php/Logger.php";
@@ -35,7 +33,13 @@ class Bootstrap
     protected function initAutoload()
     {
         spl_autoload_register(function ($className) {
-            $filename = __DIR__."/lib/".ltrim(str_replace("\\", "/", $className), "/").".php";
+            $filename = ltrim(str_replace("\\", "/", $className), "/");
+            if (false !== strpos($filename, "App/")) {
+                $filename = __DIR__."/app/models/".
+                    str_replace("App/", "", $filename).".php";
+            } else {
+                $filename = __DIR__."/lib/".$filename.".php";
+            }
             if (is_file($filename)) {
                 require_once $filename;
             }

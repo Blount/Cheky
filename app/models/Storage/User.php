@@ -2,8 +2,6 @@
 
 namespace App\Storage;
 
-require_once DOCUMENT_ROOT."/app/models/User/User.php";
-
 interface User
 {
     public function fetchAll();

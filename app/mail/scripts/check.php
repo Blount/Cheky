@@ -448,21 +448,12 @@ require dirname(__FILE__)."/../../../bootstrap.php";
 
 // lib
 require_once "PHPMailer/class.phpmailer.php";
-require_once "Message/SMS/FreeMobile.php";
-require_once "Message/SMS/Ovh.php";
-require_once "Message/Pushbullet.php";
-require_once "Message/NotifyMyAndroid.php";
-require_once "Message/Pushover.php";
 
 // modèle
 $storageType = $config->get("storage", "type", "files");
 if ($storageType == "db") {
-    require_once DOCUMENT_ROOT."/app/models/Storage/Db/Alert.php";
-    require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
     $userStorage = new \App\Storage\Db\User($dbConnection);
 } else {
-    require_once DOCUMENT_ROOT."/app/models/Storage/File/Alert.php";
-    require_once DOCUMENT_ROOT."/app/models/Storage/File/User.php";
     $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
 }
 

@@ -6,7 +6,6 @@ if (empty($alert)) {
     $alert = new App\Mail\Alert();
 }
 
-require_once "lib/Lbc/CategoryCollection.php";
 $categoryCollection = new \Lbc\CategoryCollection();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

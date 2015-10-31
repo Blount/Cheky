@@ -7,9 +7,6 @@ if (!isset($_GET["url"])) {
 $disableLayout = true;
 $logFile = DOCUMENT_ROOT."/var/logs/rss.log";
 
-require_once "FeedWriter/Item.php";
-require_once "FeedWriter/Feed.php";
-require_once "FeedWriter/RSS2.php";
 use \FeedWriter\RSS2;
 
 try {

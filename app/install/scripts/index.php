@@ -65,10 +65,8 @@ if (!$errors && $_SERVER["REQUEST_METHOD"] == "POST") {
             // installation de la base
             require DOCUMENT_ROOT."/others/install/schema.php";
 
-            require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
             $userStorage = new \App\Storage\Db\User($dbConnection);
         } else {
-            require_once DOCUMENT_ROOT."/app/models/Storage/File/User.php";
             $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
         }
 

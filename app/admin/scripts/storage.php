@@ -60,11 +60,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $config->save();
 
         if ($_POST["type"] == "db" && !empty($_POST["importtodb"])) {
-            require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
-            require_once DOCUMENT_ROOT."/app/models/Storage/File/User.php";
-            require_once DOCUMENT_ROOT."/app/models/Storage/Db/Alert.php";
-            require_once DOCUMENT_ROOT."/app/models/Storage/File/Alert.php";
-
             // installation de la base
             require DOCUMENT_ROOT."/others/install/schema.php";
 

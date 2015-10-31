@@ -2,9 +2,6 @@
 
 namespace App\Storage\File;
 
-require_once DOCUMENT_ROOT."/app/models/Mail/Alert.php";
-require_once __DIR__."/../Alert.php";
-
 class Alert implements \App\Storage\Alert
 {
     protected $_filename;
