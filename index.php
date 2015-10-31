@@ -2,7 +2,7 @@
 
 header('Content-Type: text/html; charset=utf-8');
 
-require dirname(__FILE__)."/bootstrap.php";
+require __DIR__."/bootstrap.php";
 
 $module = "default";
 if (isset($_GET["mod"])) {

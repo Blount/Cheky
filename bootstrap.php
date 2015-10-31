@@ -1,6 +1,6 @@
 <?php
 
-define("DOCUMENT_ROOT", dirname(__FILE__));
+define("DOCUMENT_ROOT", __DIR__);
 define("DS", DIRECTORY_SEPARATOR);
 
 // Define application environment
@@ -11,7 +11,7 @@ defined("APPLICATION_ENV")
 define("APPLICATION_VERSION", require DOCUMENT_ROOT."/version.php");
 
 set_include_path(
-    dirname(__FILE__)."/lib".PATH_SEPARATOR.get_include_path()
+    __DIR__."/lib".PATH_SEPARATOR.get_include_path()
 );
 
 require_once "Http/Client/Curl.php";

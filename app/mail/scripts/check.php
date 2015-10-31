@@ -444,7 +444,7 @@ class Main
     }
 }
 
-require dirname(__FILE__)."/../../../bootstrap.php";
+require __DIR__."/../../../bootstrap.php";
 
 // lib
 require_once "PHPMailer/class.phpmailer.php";

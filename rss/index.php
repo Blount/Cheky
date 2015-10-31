@@ -8,4 +8,4 @@
 $_GET["mod"] = "rss";
 $_GET["a"] = "refresh";
 
-require_once dirname(__FILE__)."/../index.php";
+require_once __DIR__."/../index.php";

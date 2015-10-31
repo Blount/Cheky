@@ -2,7 +2,7 @@
 
 namespace Auth;
 
-require_once dirname(__FILE__)."/Abstract.php";
+require_once __DIR__."/Abstract.php";
 
 class Basic extends AuthAbstract
 {
