@@ -4,12 +4,38 @@ $params = array(
     "notification" => $userAuthed->getOption("notification"),
     "unique_ads" => $userAuthed->getOption("unique_ads", false)
 );
+if (!is_array($params["notification"])) {
+    $params["notification"] = array();
+}
+$form_values["notification"] = array_replace_recursive(array(
+    "freeMobile" => array(
+        "user" => "",
+        "key" => "",
+    ),
+    "notifymyandroid" => array(
+        "token" => "",
+    ),
+    "pushbullet" => array(
+        "token" => "",
+    ),
+    "ovh" => array(
+        "account" => "",
+        "login" => "",
+        "password" => "",
+        "from" => "",
+        "to" => "",
+    ),
+    "pushover" => array(
+        "token" => "",
+        "user_key" => "",
+    ),
+), $params["notification"]);
 
 $errors = array();
 $errorsTest = array();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $params = array_merge($params, array_intersect_key($_POST, $params));
+    $params = array_merge($params, $_POST);
 
     // test config Free Mobile
     foreach ($params["notification"] AS $section => $options) {
