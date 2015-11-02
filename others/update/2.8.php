@@ -6,12 +6,19 @@ class Update_28 extends Update
 {
     public function update()
     {
-        // fichier inutile depuis 2.7
-        if (is_file(DOCUMENT_ROOT."/lib/Lbc/Item.php")) {
-            @unlink(DOCUMENT_ROOT."/lib/Lbc/Item.php");
-        }
-        if (is_file(DOCUMENT_ROOT."/lib/Lbc/Parser.php")) {
-            @unlink(DOCUMENT_ROOT."/lib/Lbc/Parser.php");
+        $delete_files = array(
+            "/lib/Lbc/Item.php", // fichier inutile depuis 2.7
+            "/lib/Lbc/Parser.php", // fichier inutile depuis 2.7
+            "/lib/AdService/Autoloader.php",
+            "/lib/Message/SMS/FreeMobile.php",
+            "/lib/Message/SMS/Ovh.php",
+            "/lib/Message/Abstract.php",
+            "/lib/Message/Pushbullet.php",
+        );
+        foreach ($delete_files AS $file) {
+            if (is_file(DOCUMENT_ROOT.$file)) {
+                @unlink(DOCUMENT_ROOT.$file);
+            }
         }
 
         if ("db" == $this->_storage) {
