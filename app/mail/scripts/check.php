@@ -132,6 +132,9 @@ class Main
             $notifications_params = $user->getOption("notification");
             if ($notifications_params && is_array($notifications_params)) {
                 foreach ($notifications_params AS $notification_name => $options) {
+                    if (!is_array($options)) {
+                        continue;
+                    }
                     try {
                         $notifications[$notification_name] = \Message\AdapterFactory::factory($notification_name, $options);
                         $this->_logger->debug("notification ".get_class($notifications[$notification_name])." activée");
