@@ -6,7 +6,6 @@ if (empty($alert)) {
     $alert = new App\Mail\Alert();
 }
 
-require_once "lib/Lbc/CategoryCollection.php";
 $categoryCollection = new \Lbc\CategoryCollection();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -18,8 +17,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     $alert->fromArray($_POST);
-    if (empty($alert->send_mail) && empty($alert->send_sms_free_mobile)
-        && empty($alert->send_sms_ovh) && empty($alert->send_pushbullet)) {
+    if (empty($alert->send_mail)
+        && empty($alert->send_sms_free_mobile)
+        && empty($alert->send_sms_ovh)
+        && empty($alert->send_pushbullet)
+        && empty($alert->send_notifymyandroid)
+        && empty($alert->send_pushover)
+    ) {
         $errors["send_type"] = "Vous devez sélectionner au moins un moyen de communication.";
     }
     if (empty($alert->email)) {

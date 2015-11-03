@@ -3,7 +3,9 @@
 	<strong>Publié le <?php echo date("Y/m/d H:i", $ad->getDate()); ?></strong>
     <br />
 
-    <strong>Nom</strong> : <a href="<?php echo $ad->getLink(); ?>"><?php echo $ad->getTitle(); ?></a>
+    <strong>Nom</strong> :
+         <a href="<?php echo $ad->getLink(); ?>"><?php echo $ad->getTitle(); ?></a>
+        (<a href="<?php echo str_replace("http://www.", "http://mobile.", $ad->getLink()); ?>">Version Mobile</a>)
     <?php if ($ad->getPrice()) : ?>
     &nbsp;&nbsp;&nbsp;&nbsp;<strong>Prix</strong> : <?php echo number_format($ad->getPrice(), 0, ',', ' '); ?> <?php echo $ad->getCurrency(); ?>
     <?php endif; ?>

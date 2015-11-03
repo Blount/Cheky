@@ -2,8 +2,6 @@
 
 namespace App\Storage;
 
-require_once DOCUMENT_ROOT."/app/models/Mail/Alert.php";
-
 interface Alert
 {
     public function fetchAll();

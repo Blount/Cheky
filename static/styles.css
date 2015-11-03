@@ -271,20 +271,41 @@ form input[name=price_max] {
 
 form .categories {
 	overflow: auto;
-	height: 200px;
 }
 form .categories h3 {
 	margin: 0 1%;
 }
 form .categories label {
 	margin: 0 1%;
-	display: inline-block;
+	display: block;
 	vertical-align: middle;
-	line-height: 150%;
+	line-height: 160%;
 	white-space: nowrap;
 }
 form .categories input[type=checkbox] {
 	margin: 0 5px 0 0;
+}
+.categories-list {
+    float: left;
+    width: 33.33%;
+}
+.categories-list {
+    float: left;
+    width: 33.33%;
+    margin-bottom: 10px;
+}
+.categories-list-4,
+.categories-list-7,
+.categories-list-10
+{
+    clear: left;
+}
+
+.notification-list label {
+    display: inline-block;
+    white-space: nowrap;
+    margin: 0 1%;
+    width: 30%;
 }
 
 .warning {

@@ -1,7 +1,5 @@
 <?php
 
-require_once DOCUMENT_ROOT."/app/models/Updater.php";
-
 $updater = new \App\Updater();
 if ($url = $config->get("general", "url_version", "")) {
     $updater->setUrlVersion($url);

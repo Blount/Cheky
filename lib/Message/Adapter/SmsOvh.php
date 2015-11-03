@@ -1,17 +1,20 @@
 <?php
 
-namespace Message\SMS;
+namespace Message\Adapter;
 
-require_once __DIR__."/../Abstract.php";
-
-class Ovh extends \Message\Message_Abstract
+class SmsOvh extends AdapterAbstract
 {
-    protected $_url = "https://www.ovh.com/cgi-bin/sms/http2sms.cgi";
-    protected $_account;
-    protected $_login;
-    protected $_password;
-    protected $_from;
-    protected $_to;
+    protected $notify_url = "https://www.ovh.com/cgi-bin/sms/http2sms.cgi";
+    protected $account;
+    protected $login;
+    protected $password;
+    protected $from;
+    protected $to;
+
+    protected $curl_options = array(
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HEADER => false,
+    );
 
     /**
     * @param string $account
@@ -19,7 +22,7 @@ class Ovh extends \Message\Message_Abstract
     */
     public function setAccount($account)
     {
-        $this->_account = $account;
+        $this->account = $account;
         return $this;
     }
 
@@ -28,7 +31,7 @@ class Ovh extends \Message\Message_Abstract
     */
     public function getAccount()
     {
-        return $this->_account;
+        return $this->account;
     }
 
     /**
@@ -37,7 +40,7 @@ class Ovh extends \Message\Message_Abstract
     */
     public function setLogin($login)
     {
-        $this->_login = $login;
+        $this->login = $login;
         return $this;
     }
 
@@ -46,7 +49,7 @@ class Ovh extends \Message\Message_Abstract
     */
     public function getLogin()
     {
-        return $this->_login;
+        return $this->login;
     }
 
     /**
@@ -55,7 +58,7 @@ class Ovh extends \Message\Message_Abstract
     */
     public function setPassword($password)
     {
-        $this->_password = $password;
+        $this->password = $password;
         return $this;
     }
 
@@ -64,7 +67,7 @@ class Ovh extends \Message\Message_Abstract
     */
     public function getPassword()
     {
-        return $this->_password;
+        return $this->password;
     }
 
     /**
@@ -73,7 +76,7 @@ class Ovh extends \Message\Message_Abstract
     */
     public function setFrom($from)
     {
-        $this->_from = $from;
+        $this->from = $from;
         return $this;
     }
 
@@ -82,7 +85,7 @@ class Ovh extends \Message\Message_Abstract
     */
     public function getFrom()
     {
-        return $this->_from;
+        return $this->from;
     }
 
     /**
@@ -91,7 +94,7 @@ class Ovh extends \Message\Message_Abstract
     */
     public function setTo($to)
     {
-        $this->_to = $to;
+        $this->to = $to;
         return $this;
     }
 
@@ -100,12 +103,17 @@ class Ovh extends \Message\Message_Abstract
     */
     public function getTo()
     {
-        return $this->_to;
+        return $this->to;
     }
 
-    public function send($message)
+    public function send($message, array $options = array())
     {
-        $url = $this->_url."?".http_build_query(array(
+        $this->setOptions($options);
+        $message = trim($message);
+        if ($url = $this->getUrl()) {
+            $message .= ": ".$url;
+        }
+        $url = $this->notify_url."?".http_build_query(array(
             "account" => $this->getAccount(),
             "login" => $this->getLogin(),
             "password" => $this->getPassword(),
@@ -114,8 +122,11 @@ class Ovh extends \Message\Message_Abstract
             "message" => utf8_decode($message),
             "contentType" => "text/json"
         ));
+        $curl = $this->getCurl(array(
+            CURLOPT_URL => $url
+        ));
+        $content = curl_exec($curl);
 
-        $content = file_get_contents($url);
         if (!$content) {
             throw new \Exception("Aucun contenu récupéré.");
         }

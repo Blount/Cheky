@@ -71,6 +71,8 @@ if (in_array("Sans groupe", $groups)) {
 $notification["freeMobile"] = $userAuthed->hasSMSFreeMobile();
 $notification["ovh"] = $userAuthed->hasSMSOvh();
 $notification["pushbullet"] = $userAuthed->hasPushbullet();
+$notification["notifymyandroid"] = $userAuthed->hasNotifyMyAndroid();
+$notification["pushover"] = $userAuthed->hasPushover();
 
 
 

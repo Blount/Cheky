@@ -2,9 +2,6 @@
 
 namespace App\Storage\File;
 
-require_once DOCUMENT_ROOT."/app/models/Mail/Alert.php";
-require_once __DIR__."/../Alert.php";
-
 class Alert implements \App\Storage\Alert
 {
     protected $_filename;
@@ -14,7 +11,7 @@ class Alert implements \App\Storage\Alert
         "time_updated", "price_min", "price_max", "price_strict",
         "cities", "suspend", "group", "group_ads", "categories",
         "send_mail", "send_sms_free_mobile", "last_id", "send_sms_ovh",
-        "send_pushbullet"
+        "send_pushbullet", "send_notifymyandroid", "send_pushover"
     );
 
     public function __construct($filename)

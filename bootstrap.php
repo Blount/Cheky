@@ -1,6 +1,6 @@
 <?php
 
-define("DOCUMENT_ROOT", dirname(__FILE__));
+define("DOCUMENT_ROOT", __DIR__);
 define("DS", DIRECTORY_SEPARATOR);
 
 // Define application environment
@@ -11,10 +11,8 @@ defined("APPLICATION_ENV")
 define("APPLICATION_VERSION", require DOCUMENT_ROOT."/version.php");
 
 set_include_path(
-    dirname(__FILE__)."/lib".PATH_SEPARATOR.get_include_path()
+    __DIR__."/lib".PATH_SEPARATOR.get_include_path()
 );
-
-require __DIR__."/lib/AdService/Autoloader.php";
 
 require_once "Http/Client/Curl.php";
 require_once "Config/Lite.php";
@@ -31,6 +29,22 @@ class Bootstrap
      * @var HttpClientCurl
      */
     protected $_client;
+
+    protected function initAutoload()
+    {
+        spl_autoload_register(function ($className) {
+            $filename = ltrim(str_replace("\\", "/", $className), "/");
+            if (false !== strpos($filename, "App/")) {
+                $filename = __DIR__."/app/models/".
+                    str_replace("App/", "", $filename).".php";
+            } else {
+                $filename = __DIR__."/lib/".$filename.".php";
+            }
+            if (is_file($filename)) {
+                require_once $filename;
+            }
+        });
+    }
 
     protected function initPHPConfig()
     {

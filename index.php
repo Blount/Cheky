@@ -2,7 +2,7 @@
 
 header('Content-Type: text/html; charset=utf-8');
 
-require dirname(__FILE__)."/bootstrap.php";
+require __DIR__."/bootstrap.php";
 
 $module = "default";
 if (isset($_GET["mod"])) {
@@ -25,17 +25,13 @@ if (!$currentVersion = $config->get("general", "version")) {
 if ($module != "install") {
     $storageType = $config->get("storage", "type", "files");
     if ($storageType == "db") {
-        require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
         $userStorage = new \App\Storage\Db\User($dbConnection);
     } else {
-        require_once DOCUMENT_ROOT."/app/models/Storage/File/User.php";
         $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
     }
 
     // identification nécessaire
     if ($module == "rss" && $action == "refresh") {
-        require_once "Auth/Session.php";
-        require_once "Auth/Basic.php";
         $auth = new Auth\Session($userStorage);
         if (!$userAuthed = $auth->authenticate()) {
             $auth = new Auth\Basic($userStorage);
@@ -47,7 +43,6 @@ if ($module != "install") {
             }
         }
     } else {
-        require_once "Auth/Session.php";
         $auth = new Auth\Session($userStorage);
         if (!$userAuthed = $auth->authenticate()) {
             $module = "default";

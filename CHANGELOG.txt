@@ -1,4 +1,12 @@
 
+## Version 2.8
+
+ * ajout: en charge de NotityMyAndroid et Pushover pour les alertes.
+ * correction: mise en forme de la liste des catégories des formulaires (fixes #29)
+ * correction: ne pas échapper les caractères spéciaux pour l'URL de recherche dans le flux RSS (fixes #27)
+ * correction: indiquer le nombre de nouelles annonces dans les mails (fixes #24)
+ * correction: lien vers la version mobile de l'annonce dans le mail d'alerte (fixes #17).
+
 ## Version 2.7
 
  * ajout: message "Pas de photo disponible." dans les flux RSS lorsqu'une annonce n'a pas de photo.

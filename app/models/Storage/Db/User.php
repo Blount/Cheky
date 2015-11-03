@@ -2,9 +2,6 @@
 
 namespace App\Storage\Db;
 
-require_once DOCUMENT_ROOT."/app/models/User/User.php";
-require_once __DIR__."/../User.php";
-
 class User implements \App\Storage\User
 {
     /**

@@ -24,6 +24,8 @@ class Alert
     public $last_id = 0;
     public $send_sms_ovh = 0;
     public $send_pushbullet = 0;
+    public $send_notifymyandroid = 0;
+    public $send_pushover = 0;
 
     public function fromArray(array $values)
     {
@@ -37,8 +39,11 @@ class Alert
 
     public function getCategories()
     {
-        if ($this->categories) {
+        if ($this->categories && is_string($this->categories)) {
             return explode(",", $this->categories);
+        }
+        if (is_array($this->categories)) {
+            return $this->categories;
         }
         return array();
     }
@@ -65,7 +70,9 @@ class Alert
             "send_sms_free_mobile" => $this->send_sms_free_mobile,
             "last_id" => (int) $this->last_id,
             "send_sms_ovh" => $this->send_sms_ovh,
-            "send_pushbullet" => $this->send_pushbullet
+            "send_pushbullet" => $this->send_pushbullet,
+            "send_notifymyandroid" => $this->send_notifymyandroid,
+            "send_pushover" => $this->send_pushover
         );
     }
 }

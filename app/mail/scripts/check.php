@@ -1,13 +1,6 @@
 <?php
 
 set_time_limit(0);
-$key = "";
-
-if ($key && (!isset($_GET["key"]) || $_GET["key"] != $key)) {
-    return;
-}
-
-declare(ticks = 1);
 
 class Main
 {
@@ -136,17 +129,19 @@ class Main
 
             // configuration des notifications.
             $notifications = array();
-            if ($options = $user->getOption("notification.freeMobile")) {
-                $notifications["freeMobile"] = new \Message\SMS\FreeMobile($options);
-                $this->_logger->debug("notification SMS Free Mobile activée");
-            }
-            if ($options = $user->getOption("notification.ovh")) {
-                $notifications["ovh"] = new \Message\SMS\Ovh($options);
-                $this->_logger->debug("notification SMS OVH activée");
-            }
-            if ($options = $user->getOption("notification.pushbullet")) {
-                $notifications["pushbullet"] = new \Message\Pushbullet($options);
-                $this->_logger->debug("notification Pushbullet activée");
+            $notifications_params = $user->getOption("notification");
+            if ($notifications_params && is_array($notifications_params)) {
+                foreach ($notifications_params AS $notification_name => $options) {
+                    if (!is_array($options)) {
+                        continue;
+                    }
+                    try {
+                        $notifications[$notification_name] = \Message\AdapterFactory::factory($notification_name, $options);
+                        $this->_logger->debug("notification ".get_class($notifications[$notification_name])." activée");
+                    } catch (\Exception $e) {
+                        $this->_logger->warn("notification ".$notification_name." invalide");
+                    }
+                }
             }
 
             $alerts = $storage->fetchAll();
@@ -212,29 +207,48 @@ class Main
                         }
                     }
                 }
-                if ($newAds) {
-                    $countAds = count($newAds);
-                    $this->_logger->info($countAds." annonce".
-                        ($countAds > 1?"s":"")." trouvée".($countAds > 1?"s":""));
-                    $this->_mailer->clearAddresses();
-                    $error = false;
-                    if ($alert->send_mail) {
-                        try {
-                            $emails = explode(",", $alert->email);
-                            foreach ($emails AS $email) {
-                                $this->_mailer->addAddress(trim($email));
-                            }
-                        } catch (phpmailerException $e) {
-                            $this->_logger->warn($e->getMessage());
-                            $error = true;
+                if (!$newAds) {
+                    $storage->save($alert);
+                    continue;
+                }
+                $countAds = count($newAds);
+                $this->_logger->info($countAds." annonce".
+                    ($countAds > 1?"s":"")." trouvée".($countAds > 1?"s":""));
+                $this->_mailer->clearAddresses();
+                $error = false;
+                if ($alert->send_mail) {
+                    try {
+                        $emails = explode(",", $alert->email);
+                        foreach ($emails AS $email) {
+                            $this->_mailer->addAddress(trim($email));
                         }
-                        if (!$error) {
-                            if ($alert->group_ads) {
-                                $subject = "Alert ".$siteConfig->getOption("site_name")." : ".$alert->title;
-                                $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
+                    } catch (phpmailerException $e) {
+                        $this->_logger->warn($e->getMessage());
+                        $error = true;
+                    }
+                    if (!$error) {
+                        if ($alert->group_ads) {
+                            $newAdsCount = count($newAds);
+                            $subject = "Alert ".$siteConfig->getOption("site_name")." : ".$alert->title;
+                            $message = '<h2>'.$newAdsCount.' nouvelle'.($newAdsCount > 1?'s':'').' annonce'.($newAdsCount > 1?'s':'').' - '.date("d/m/Y H:i", $currentTime).'</h2>
+                            <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
+                            <hr /><br />'.
+                            implode("<br /><hr /><br />", $newAds).'<hr /><br />';
+
+                            $this->_mailer->Subject = $subject;
+                            $this->_mailer->Body = $message;
+                            try {
+                                $this->_mailer->send();
+                            } catch (phpmailerException $e) {
+                                $this->_logger->warn($e->getMessage());
+                            }
+                        } else {
+                            $newAds = array_reverse($newAds, true);
+                            foreach ($newAds AS $id => $ad) {
+                                $subject = ($alert->title?$alert->title." : ":"").$ads[$id]->getTitle();
+                                $message = '<h2>Nouvelle annonce - '.date("d/m/Y H:i", $currentTime).'</h2>
                                 <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
-                                <p>Liste des nouvelles annonces :</p><hr /><br />'.
-                                implode("<br /><hr /><br />", $newAds).'<hr /><br />';
+                                <hr /><br />'.$ad.'<hr /><br />';
 
                                 $this->_mailer->Subject = $subject;
                                 $this->_mailer->Body = $message;
@@ -243,96 +257,92 @@ class Main
                                 } catch (phpmailerException $e) {
                                     $this->_logger->warn($e->getMessage());
                                 }
-                            } else {
-                                $newAds = array_reverse($newAds, true);
-                                foreach ($newAds AS $id => $ad) {
-                                    $subject = ($alert->title?$alert->title." : ":"").$ads[$id]->getTitle();
-                                    $message = '<h2>Alerte générée le '.date("d/m/Y H:i", $currentTime).'</h2>
-                                    <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
-                                    <p>Nouvelle annonce :</p><hr /><br />'.$ad.'<hr /><br />';
-
-                                    $this->_mailer->Subject = $subject;
-                                    $this->_mailer->Body = $message;
-                                    try {
-                                        $this->_mailer->send();
-                                    } catch (phpmailerException $e) {
-                                        $this->_logger->warn($e->getMessage());
+                            }
+                        }
+                    }
+                }
+                if ($notifications && (
+                       $alert->send_sms_free_mobile
+                    || $alert->send_sms_ovh
+                    || $alert->send_pushbullet
+                    || $alert->send_notifymyandroid
+                    || $alert->send_pushover
+                )) {
+                    if ($countAds < 5) { // limite à 5 SMS
+                        foreach ($newAds AS $id => $ad) {
+                            $ad = $ads[$id]; // récupère l'objet.
+                            $url = $ad->getLink();
+                            if (false !== strpos($url, "leboncoin")) {
+                                $url = "http://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
+                            }
+                            curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$url);
+                            if ($url = curl_exec($curlTinyurl)) {
+                                $msg  = "Nouvelle annonce ".($alert->title?$alert->title." : ":"").$ad->getTitle();
+                                $others = array();
+                                if ($ad->getPrice()) {
+                                    $others[] = number_format($ad->getPrice(), 0, ',', ' ').$ad->getCurrency();
+                                }
+                                if ($ad->getCity()) {
+                                    $others[] = $ad->getCity();
+                                } elseif ($ad->getCountry()) {
+                                    $others[] = $ad->getCountry();
+                                }
+                                if ($others) {
+                                    $msg .= " (".implode(", ", $others).")";
+                                }
+                                $params = array(
+                                    "title" => "Alerte ".$siteConfig->getOption("site_name"),
+                                    "description" => "Nouvelle annonce".($alert->title ? " pour : ".$alert->title : ""),
+                                    "url" => $url,
+                                );
+                                foreach ($notifications AS $key => $notifier) {
+                                    switch ($key) {
+                                        case "freeMobile":
+                                            $key_test = "send_sms_free_mobile";
+                                            break;
+                                        case "ovh":
+                                            $key_test = "send_sms_ovh";
+                                            break;
+                                        default:
+                                            $key_test = "send_".$key;
+                                    }
+                                    if (isset($alert->$key_test) && $alert->$key_test) {
+                                        try {
+                                            $notifier->send($msg, $params);
+                                        } catch (Exception $e) {
+                                            $this->_logger->warn("Erreur sur envoi via ".get_class($notifier).": (".$e->getCode().") ".$e->getMessage());
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    if ($notifications && ($alert->send_sms_free_mobile || $alert->send_sms_ovh || $alert->send_pushbullet)) {
-                        if ($countAds < 5) { // limite à 5 SMS
-                            foreach ($newAds AS $id => $ad) {
-                                $ad = $ads[$id]; // récupère l'objet.
-                                $url = $ad->getLink();
-                                if (false !== strpos($url, "leboncoin")) {
-                                    $url = "http://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
+                    } else { // envoi un msg global
+                        curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$alert->url);
+                        if ($url = curl_exec($curlTinyurl)) {
+                            $msg  = "Il y a ".$countAds." nouvelles annonces pour votre alerte '".($alert->title?$alert->title:"sans nom")."'";
+                            $params = array(
+                                "title" => "Alerte ".$siteConfig->getOption("site_name"),
+                                "description" => "Nouvelle".($countAds > 1 ? "s" : "").
+                                            " annonce".($countAds > 1 ? "s" : "").
+                                            ($alert->title ? " pour : ".$alert->title : ""),
+                                "url" => $url,
+                            );
+                            foreach ($notifications AS $key => $notifier) {
+                                switch ($key) {
+                                    case "freeMobile":
+                                        $key_test = "send_sms_free_mobile";
+                                        break;
+                                    case "ovh":
+                                        $key_test = "send_sms_ovh";
+                                        break;
+                                    default:
+                                        $key_test = "send_".$key;
                                 }
-                                curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$url);
-                                if ($url = curl_exec($curlTinyurl)) {
-                                    $msg  = "Nouvelle annonce ".($alert->title?$alert->title." : ":"").$ad->getTitle();
-                                    $others = array();
-                                    if ($ad->getPrice()) {
-                                        $others[] = number_format($ad->getPrice(), 0, ',', ' ').$ad->getCurrency();
-                                    }
-                                    if ($ad->getCity()) {
-                                        $others[] = $ad->getCity();
-                                    } elseif ($ad->getCountry()) {
-                                        $others[] = $ad->getCountry();
-                                    }
-                                    if ($others) {
-                                        $msg .= " (".implode(", ", $others).")";
-                                    }
-                                    $msg .= ": ".$url;
-                                    if ($alert->send_sms_free_mobile && isset($notifications["freeMobile"])) {
-                                        try {
-                                            $notifications["freeMobile"]->send($msg);
-                                        } catch (Exception $e) {
-                                            $this->_logger->warn("Erreur sur envoi via SMS Free Mobile: (".$e->getCode().") ".$e->getMessage());
-                                        }
-                                    }
-                                    if ($alert->send_sms_ovh && isset($notifications["ovh"])) {
-                                        try {
-                                            $notifications["ovh"]->send($msg);
-                                        } catch (Exception $e) {
-                                            $this->_logger->warn("Erreur sur envoi via SMS OVH: (".$e->getCode().") ".$e->getMessage());
-                                        }
-                                    }
-                                    if ($alert->send_pushbullet && isset($notifications["pushbullet"])) {
-                                        try {
-                                            $notifications["pushbullet"]->send($msg);
-                                        } catch (Exception $e) {
-                                            $this->_logger->warn("Erreur sur envoi via Pushbullet: (".$e->getCode().") ".$e->getMessage());
-                                        }
-                                    }
-                                }
-                            }
-                        } else { // envoi un msg global
-                            curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$alert->url);
-                            if ($url = curl_exec($curlTinyurl)) {
-                                $msg  = "Il y a ".$countAds." nouvelles annonces pour votre alerte '".($alert->title?$alert->title:"sans nom")."'";
-                                $msg .= ": ".$url;
-                                if ($alert->send_sms_free_mobile && isset($notifications["freeMobile"])) {
+                                if (isset($alert->$key_test) && $alert->$key_test) {
                                     try {
-                                        $notifications["freeMobile"]->send($msg);
+                                        $notifier->send($msg, $params);
                                     } catch (Exception $e) {
-                                        $this->_logger->warn("Erreur sur envoi via SMS Free Mobile: (".$e->getCode().") ".$e->getMessage());
-                                    }
-                                }
-                                if ($alert->send_sms_ovh && isset($notifications["ovh"])) {
-                                    try {
-                                        $notifications["ovh"]->send($msg);
-                                    } catch (Exception $e) {
-                                        $this->_logger->warn("Erreur sur envoi via SMS OVH: (".$e->getCode().") ".$e->getMessage());
-                                    }
-                                }
-                                if ($alert->send_pushbullet && isset($notifications["pushbullet"])) {
-                                    try {
-                                        $notifications["pushbullet"]->send($msg);
-                                    } catch (Exception $e) {
-                                        $this->_logger->warn("Erreur sur envoi via Pushbullet: (".$e->getCode().") ".$e->getMessage());
+                                        $this->_logger->warn("Erreur sur envoi via ".get_class($notifier).": (".$e->getCode().") ".$e->getMessage());
                                     }
                                 }
                             }
@@ -343,7 +353,6 @@ class Main
             }
         }
 
-        unset($sms);
         curl_close($curlTinyurl);
         $this->_mailer->smtpClose();
     }
@@ -388,23 +397,16 @@ class Main
     }
 }
 
-require dirname(__FILE__)."/../../../bootstrap.php";
+require __DIR__."/../../../bootstrap.php";
 
 // lib
 require_once "PHPMailer/class.phpmailer.php";
-require_once "Message/SMS/FreeMobile.php";
-require_once "Message/SMS/Ovh.php";
-require_once "Message/Pushbullet.php";
 
 // modèle
 $storageType = $config->get("storage", "type", "files");
 if ($storageType == "db") {
-    require_once DOCUMENT_ROOT."/app/models/Storage/Db/Alert.php";
-    require_once DOCUMENT_ROOT."/app/models/Storage/Db/User.php";
     $userStorage = new \App\Storage\Db\User($dbConnection);
 } else {
-    require_once DOCUMENT_ROOT."/app/models/Storage/File/Alert.php";
-    require_once DOCUMENT_ROOT."/app/models/Storage/File/User.php";
     $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
 }
 

@@ -7,9 +7,6 @@ if (!isset($_GET["url"])) {
 $disableLayout = true;
 $logFile = DOCUMENT_ROOT."/var/logs/rss.log";
 
-require_once "FeedWriter/Item.php";
-require_once "FeedWriter/Feed.php";
-require_once "FeedWriter/RSS2.php";
 use \FeedWriter\RSS2;
 
 try {
@@ -71,7 +68,7 @@ $feeds->setSelfLink(
     !empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on"?"https":"http".
     "://".$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"]
 );
-$feeds->setDescription("Flux RSS de la recherche : ".htmlspecialchars($_GET["url"]));
+$feeds->setDescription("Flux RSS de la recherche : ".$_GET["url"]);
 $feeds->setChannelElement("language", "fr-FR");
 // The date when this feed was lastly updated. The publication date is also set.
 $feeds->setDate(date(DATE_RSS, time()));
