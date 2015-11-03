@@ -24,7 +24,7 @@
     </dl>
 
     <h2 id="configFreeMobile" class="formbox">Configuration SMS via Free Mobile</h2>
-    <dl id="configFreeMobile-content" style="display: <?php echo !empty($form_values["notification"]["freeMobile"]) ? "block" : "none"; ?>;">
+    <dl id="configFreeMobile-content" style="display: <?php echo !empty($form_values["notification"]["freeMobile"]["user"]) ? "block" : "none"; ?>;">
         <dt>
             <label for="free_mobile_user">ID utilisateur</label>
         </dt>
@@ -97,7 +97,7 @@
     </dl>
 
     <h2 id="configOvh" class="formbox">Configuration SMS via OVH Telecom</h2>
-    <dl id="configOvh-content" style="display: <?php echo !empty($form_values["notification"]["ovh"]) ? "block" : "none"; ?>;">
+    <dl id="configOvh-content" style="display: <?php echo !empty($form_values["notification"]["ovh"]["account"]) ? "block" : "none"; ?>;">
         <dt>
             <label for="ovh_account">Numéro de compte</label>
         </dt>
