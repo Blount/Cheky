@@ -20,7 +20,7 @@ Publié le <strong><?php echo date("d/m/Y H:i", $ad->getDate()); ?></strong>
 <strong>Département</strong> : <?php echo $ad->getCountry(); ?>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <?php endif; ?>
-<?php if ($ad->getCity()) : ?><strong>Ville</strong> : <a href="http://maps.google.fr/?z=9&q=<?php
+<?php if ($ad->getCity()) : ?><strong>Ville</strong> : <a href="https://maps.google.fr/?z=9&q=<?php
     echo htmlspecialchars($ad->getCountry().' '.$ad->getCity());
 ?>" title="Localiser sur Google Map" target="_blank"><?php echo $ad->getCity(); ?></a>
 <?php endif; ?>

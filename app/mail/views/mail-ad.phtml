@@ -5,7 +5,11 @@
 
     <strong>Nom</strong> :
          <a href="<?php echo $ad->getLink(); ?>"><?php echo $ad->getTitle(); ?></a>
-        (<a href="<?php echo str_replace("http://www.", "http://mobile.", $ad->getLink()); ?>">Version Mobile</a>)
+        (<a href="<?php echo str_replace(
+            array("http://www.", "https://www."),
+            array("http://mobile.", "https://mobile."),
+            $ad->getLink()
+        ); ?>">Version Mobile</a>)
     <?php if ($ad->getPrice()) : ?>
     &nbsp;&nbsp;&nbsp;&nbsp;<strong>Prix</strong> : <?php echo number_format($ad->getPrice(), 0, ',', ' '); ?> <?php echo $ad->getCurrency(); ?>
     <?php endif; ?>
@@ -20,7 +24,7 @@
     &nbsp;&nbsp;&nbsp;&nbsp;
     <?php endif; ?>
     <?php if ($ad->getCity()) : ?>
-    <strong>Ville</strong> : <a href="http://maps.google.fr/?z=9&q=<?php
+    <strong>Ville</strong> : <a href="https://maps.google.fr/?z=9&q=<?php
         echo htmlspecialchars($ad->getCountry().' '.$ad->getCity());
     ?>" title="Localiser sur Google Map"><?php echo $ad->getCity(); ?></a>
     <?php endif; ?>

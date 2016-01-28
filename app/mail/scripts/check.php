@@ -187,7 +187,11 @@ class Main
                     "categories" => $alert->getCategories(),
                     "min_id" => $unique_ads ? $alert->last_id : 0
                 ));
-                $ads = $parser->process($content, $filter);
+                $ads = $parser->process(
+                    $content,
+                    $filter,
+                    parse_url($alert->url, PHP_URL_SCHEME)
+                );
                 $countAds = count($ads);
                 if ($countAds == 0) {
                     $storage->save($alert);

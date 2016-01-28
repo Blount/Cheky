@@ -1,4 +1,9 @@
 
+## Version 2.9
+
+ * correction: prise en charge du protocole HTTPS pour les URL Leboncoin.
+ * correction: utiliser le protocole HTTPS pour les URL externe (Google) (fixes 34).
+
 ## Version 2.8
 
  * ajout: en charge de NotityMyAndroid et Pushover pour les alertes.
