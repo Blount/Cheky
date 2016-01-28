@@ -24,7 +24,7 @@
     &nbsp;&nbsp;&nbsp;&nbsp;
     <?php endif; ?>
     <?php if ($ad->getCity()) : ?>
-    <strong>Ville</strong> : <a href="http://maps.google.fr/?z=9&q=<?php
+    <strong>Ville</strong> : <a href="https://maps.google.fr/?z=9&q=<?php
         echo htmlspecialchars($ad->getCountry().' '.$ad->getCity());
     ?>" title="Localiser sur Google Map"><?php echo $ad->getCity(); ?></a>
     <?php endif; ?>
