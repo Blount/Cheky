@@ -50,7 +50,11 @@ $content = $client->request($_GET["url"]);
 $filter = new \AdService\Filter($params);
 $siteConfig = \AdService\SiteConfigFactory::factory($_GET["url"]);
 
-$ads = $parser->process($content, $filter);
+$ads = $parser->process(
+    $content,
+    $filter,
+    parse_url($_GET["url"], PHP_URL_SCHEME)
+);
 
 $title = $siteConfig->getOption("site_name");
 $urlParams = parse_url($_GET["url"]);

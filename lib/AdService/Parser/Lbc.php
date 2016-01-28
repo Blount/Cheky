@@ -14,10 +14,13 @@ class Lbc extends AbstractParser
         "déc" => 12
     );
 
-    public function process($content, Filter $filter = null) {
+    protected $scheme;
+
+    public function process($content, Filter $filter = null, $scheme = "http") {
         if (!$content) {
             return;
         }
+        $this->scheme = $scheme;
         $this->loadHTML($content);
 
         $timeToday = strtotime(date("Y-m-d")." 23:59:59");
@@ -50,7 +53,7 @@ class Lbc extends AbstractParser
                 continue;
             }
 
-            $ad->setLink($a->getAttribute("href"))
+            $ad->setLink($this->formatLink($a->getAttribute("href")))
                 ->setId($m[1]);
 
             foreach ($result->getElementsByTagName("div") AS $node) {
@@ -82,7 +85,7 @@ class Lbc extends AbstractParser
                         $img = $node->getElementsByTagName("img");
                         if ($img->length > 0) {
                             $img = $img->item(0);
-                            $ad->setThumbnailLink($img->getAttribute("src"));
+                            $ad->setThumbnailLink($this->formatLink($img->getAttribute("src")));
                         }
                     } elseif ($class == "placement") {
                         $placement = $node->nodeValue;
@@ -123,5 +126,13 @@ class Lbc extends AbstractParser
             }
         }
         return $ads;
+    }
+
+    protected function formatLink($link)
+    {
+        if (0 === strpos($link, "//")) {
+            $link = $this->scheme.":".$link;
+        }
+        return $link;
     }
 }
