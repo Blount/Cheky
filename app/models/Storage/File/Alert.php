@@ -7,11 +7,28 @@ class Alert implements \App\Storage\Alert
     protected $_filename;
 
     protected $_header = array(
-        "email", "id", "title", "url", "interval", "time_last_ad",
-        "time_updated", "price_min", "price_max", "price_strict",
-        "cities", "suspend", "group", "group_ads", "categories",
-        "send_mail", "send_sms_free_mobile", "last_id", "send_sms_ovh",
-        "send_pushbullet", "send_notifymyandroid", "send_pushover"
+        "email",
+        "id",
+        "title",
+        "url",
+        "interval",
+        "time_last_ad",
+        "time_updated",
+        "price_min",
+        "price_max",
+        "price_strict",
+        "cities",
+        "suspend",
+        "group",
+        "group_ads",
+        "categories",
+        "send_mail",
+        "send_sms_free_mobile",
+        "last_id",
+        "send_sms_ovh",
+        "send_pushbullet",
+        "send_notifymyandroid",
+        "send_pushover"
     );
 
     public function __construct($filename)
@@ -26,9 +43,13 @@ class Alert implements \App\Storage\Alert
         if (is_file($this->_filename)) {
             $fopen = fopen($this->_filename, "r");
             if ($header = fgetcsv($fopen, 0, ",", '"')) {
+                $nb_columns = count($header);
                 while (false !== $values = fgetcsv($fopen, 0, ",", '"')) {
                     $alert = new \App\Mail\Alert();
-                    $alert->fromArray(array_combine($header, $values));
+                    $alert->fromArray(array_combine(
+                        $header,
+                        array_slice($values, 0, $nb_columns)
+                    ));
                     $alerts[$alert->id] = $alert;
                 }
             }
@@ -44,7 +65,10 @@ class Alert implements \App\Storage\Alert
             $fopen = fopen($this->_filename, "r");
             if ($header = fgetcsv($fopen, 0, ",", '"')) {
                 while (false !== $values = fgetcsv($fopen, 0, ",", '"')) {
-                    $options = array_combine($header, $values);
+                    $options = array_combine(
+                        $header,
+                        array_slice($values, 0, count($header))
+                    );
                     if ($options["id"] == $id) {
                         $alert = new \App\Mail\Alert();
                         $alert->fromArray($options);
