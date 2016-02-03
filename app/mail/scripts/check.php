@@ -414,6 +414,11 @@ if ($storageType == "db") {
     $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
 }
 
+if (is_file(DOCUMENT_ROOT."/var/.lock_update")) {
+    Logger::getLogger("main")->info("Tâche annulée : une mise à jour de l'application est en cours.");
+    return;
+}
+
 try {
     $main = new Main($config, $client, $userStorage);
 } catch (\Exception $e) {
