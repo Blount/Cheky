@@ -129,6 +129,12 @@ class Main
                 $this->_logger->debug("Fichier config: ".$file);
             }
 
+            $reset_filename = DOCUMENT_ROOT."/var/tmp/reset_".$user->getId();
+            $reset = is_file($reset_filename);
+            if ($reset) {
+                unlink($reset_filename);
+            }
+
             // configuration des notifications.
             $notifications = array();
             $notifications_params = $user->getOption("notification");
@@ -157,6 +163,11 @@ class Main
                 $currentTime = time();
                 if (!isset($alert->time_updated)) {
                     $alert->time_updated = 0;
+                }
+                if ($reset) {
+                    $alert->time_updated = 0;
+                    $alert->last_id = 0;
+                    $alert->time_last_ad = 0;
                 }
                 if (((int)$alert->time_updated + (int)$alert->interval*60) > $currentTime
                     || $alert->suspend) {

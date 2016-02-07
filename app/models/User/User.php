@@ -13,7 +13,7 @@ class User
     public function __construct(array $options = array())
     {
         if (isset($options["id"])) {
-            $this->setUsername($options["id"]);
+            $this->setId($options["id"]);
         }
         if (isset($options["username"])) {
             $this->setUsername($options["username"]);
@@ -38,6 +38,9 @@ class User
     */
     public function getId()
     {
+        if (!$this->_id) {
+            return md5($this->_username);
+        }
         return $this->_id;
     }
 
