@@ -114,6 +114,8 @@ class Main
 
         $storageType = $this->_config->get("storage", "type", "files");
 
+        $baseurl = $this->_config->get("general", "baseurl", "");
+
         foreach ($users AS $user) {
             if ($storageType == "db") {
                 $storage = new \App\Storage\Db\Alert($this->_userStorage->getDbConnection(), $user);
@@ -233,11 +235,30 @@ class Main
                     if (!$error) {
                         if ($alert->group_ads) {
                             $newAdsCount = count($newAds);
-                            $subject = "Alert ".$siteConfig->getOption("site_name")." : ".$alert->title;
-                            $message = '<h2>'.$newAdsCount.' nouvelle'.($newAdsCount > 1?'s':'').' annonce'.($newAdsCount > 1?'s':'').' - '.date("d/m/Y H:i", $currentTime).'</h2>
-                            <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
-                            <hr /><br />'.
-                            implode("<br /><hr /><br />", $newAds).'<hr /><br />';
+                            $subject = "Alerte ".$siteConfig->getOption("site_name")." : ".$alert->title;
+                            $message = '
+                            <h1 style="font-size: 16px;">Alerte : '.htmlspecialchars($alert->title, null, "UTF-8").'</h1>
+                            <p style="font-size: 14px; margin: 0;"><strong><a href="'.htmlspecialchars($alert->url, null, "UTF-8").'"
+                                style="text-decoration: none; color: #0B6CDA;">LIEN DE RECHERCHE</a>';
+                            if ($baseurl) {
+                                $message .= '
+                                    - <a href="'.$baseurl.'?mod=mail&amp;a=form&amp;id='. $alert->id .
+                                        '" style="text-decoration: none; color: #E77600;">MODIFIER</a>
+                                    - <a href="'.$baseurl.'?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id='. $alert->id .
+                                        '" style="text-decoration: none; color: #999999;">ACTIVER / DÉSACTIVER</a>
+                                    - <a href="'.$baseurl.'?mod=mail&amp;a=form-delete&amp;id='. $alert->id .
+                                        '" style="text-decoration: none; color: #FF0000;">SUPPRIMER</a>
+                                ';
+                            }
+                            $message .= '</strong></p>';
+                            $message .= '<hr />';
+                            $message .= '<p style="font-size: 16px; margin: 10px 0;"><strong>'.
+                                $newAdsCount.' nouvelle'.($newAdsCount > 1?'s':'').
+                                ' annonce'.($newAdsCount > 1?'s':'').
+                                ' - '.date("d/m/Y à H:i", $currentTime).'</strong></p>';
+                            $message .= '<hr /><br />';
+                            $message .= implode("<br /><hr /><br />", $newAds);
+                            $message .= '<hr /><br />';
 
                             $this->_mailer->Subject = $subject;
                             $this->_mailer->Body = $message;
@@ -250,9 +271,23 @@ class Main
                             $newAds = array_reverse($newAds, true);
                             foreach ($newAds AS $id => $ad) {
                                 $subject = ($alert->title?$alert->title." : ":"").$ads[$id]->getTitle();
-                                $message = '<h2>Nouvelle annonce - '.date("d/m/Y H:i", $currentTime).'</h2>
-                                <p>Lien de recherche: <a href="'.htmlspecialchars($alert->url, null, "UTF-8").'">'.htmlspecialchars($alert->url, null, "UTF-8").'</a></p>
-                                <hr /><br />'.$ad.'<hr /><br />';
+                                $message = '
+                                <h1 style="font-size: 16px;">Alerte : '.htmlspecialchars($alert->title, null, "UTF-8").'</h1>
+                                <p style="font-size: 14px; margin: 0;"><strong><a href="'.htmlspecialchars($alert->url, null, "UTF-8").'"
+                                    style="text-decoration: none; color: #0B6CDA;">LIEN DE RECHERCHE</a>';
+                                if ($baseurl) {
+                                    $message .= '
+                                        - <a href="'.$baseurl.'?mod=mail&amp;a=form&amp;id='. $alert->id .
+                                            '" style="text-decoration: none; color: #E77600;">MODIFIER</a>
+                                        - <a href="'.$baseurl.'?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id='. $alert->id .
+                                            '" style="text-decoration: none; color: #999999;">ACTIVER / DÉSACTIVER</a>
+                                        - <a href="'.$baseurl.'?mod=mail&amp;a=form-delete&amp;id='. $alert->id .
+                                            '" style="text-decoration: none; color: #FF0000;">SUPPRIMER</a>
+                                    ';
+                                }
+                                $message .= '</strong></p>';
+                                $message .= '<hr /><br />';
+                                $message .= $ad;
 
                                 $this->_mailer->Subject = $subject;
                                 $this->_mailer->Body = $message;
