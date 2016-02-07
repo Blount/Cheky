@@ -96,13 +96,36 @@ class Bootstrap
         $this->_config->set("general", "check_start", 7);
         $this->_config->set("general", "check_end", 24);
         $this->_config->set("general", "version", 0);
+        $this->_config->set("general", "baseurl", "");
         $this->_config->set("storage", "type", "files");
 
         // lit la configuration du fichier.
         try {
             $this->_config->read();
         } catch (Config_Lite_Exception_Runtime $e) {
+            return;
+        }
 
+        if (isset($_SERVER["HTTP_HOST"])) {
+            $current_base_url = $this->_config->get("general", "baseurl", "");
+            $base_url = "http";
+            if (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off") {
+                $base_url .= "s";
+            }
+            $base_url .= "://".$_SERVER["HTTP_HOST"]."/";
+            if (!empty($_SERVER["REQUEST_URI"])) {
+                $request_uri = trim($_SERVER["REQUEST_URI"], "/");
+                if (false !== $pos = strpos($request_uri, "?")) {
+                    $request_uri = mb_substr($request_uri, 0, $pos);
+                }
+                if ($request_uri) {
+                    $base_url .= trim($request_uri, "/")."/";
+                }
+            }
+            if ($base_url != $current_base_url) {
+                $this->_config->set("general", "baseurl", $base_url);
+                $this->_config->save();
+            }
         }
     }
 
