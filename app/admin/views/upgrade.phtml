@@ -1,3 +1,10 @@
+<?php if (!empty($errors)) : ?>
+<p class="error">
+    <?php echo implode("<br />", $errors); ?>
+</p>
+<br />
+<?php endif; ?>
+
 <?php if ($upgradeStarted) : ?>
 
 <form action="" method="post">
@@ -10,34 +17,30 @@
     </p>
 </form>
 
-<?php else: ?>
+<?php elseif ($upgradeAvailable) : ?>
+<h2>Une mise à jour est disponible</h2>
 <p>
-    <?php if ($upgradeAvailable) : ?>
-    Une mise à jour est disponible
-    <?php else : ?>
-    Vous utilisez déjà la dernière version.
-    <?php endif; ?>
+    Vous utilisez actuellement la version <strong><?php echo APPLICATION_VERSION; ?></strong>.
+    La version <strong><?php echo $lastVersion; ?></strong> est disponible.
 </p>
-<?php if ($upgradeAvailable) : ?>
-<p>
-    Vous utilisez actuellement la version <?php echo APPLICATION_VERSION; ?>.
-    La version <?php echo $lastVersion; ?> est disponible.
-</p>
+<?php if ($allow_update) : ?>
 <form action="" method="post">
     <p>
         <input type="hidden" name="upgrade" value="1" />
         <input type="submit" value="Mettre à jour" />
     </p>
 </form>
+<?php endif; ?>
+
 <?php else : ?>
+<p><strong>Vous utilisez déjà la dernière version.</strong></p>
 <form action="" method="post">
     <p>
-        Dernière vérification effectuée le <?php echo date("d/m/Y H:i", $_SESSION["lbcLastVersionTime"]); ?>
+        Dernière vérification effectuée le <?php echo date("d/m/Y à H:i", $_SESSION["lbcLastVersionTime"]); ?>
     </p>
     <p>
         <input type="hidden" name="checkVersion" value="1" />
         <input type="submit" value="Vérifier à nouveau" />
     </p>
 </form>
-<?php endif; ?>
 <?php endif; ?>

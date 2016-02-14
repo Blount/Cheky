@@ -1,4 +1,10 @@
 
+## Version 3.0
+
+ * ajout: liens modifier, supprimer et activer/désactiver dans les mails d'alerte.
+ * ajout: bouton permettant de réinitialiser les alertes afin de recevoir toutes les dernières annonces.
+ * correction: amélioration de la mise à jour automatique.
+
 ## Version 2.9
 
  * correction: prise en charge du protocole HTTPS pour les URL Leboncoin.
