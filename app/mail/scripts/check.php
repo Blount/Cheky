@@ -2,6 +2,8 @@
 
 set_time_limit(0);
 
+use AdService\SiteConfigFactory;
+
 class Main
 {
     /**
@@ -158,8 +160,19 @@ class Main
             if (count($alerts) == 0) {
                 continue;
             }
-            $unique_ads = $user->getOption("unique_ads");
             foreach ($alerts AS $i => $alert) {
+                $config = SiteConfigFactory::factory($alert->url);
+
+                $unique_ads = $user->getOption("unique_ads");
+
+                /**
+                 * Si le site ne fourni pas de date par annonce,
+                 * on est obligé de baser la dernière annonce reçue sur l'ID.
+                 */
+                if (!$config->getOption("has_date")) {
+                    $unique_ads = true;
+                }
+
                 $currentTime = time();
                 if (!isset($alert->time_updated)) {
                     $alert->time_updated = 0;
