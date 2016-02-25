@@ -167,6 +167,7 @@ class Main
                 if ($reset) {
                     $alert->time_updated = 0;
                     $alert->last_id = 0;
+                    $alert->max_id = 0;
                     $alert->time_last_ad = 0;
                 }
                 if (((int)$alert->time_updated + (int)$alert->interval*60) > $currentTime
@@ -198,7 +199,8 @@ class Main
                     "cities" => $cities,
                     "price_strict" => (bool)$alert->price_strict,
                     "categories" => $alert->getCategories(),
-                    "min_id" => $unique_ads ? $alert->last_id : 0
+                    "min_id" => $unique_ads ? $alert->max_id : 0,
+                    "last_id" => $alert->last_id,
                 ));
                 $ads = $parser->process(
                     $content,
@@ -211,6 +213,9 @@ class Main
                     continue;
                 }
                 $siteConfig = \AdService\SiteConfigFactory::factory($alert->url);
+                if ($ad = current($ads)) {
+                    $alert->last_id = $ad->getId();
+                }
                 $newAds = array();
                 $time_last_ad = (int)$alert->time_last_ad;
                 foreach ($ads AS $ad) {
@@ -219,8 +224,8 @@ class Main
                         if ($alert->time_last_ad < $ad->getDate()) {
                             $alert->time_last_ad = $ad->getDate();
                         }
-                        if ($unique_ads && $ad->getId() > $alert->last_id) {
-                            $alert->last_id = $ad->getId();
+                        if ($unique_ads && $ad->getId() > $alert->max_id) {
+                            $alert->max_id = $ad->getId();
                         }
                     }
                 }

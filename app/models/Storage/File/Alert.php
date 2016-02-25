@@ -25,6 +25,7 @@ class Alert implements \App\Storage\Alert
         "send_mail",
         "send_sms_free_mobile",
         "last_id",
+        "max_id",
         "send_sms_ovh",
         "send_pushbullet",
         "send_notifymyandroid",
