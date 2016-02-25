@@ -217,16 +217,14 @@ class Main
                     $alert->last_id = $ad->getId();
                 }
                 $newAds = array();
-                $time_last_ad = (int)$alert->time_last_ad;
                 foreach ($ads AS $ad) {
-                    if ($time_last_ad < $ad->getDate()) {
-                        $newAds[$ad->getId()] = require DOCUMENT_ROOT."/app/mail/views/mail-ad.phtml";
-                        if ($alert->time_last_ad < $ad->getDate()) {
-                            $alert->time_last_ad = $ad->getDate();
-                        }
-                        if ($unique_ads && $ad->getId() > $alert->max_id) {
-                            $alert->max_id = $ad->getId();
-                        }
+                    $time = $ad->getDate();
+                    $newAds[$ad->getId()] = require DOCUMENT_ROOT."/app/mail/views/mail-ad.phtml";
+                    if ($time && $alert->time_last_ad < $time) {
+                        $alert->time_last_ad = $time;
+                    }
+                    if ($unique_ads && $ad->getId() > $alert->max_id) {
+                        $alert->max_id = $ad->getId();
                     }
                 }
                 if (!$newAds) {
