@@ -1,9 +1,11 @@
 <?php
 ob_start();
 ?>
+<?php if ($ad->getDate()) : ?>
 Publié le <strong><?php echo date("d/m/Y H:i", $ad->getDate()); ?></strong>
 <br />
 <br />
+<?php endif; ?>
 
 <strong>Nom</strong> : <?php echo $ad->getTitle(); ?>
 <?php if ($ad->getPrice()) : ?>

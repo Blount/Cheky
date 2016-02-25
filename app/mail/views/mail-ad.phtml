@@ -1,7 +1,9 @@
 <?php ob_start(); ?>
 <div>
-	<strong>Publié le <?php echo date("Y/m/d H:i", $ad->getDate()); ?></strong>
+    <?php if ($ad->getDate()) : ?>
+    <strong>Publié le <?php echo date("d/m/Y à H:i", $ad->getDate()); ?></strong>
     <br />
+    <?php endif; ?>
 
     <strong>Nom</strong> :
          <a href="<?php echo $ad->getLink(); ?>"><?php echo $ad->getTitle(); ?></a>
