@@ -5,11 +5,9 @@
 
     <strong>Nom</strong> :
          <a href="<?php echo $ad->getLink(); ?>"><?php echo $ad->getTitle(); ?></a>
-        (<a href="<?php echo str_replace(
-            array("http://www.", "https://www."),
-            array("http://mobile.", "https://mobile."),
-            $ad->getLink()
-        ); ?>">Version Mobile</a>)
+         <?php if ($link_mobile = $ad->getLinkMobile()) : ?>
+        (<a href="<?php echo $link_mobile; ?>">Version Mobile</a>)
+        <?php endif; ?>
     <?php if ($ad->getPrice()) : ?>
     &nbsp;&nbsp;&nbsp;&nbsp;<strong>Prix</strong> : <?php echo number_format($ad->getPrice(), 0, ',', ' '); ?> <?php echo $ad->getCurrency(); ?>
     <?php endif; ?>

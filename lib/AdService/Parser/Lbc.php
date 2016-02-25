@@ -54,7 +54,12 @@ class Lbc extends AbstractParser
             }
 
             $ad->setLink($this->formatLink($a->getAttribute("href")))
-                ->setId($m[1]);
+                ->setId($m[1])
+                ->setLinkMobile(str_replace(
+                    array("http://www.", "https://www."),
+                    array("http://mobile.", "https://mobile."),
+                    $ad->getLink()
+                ));
 
             foreach ($result->getElementsByTagName("div") AS $node) {
                 if ($node->hasAttribute("class")) {
