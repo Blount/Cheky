@@ -84,7 +84,7 @@ class Filter
      */
     public function setLastId($last_id)
     {
-        $this->_last_id = $last_id;
+        $this->last_id = $last_id;
         return $this;
     }
 
@@ -93,7 +93,7 @@ class Filter
      */
     public function getLastId()
     {
-        return $this->_last_id;
+        return $this->last_id;
     }
 
     /**
