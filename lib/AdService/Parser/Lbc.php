@@ -48,6 +48,15 @@ class Lbc extends AbstractParser
                 continue;
             }
 
+            /**
+             * @todo si l'annonce est supprimée, risque de renvoie de toutes
+             * les annonces. Il faudrait plutôt sauvegarder les IDs x
+             * derniers IDs et faire un filtre : exlude_ids
+             */
+            if ($m[1] == $filter->getLastId()) {
+                break;
+            }
+
             // permet d'éliminer les annonces déjà envoyées.
             if ($filter && $m[1] <= $filter->getMinId()) {
                 continue;
