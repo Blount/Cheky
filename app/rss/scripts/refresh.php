@@ -85,7 +85,9 @@ if (count($ads)) {
         $item->setTitle($ad->getTitle());
         $item->setLink($ad->getLink());
         $item->setDescription(require DOCUMENT_ROOT."/app/rss/views/rss-ad.phtml");
-        $item->setDate($ad->getDate());
+        if ($ad->getDate()) {
+            $item->setDate($ad->getDate());
+        }
         $item->setId(md5($ad->getId()));
         $feeds->addItem($item);
     }
