@@ -2,6 +2,8 @@
 
 set_time_limit(0);
 
+use AdService\SiteConfigFactory;
+
 class Main
 {
     /**
@@ -158,8 +160,19 @@ class Main
             if (count($alerts) == 0) {
                 continue;
             }
-            $unique_ads = $user->getOption("unique_ads");
             foreach ($alerts AS $i => $alert) {
+                $config = SiteConfigFactory::factory($alert->url);
+
+                $unique_ads = $user->getOption("unique_ads");
+
+                /**
+                 * Si le site ne fourni pas de date par annonce,
+                 * on est obligé de baser la dernière annonce reçue sur l'ID.
+                 */
+                if (!$config->getOption("has_date")) {
+                    $unique_ads = true;
+                }
+
                 $currentTime = time();
                 if (!isset($alert->time_updated)) {
                     $alert->time_updated = 0;
@@ -167,6 +180,7 @@ class Main
                 if ($reset) {
                     $alert->time_updated = 0;
                     $alert->last_id = 0;
+                    $alert->max_id = 0;
                     $alert->time_last_ad = 0;
                 }
                 if (((int)$alert->time_updated + (int)$alert->interval*60) > $currentTime
@@ -198,7 +212,8 @@ class Main
                     "cities" => $cities,
                     "price_strict" => (bool)$alert->price_strict,
                     "categories" => $alert->getCategories(),
-                    "min_id" => $unique_ads ? $alert->last_id : 0
+                    "min_id" => $unique_ads ? $alert->max_id : 0,
+                    "last_id" => $alert->last_id,
                 ));
                 $ads = $parser->process(
                     $content,
@@ -211,17 +226,18 @@ class Main
                     continue;
                 }
                 $siteConfig = \AdService\SiteConfigFactory::factory($alert->url);
+                if ($ad = current($ads)) {
+                    $alert->last_id = $ad->getId();
+                }
                 $newAds = array();
-                $time_last_ad = (int)$alert->time_last_ad;
                 foreach ($ads AS $ad) {
-                    if ($time_last_ad < $ad->getDate()) {
-                        $newAds[$ad->getId()] = require DOCUMENT_ROOT."/app/mail/views/mail-ad.phtml";
-                        if ($alert->time_last_ad < $ad->getDate()) {
-                            $alert->time_last_ad = $ad->getDate();
-                        }
-                        if ($unique_ads && $ad->getId() > $alert->last_id) {
-                            $alert->last_id = $ad->getId();
-                        }
+                    $time = $ad->getDate();
+                    $newAds[$ad->getId()] = require DOCUMENT_ROOT."/app/mail/views/mail-ad.phtml";
+                    if ($time && $alert->time_last_ad < $time) {
+                        $alert->time_last_ad = $time;
+                    }
+                    if ($unique_ads && $ad->getId() > $alert->max_id) {
+                        $alert->max_id = $ad->getId();
                     }
                 }
                 if (!$newAds) {

@@ -30,6 +30,12 @@ abstract class AbstractSiteConfig
     protected $pro_visible = true;
 
     /**
+     * Indique si le site fourni une date par annonce.
+     * @var bool
+     */
+    protected $has_date = true;
+
+    /**
      * @param string $name
      * @return mixed
      */

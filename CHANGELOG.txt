@@ -1,4 +1,13 @@
 
+## Version 3.1
+
+ * ajout: prise en charge de SeLoger.com.
+ * correction: last_id contient maintenant l'ID de la dernière annonce et max_id l'ID max trouvé.
+ * correction: indiquer l'URL mobile seulement si disponible pour le site d'annonce.
+ * correction: si pas de date de publication fournie, on désactive la détection des annonces remontées.
+ * correction: date optionnelle dans les flux RSS.
+ * correction: date mise à jour du parser pour le nouveau site LBC.
+
 ## Version 3.0
 
  * ajout: liens modifier, supprimer et activer/désactiver dans les mails d'alerte.

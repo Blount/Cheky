@@ -6,6 +6,8 @@ class Filter
 {
     protected $min_id = 0;
 
+    protected $last_id = 0;
+
     protected $price_min = -1;
 
     protected $price_max = -1;
@@ -74,6 +76,24 @@ class Filter
     public function getMinId()
     {
         return $this->min_id;
+    }
+
+    /**
+     * @param int $last_id
+     * @return Filter
+     */
+    public function setLastId($last_id)
+    {
+        $this->last_id = $last_id;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLastId()
+    {
+        return $this->last_id;
     }
 
     /**
