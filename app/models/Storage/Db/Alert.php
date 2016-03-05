@@ -29,6 +29,16 @@ class Alert implements \App\Storage\Alert
             ." WHERE user_id = ".$this->_user->getId());
         while ($alertDb = $alertsDb->fetch_assoc()) {
             $alert = new \App\Mail\Alert();
+            if (isset($alertDb["last_id"])) {
+                if (is_numeric($alertDb["last_id"])) {
+                    $alertDb["last_id"] = array($alertDb["last_id"]);
+                } else {
+                    $alertDb["last_id"] = json_decode($alertDb["last_id"], true);
+                    if (!is_array($alertDb["last_id"])) {
+                        $alertDb["last_id"] = array();
+                    }
+                }
+            }
             $alert->fromArray($alertDb);
             $alert->id = $alertDb["idstr"];
             $alerts[] = $alert;
@@ -45,6 +55,14 @@ class Alert implements \App\Storage\Alert
             ->fetch_assoc();
         if ($alertDb) {
             $alert = new \App\Mail\Alert();
+            if (is_numeric($alertDb["last_id"])) {
+                $alertDb["last_id"] = array($alertDb["last_id"]);
+            } else {
+                $alertDb["last_id"] = json_decode($alertDb["last_id"], true);
+                if (!is_array($alertDb["last_id"])) {
+                    $alertDb["last_id"] = array();
+                }
+            }
             $alert->fromArray($alertDb);
             $alert->id = $alertDb["idstr"];
         }
@@ -54,6 +72,14 @@ class Alert implements \App\Storage\Alert
     public function save(\App\Mail\Alert $alert, $forceInsert = false)
     {
         $options = $alert->toArray();
+
+        if (empty($options["last_id"])) {
+            $options["last_id"] = array();
+        } elseif (!is_array($options["last_id"])) {
+            $options["last_id"] = array($options["last_id"]);
+        }
+
+        $options["last_id"] = json_encode($options["last_id"]);
         if (!$alert->id || $forceInsert) {
             $options["user_id"] = $this->_user->getId();
             if (!$alert->id) {

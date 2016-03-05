@@ -179,7 +179,7 @@ class Main
                 }
                 if ($reset) {
                     $alert->time_updated = 0;
-                    $alert->last_id = 0;
+                    $alert->last_id = array();
                     $alert->max_id = 0;
                     $alert->time_last_ad = 0;
                 }
@@ -213,7 +213,7 @@ class Main
                     "price_strict" => (bool)$alert->price_strict,
                     "categories" => $alert->getCategories(),
                     "min_id" => $unique_ads ? $alert->max_id : 0,
-                    "last_id" => $alert->last_id,
+                    "last_ids" => $alert->last_id,
                 ));
                 $ads = $parser->process(
                     $content,
@@ -226,18 +226,19 @@ class Main
                     continue;
                 }
                 $siteConfig = \AdService\SiteConfigFactory::factory($alert->url);
-                if ($ad = current($ads)) {
-                    $alert->last_id = $ad->getId();
-                }
                 $newAds = array();
                 foreach ($ads AS $ad) {
                     $time = $ad->getDate();
-                    $newAds[$ad->getId()] = require DOCUMENT_ROOT."/app/mail/views/mail-ad.phtml";
+                    $id = $ad->getId();
+                    $newAds[$id] = require DOCUMENT_ROOT."/app/mail/views/mail-ad.phtml";
+                    if (!in_array($id, $alert->last_id)) {
+                        array_unshift($alert->last_id, $id);
+                    }
                     if ($time && $alert->time_last_ad < $time) {
                         $alert->time_last_ad = $time;
                     }
-                    if ($unique_ads && $ad->getId() > $alert->max_id) {
-                        $alert->max_id = $ad->getId();
+                    if ($unique_ads && $id > $alert->max_id) {
+                        $alert->max_id = $id;
                     }
                 }
                 if (!$newAds) {

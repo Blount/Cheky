@@ -35,7 +35,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_Alert` (
     `send_pushbullet` BOOLEAN NOT NULL,
     `send_notifymyandroid` TINYINT(1) NOT NULL,
     `send_pushover` TINYINT(1) NOT NULL,
-    `last_id` INTEGER UNSIGNED NOT NULL DEFAULT '0',
+    `last_id` TEXT DEFAULT NULL,
     `max_id` INTEGER UNSIGNED NOT NULL DEFAULT '0',
     `user_id` MEDIUMINT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),

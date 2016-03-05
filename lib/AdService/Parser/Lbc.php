@@ -48,8 +48,8 @@ class Lbc extends AbstractParser
              * les annonces. Il faudrait plutôt sauvegarder les IDs x
              * derniers IDs et faire un filtre : exlude_ids
              */
-            if ($m[1] == $filter->getLastId()) {
-                break;
+            if ($filter && in_array($m[1], $filter->getLastIds())) {
+                continue;
             }
 
             // permet d'éliminer les annonces déjà envoyées.

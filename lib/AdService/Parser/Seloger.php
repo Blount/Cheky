@@ -37,12 +37,9 @@ class Seloger extends AbstractParser
             if (!$id = (int) $adNode->getAttribute("data-listing-id")) {
                 continue;
             }
-//             if ($id == 106823053) {
-//                 var_dump($id);
-//             }
 
             // permet d'éliminer les annonces déjà envoyées.
-            if ($filter && $id == $filter->getLastId()) {
+            if ($filter && in_array($id, $filter->getLastIds())) {
                 break;
             }
 
@@ -98,8 +95,6 @@ class Seloger extends AbstractParser
 
             $ads[$ad->getId()] = $ad;
         }
-//         var_dump($ads[174267]);
-//         exit;
         return $ads;
     }
 }
