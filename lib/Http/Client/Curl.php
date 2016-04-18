@@ -55,6 +55,14 @@ class HttpClientCurl extends HttpClientAbstract
         curl_setopt($this->_resource, CURLOPT_URL, $url);
         $body = curl_exec($this->_resource);
         $this->_respond_code = curl_getinfo($this->_resource, CURLINFO_HTTP_CODE);
+
+        if ($this->_respond_code == 301 || $this->_respond_code == 302) {
+            $redirect = curl_getinfo($this->_resource, CURLINFO_REDIRECT_URL);
+            if ($redirect) {
+                return $this->request($redirect);
+            }
+        }
+
         if ($this->getProxyType() == self::PROXY_TYPE_WEB) {
             // restaure les vrai URL
             if (preg_match_all("#<(?:img|a)[^>]+(?:src|href)=(?:'|\")(https?://.*(http[^'\"]+))(?:'|\")[^>]*/?>#ismU", $body, $matches,  PREG_SET_ORDER)) {
