@@ -118,6 +118,9 @@ class Bootstrap
                 if (false !== $pos = strpos($request_uri, "?")) {
                     $request_uri = mb_substr($request_uri, 0, $pos);
                 }
+                if (false !== strpos($request_uri, ".php")) {
+                    $request_uri = substr($request_uri, 0, strrpos($request_uri, "/"));
+                }
                 if ($request_uri) {
                     $base_url .= trim($request_uri, "/")."/";
                 }
