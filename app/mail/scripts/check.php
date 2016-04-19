@@ -340,7 +340,7 @@ class Main
                             $ad = $ads[$id]; // récupère l'objet.
                             $url = $ad->getLink();
                             if (false !== strpos($url, "leboncoin")) {
-                                $url = "http://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
+                                $url = "https://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
                             }
                             curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$url);
                             if ($url = curl_exec($curlTinyurl)) {
@@ -444,12 +444,12 @@ class Main
     {
         // teste la connexion
         $this->_httpClient->setDownloadBody(false);
-        if (false === $this->_httpClient->request("http://www.leboncoin.fr")) {
-            throw new Exception("Connexion vers http://www.leboncoin.fr échouée".
+        if (false === $this->_httpClient->request("https://www.leboncoin.fr")) {
+            throw new Exception("Connexion vers https://www.leboncoin.fr échouée".
                 (($error = $this->_httpClient->getError())?" (erreur: ".$error.")":"").".");
         }
-        if (200 != $this->_httpClient->getRespondCode()) {
-            throw new Exception("Code HTTP différent de 200.");
+        if (200 != $code = $this->_httpClient->getRespondCode()) {
+            throw new Exception("Code HTTP différent de 200 : ".$code);
         }
         $this->_httpClient->setDownloadBody(true);
     }

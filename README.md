@@ -14,4 +14,4 @@ Alerte mail et RSS pour Leboncoin.fr
 ## Documentation
 
 Pour l'installation et la configuration, une documentation est disponible sur le site officiel :
-http://alerte.ilatumi.org
+https://alerte.ilatumi.org

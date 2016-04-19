@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (false === $client->request("http://portail.free.fr")) {
             $errors["test"]["site"] = $client->getError();
         }
-        if (false === $client->request("http://www.leboncoin.fr")) {
+        if (false === $client->request("https://www.leboncoin.fr")) {
             $errors["test"]["lbc"] = $client->getError();
         }
     } else {
