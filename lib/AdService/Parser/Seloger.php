@@ -32,6 +32,19 @@ class Seloger extends AbstractParser
         if (!$section_results) {
             return array();
         }
+
+        if ($filter) {
+            $exclude_ids = $filter->getExcludeIds();
+
+            /**
+             * Afin de garder une rétrocompatibilité, on prend en compte
+             * que $exclude_ids peut être numérique.
+             */
+            if (!is_numeric($exclude_ids) && !is_array($exclude_ids)) {
+                unset($exclude_ids);
+            }
+        }
+
         $adNodes = $section_results->getElementsByTagName("article");
         foreach ($adNodes AS $adNode) {
             if (!$id = (int) $adNode->getAttribute("data-listing-id")) {
@@ -39,8 +52,20 @@ class Seloger extends AbstractParser
             }
 
             // permet d'éliminer les annonces déjà envoyées.
-            if ($filter && in_array($id, $filter->getExcludeIds())) {
-                break;
+            if (isset($exclude_ids)) {
+                if (is_numeric($exclude_ids)) {
+                    /**
+                     * Si $exclude_ids est numérique, alors détection
+                     * à l'ancienne. Quand on rencontre l'ID de la
+                     * dernière annonce, on stoppe la boucle.
+                     */
+                    if ($id == $exclude_ids) {
+                        break;
+                    }
+
+                } elseif (in_array($id, $exclude_ids)) {
+                    continue;
+                }
             }
 
             $ad = new Ad();

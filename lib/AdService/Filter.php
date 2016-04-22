@@ -79,7 +79,7 @@ class Filter
     }
 
     /**
-     * @param array $last_id
+     * @param array $exclude_ids
      * @return Filter
      */
     public function setExcludeIds($exclude_ids)

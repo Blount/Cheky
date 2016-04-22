@@ -226,6 +226,24 @@ class Main
                     parse_url($alert->url, PHP_URL_SCHEME)
                 );
                 $countAds = count($ads);
+
+                /**
+                 * Migrer vers le nouveau système de détection d'annonce.
+                 */
+                if (is_numeric($alert->last_id)) {
+                    $filter->setExcludeIds(array());
+                    $alert->last_id = array();
+                    $tmp_ads = $parser->process(
+                        $content,
+                        $filter,
+                        parse_url($alert->url, PHP_URL_SCHEME)
+                    );
+                    foreach ($tmp_ads AS $tmp_ad) {
+                        $alert->last_id[] = $tmp_ad->getId();
+                    }
+                    unset($tmp_ads, $tmp_ad);
+                }
+
                 if ($countAds == 0) {
                     $storage->save($alert);
                     continue;

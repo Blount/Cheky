@@ -51,14 +51,10 @@ class Alert implements \App\Storage\Alert
                         $header,
                         array_slice($values, 0, count($header))
                     );
-                    if (isset($options["last_id"])) {
-                        if (is_numeric($options["last_id"])) {
-                            $options["last_id"] = array($options["last_id"]);
-                        } else {
-                            $options["last_id"] = json_decode($options["last_id"], true);
-                            if (!is_array($options["last_id"])) {
-                                $options["last_id"] = array();
-                            }
+                    if (isset($options["last_id"]) && !is_numeric($options["last_id"])) {
+                        $options["last_id"] = json_decode($options["last_id"], true);
+                        if (!is_array($options["last_id"])) {
+                            $options["last_id"] = array();
                         }
                     }
                     $alert->fromArray($options);
@@ -82,14 +78,10 @@ class Alert implements \App\Storage\Alert
                         array_slice($values, 0, count($header))
                     );
                     if ($options["id"] == $id) {
-                        if (isset($options["last_id"])) {
-                            if (is_numeric($options["last_id"])) {
-                                $options["last_id"] = array($options["last_id"]);
-                            } else {
-                                $options["last_id"] = json_decode($options["last_id"], true);
-                                if (!is_array($options["last_id"])) {
-                                    $options["last_id"] = array();
-                                }
+                        if (isset($options["last_id"]) && !is_numeric($options["last_id"])) {
+                            $options["last_id"] = json_decode($options["last_id"], true);
+                            if (!is_array($options["last_id"])) {
+                                $options["last_id"] = array();
                             }
                         }
                         $alert = new \App\Mail\Alert();
@@ -119,12 +111,9 @@ class Alert implements \App\Storage\Alert
                 $updated = true;
             }
             $data = $a->toArray();
-            if (empty($data["last_id"])) {
-                $data["last_id"] = array();
-            } elseif (!is_array($data["last_id"])) {
-                $data["last_id"] = array($data["last_id"]);
+            if (is_array($data["last_id"])) {
+                $data["last_id"] = json_encode($data["last_id"]);
             }
-            $data["last_id"] = json_encode($data["last_id"]);
             fputcsv($fpNewFile, $data, ",", '"');
         }
         if (!$updated && !$alert->id) {
