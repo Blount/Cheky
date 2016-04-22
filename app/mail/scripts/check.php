@@ -161,7 +161,12 @@ class Main
                 continue;
             }
             foreach ($alerts AS $i => $alert) {
-                $config = SiteConfigFactory::factory($alert->url);
+                try {
+                    $config = SiteConfigFactory::factory($alert->url);
+                } catch (Exception $e) {
+                    $this->_logger->warn($e->getMessage()." pour l'alerte : ".$alert->title);
+                    continue;
+                }
 
                 $unique_ads = $user->getOption("unique_ads");
 
