@@ -241,6 +241,12 @@ class Main
                         $alert->max_id = $id;
                     }
                 }
+
+                // On conserve 250 IDs d'annonce vues.
+                if (250 < count($alert->last_id)) {
+                    $alert->last_id = array_slice($alert->last_id, 0, 250);
+                }
+
                 if (!$newAds) {
                     $storage->save($alert);
                     continue;
