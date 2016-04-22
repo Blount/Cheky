@@ -39,7 +39,7 @@ class Seloger extends AbstractParser
             }
 
             // permet d'éliminer les annonces déjà envoyées.
-            if ($filter && in_array($id, $filter->getLastIds())) {
+            if ($filter && in_array($id, $filter->getExcludeIds())) {
                 break;
             }
 

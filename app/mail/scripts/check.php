@@ -213,7 +213,7 @@ class Main
                     "price_strict" => (bool)$alert->price_strict,
                     "categories" => $alert->getCategories(),
                     "min_id" => $unique_ads ? $alert->max_id : 0,
-                    "last_ids" => $alert->last_id,
+                    "exclude_ids" => $alert->last_id,
                 ));
                 $ads = $parser->process(
                     $content,
