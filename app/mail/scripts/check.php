@@ -50,7 +50,7 @@ class Main
         $this->_lock();
         $this->_running = true;
 
-        $this->_logger->info("Vérification des alertes.");
+        $this->_logger->info("[Pid ".getmypid()."] Vérification des alertes.");
 
         $this->_mailer = new PHPMailer($exceptions=true);
         $this->_mailer->setLanguage("fr", DOCUMENT_ROOT."/lib/PHPMailer/language/");
@@ -103,10 +103,9 @@ class Main
         }
         $hour = (int)date("G");
         if ($hour < $checkStart || $hour >= $checkEnd) {
-            $this->_logger->info("Hors de la plage horaire. Contrôle annulé.");
+            $this->_logger->info("[Pid ".getmypid()."] Hors de la plage horaire. Contrôle annulé.");
             return;
         }
-        $this->_logger->info("Contrôle des alertes.");
         $this->_checkConnection();
         $users = $this->_userStorage->fetchAll();
 
@@ -121,14 +120,14 @@ class Main
         foreach ($users AS $user) {
             if ($storageType == "db") {
                 $storage = new \App\Storage\Db\Alert($this->_userStorage->getDbConnection(), $user);
-                $this->_logger->info("User: ".$user->getUsername());
+                $this->_logger->info("[Pid ".getmypid()."] USER : ".$user->getUsername());
             } else {
                 $file = DOCUMENT_ROOT."/var/configs/".$user->getUsername().".csv";
                 if (!is_file($file)) {
                     continue;
                 }
                 $storage = new \App\Storage\File\Alert($file);
-                $this->_logger->debug("Fichier config: ".$file);
+                $this->_logger->info("[Pid ".getmypid()."] USER : ".$user->getUsername()." (".$file.")");
             }
 
             $reset_filename = DOCUMENT_ROOT."/var/tmp/reset_".$user->getId();
@@ -147,24 +146,34 @@ class Main
                     }
                     try {
                         $notifications[$notification_name] = \Message\AdapterFactory::factory($notification_name, $options);
-                        $this->_logger->debug("notification ".get_class($notifications[$notification_name])." activée");
+                        $this->_logger->debug(
+                            "[Pid ".getmypid()."] USER : ".$user->getUsername().
+                            " -> Notification ".get_class($notifications[$notification_name])." activée"
+                        );
                     } catch (\Exception $e) {
-                        $this->_logger->warn("notification ".$notification_name." invalide");
+                        $this->_logger->warn(
+                            "[Pid ".getmypid()."] USER : ".$user->getUsername().
+                            " -> Notification ".$notification_name." invalide"
+                        );
                     }
                 }
             }
 
             $alerts = $storage->fetchAll();
-            $this->_logger->info(count($alerts)." alerte".
-                (count($alerts) > 1?"s":"")." trouvée".(count($alerts) > 1?"s":""));
+            $this->_logger->info(
+                "[Pid ".getmypid()."] USER : ".$user->getUsername()." -> ".
+                count($alerts)." alerte".(count($alerts) > 1 ? "s" : "").
+                " trouvée".(count($alerts) > 1 ? "s" : ""));
             if (count($alerts) == 0) {
                 continue;
             }
             foreach ($alerts AS $i => $alert) {
+                $log_id = "[Pid ".getmypid()."] USER : ".$user->getUsername()." - ALERT ID : ".$alert->id." -> ";
+
                 try {
                     $config = SiteConfigFactory::factory($alert->url);
                 } catch (Exception $e) {
-                    $this->_logger->warn($e->getMessage()." pour l'alerte : ".$alert->title);
+                    $this->_logger->warn($log_id.$e->getMessage());
                     continue;
                 }
 
@@ -192,19 +201,27 @@ class Main
                     || $alert->suspend) {
                     continue;
                 }
-                $this->_logger->info("Contrôle de l'alerte ".$alert->url);
+                $this->_logger->info($log_id."URL : ".$alert->url);
                 try {
                     $parser = \AdService\ParserFactory::factory($alert->url);
                 } catch (\AdService\Exception $e) {
-                    $this->_logger->info("\t".$e->getMessage());
+                    $this->_logger->err($log_id." ".$e->getMessage());
                     continue;
                 }
 
-                $this->_logger->debug("Dernière mise à jour : ".(!empty($alert->time_updated)?date("d/m/Y H:i", (int)$alert->time_updated):"inconnue"));
-                $this->_logger->debug("Dernière annonce : ".(!empty($alert->time_last_ad)?date("d/m/Y H:i", (int)$alert->time_last_ad):"inconnue"));
+                $this->_logger->debug($log_id."Dernière mise à jour : ".(
+                    !empty($alert->time_updated) ?
+                        date("d/m/Y H:i", (int) $alert->time_updated) :
+                        "inconnue"
+                ));
+                $this->_logger->debug($log_id."Dernière annonce : ".(
+                    !empty($alert->time_last_ad) ?
+                        date("d/m/Y H:i", (int) $alert->time_last_ad) :
+                        "inconnue"
+                ));
                 $alert->time_updated = $currentTime;
                 if (!$content = $this->_httpClient->request($alert->url)) {
-                    $this->_logger->error("Curl Error : ".$this->_httpClient->getError());
+                    $this->_logger->error($log_id."Curl Error : ".$this->_httpClient->getError());
                     continue;
                 }
                 $cities = array();
@@ -275,8 +292,11 @@ class Main
                     continue;
                 }
                 $countAds = count($newAds);
-                $this->_logger->info($countAds." annonce".
-                    ($countAds > 1?"s":"")." trouvée".($countAds > 1?"s":""));
+                $this->_logger->info(
+                    $log_id.$countAds.
+                    " annonce".($countAds > 1 ? "s" : "").
+                    " trouvée".($countAds > 1?"s":"")
+                );
                 $this->_mailer->clearAddresses();
                 $error = false;
                 if ($alert->send_mail) {
@@ -286,7 +306,7 @@ class Main
                             $this->_mailer->addAddress(trim($email));
                         }
                     } catch (phpmailerException $e) {
-                        $this->_logger->warn($e->getMessage());
+                        $this->_logger->warn($log_id.$e->getMessage());
                         $error = true;
                     }
                     if (!$error) {
@@ -322,7 +342,7 @@ class Main
                             try {
                                 $this->_mailer->send();
                             } catch (phpmailerException $e) {
-                                $this->_logger->warn($e->getMessage());
+                                $this->_logger->warn($log_id.$e->getMessage());
                             }
                         } else {
                             $newAds = array_reverse($newAds, true);
@@ -351,7 +371,7 @@ class Main
                                 try {
                                     $this->_mailer->send();
                                 } catch (phpmailerException $e) {
-                                    $this->_logger->warn($e->getMessage());
+                                    $this->_logger->warn($log_id.$e->getMessage());
                                 }
                             }
                         }
@@ -406,7 +426,12 @@ class Main
                                         try {
                                             $notifier->send($msg, $params);
                                         } catch (Exception $e) {
-                                            $this->_logger->warn("Erreur sur envoi via ".get_class($notifier).": (".$e->getCode().") ".$e->getMessage());
+                                            $this->_logger->warn(
+                                                $log_id."Erreur sur envoi via ".
+                                                get_class($notifier).
+                                                ": (".$e->getCode().") ".
+                                                $e->getMessage()
+                                            );
                                         }
                                     }
                                 }
@@ -438,7 +463,12 @@ class Main
                                     try {
                                         $notifier->send($msg, $params);
                                     } catch (Exception $e) {
-                                        $this->_logger->warn("Erreur sur envoi via ".get_class($notifier).": (".$e->getCode().") ".$e->getMessage());
+                                        $this->_logger->warn(
+                                            $log_id."Erreur sur envoi via ".
+                                            get_class($notifier).
+                                            ": (".$e->getCode().") ".
+                                            $e->getMessage()
+                                        );
                                     }
                                 }
                             }
@@ -463,7 +493,7 @@ class Main
     public function sigHandler($no)
     {
         if (in_array($no, array(SIGTERM, SIGINT))) {
-            $this->_logger->info("QUIT (".$no.")");
+            $this->_logger->info("[Pid ".getmypid()."] QUIT (".$no.")");
             $this->shutdown();
             exit;
         }
