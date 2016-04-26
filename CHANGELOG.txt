@@ -1,4 +1,13 @@
 
+## Version 3.2
+
+ * correction: si CURLOPT_FOLLOWLOCATION désactivé, suivre manuellement les redirections.
+ * correction: utiliser portail.free.fr pour le test de connexion distant.
+ * correction: utiliser le protocol HTTPs pour Leboncoin et alerte.ilatumi.org.
+ * correction: supprimer le nom du fichier dans l'URL de base de LBCAlerte.
+ * correction: crash possible si URL invalide.
+ * correction: amélioration des infos de log pour la tâche cron.
+
 ## Version 3.1
 
  * ajout: prise en charge de SeLoger.com.
