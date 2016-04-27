@@ -27,6 +27,18 @@ class Lbc extends AbstractParser
         $dateYesterday = $timeToday - 24*3600;
         $ads = array();
 
+        if ($filter) {
+            $exclude_ids = $filter->getExcludeIds();
+
+            /**
+             * Afin de garder une rétrocompatibilité, on prend en compte
+             * que $exclude_ids peut être numérique.
+             */
+            if (!is_numeric($exclude_ids) && !is_array($exclude_ids)) {
+                unset($exclude_ids);
+            }
+        }
+
         $adNodes = $this->getElementsByTagName("a");
 
         foreach ($adNodes AS $result) {
@@ -43,13 +55,21 @@ class Lbc extends AbstractParser
                 continue;
             }
 
-            /**
-             * @todo si l'annonce est supprimée, risque de renvoie de toutes
-             * les annonces. Il faudrait plutôt sauvegarder les IDs x
-             * derniers IDs et faire un filtre : exlude_ids
-             */
-            if ($m[1] == $filter->getLastId()) {
-                break;
+            // permet d'éliminer les annonces déjà envoyées.
+            if (isset($exclude_ids)) {
+                if (is_numeric($exclude_ids)) {
+                    /**
+                     * Si $exclude_ids est numérique, alors détection
+                     * à l'ancienne. Quand on rencontre l'ID de la
+                     * dernière annonce, on stoppe la boucle.
+                     */
+                    if ($m[1] == $exclude_ids) {
+                        break;
+                    }
+
+                } elseif (in_array($m[1], $exclude_ids)) {
+                    continue;
+                }
             }
 
             // permet d'éliminer les annonces déjà envoyées.

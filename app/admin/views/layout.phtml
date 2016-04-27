@@ -23,18 +23,6 @@
         </header>
         <?php endif; ?>
         <div class="content">
-            <?php if (false && true !== $msg = testHTTPConnection($client)) : ?>
-            <div style="color: #EF0000; font-weight: bold;">
-                <p>Erreur lors du test de connexion :</p>
-                <p>Message retourné par le test : <?php echo $msg; ?></p>
-                <p>Message retourné par cURL : <?php echo ($error = $client->getError())?$error:"aucun"; ?>.</p>
-                <ul>
-                    <li>Un message comme "connection time out" peut signifier que Leboncoin bloque vos connexions.</li>
-                    <li>Vérifiez que votre hébergement permet des connexions distantes.</li>
-                    <li>Vérifiez si votre proxy fonctionne correctement.</li>
-                </ul>
-            </div>
-            <?php endif; ?>
             <?php echo $content; ?>
         </div>
         <?php if ($userAuthed) : ?>

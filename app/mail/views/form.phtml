@@ -12,7 +12,7 @@ $alertCategories = $alert->getCategories();
             <input type="text" id="url" name="url" value="<?php
                 echo htmlspecialchars($alert->url);
             ?>" size="75" placeholder="Ex: <?php
-                echo htmlspecialchars("http://www.leboncoin.fr/ventes_immobilieres/offres/champagne_ardenne/?f=a&th=1&pe=7&ret=1");
+                echo htmlspecialchars("https://www.leboncoin.fr/ventes_immobilieres/offres/champagne_ardenne/?f=a&th=1&pe=7&ret=1");
             ?>" />
             <?php if (isset($errors["url"])) : ?>
             <p class="error"><?php echo $errors["url"]; ?></p>

@@ -26,10 +26,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $client->setProxyPassword($options["proxy_password"]);
         }
         $errors["test"] = array();
-        if (false === $client->request("http://www.free.fr")) {
+        if (false === $client->request("http://portail.free.fr")) {
             $errors["test"]["site"] = $client->getError();
         }
-        if (false === $client->request("http://www.leboncoin.fr")) {
+        if (false === $client->request("https://www.leboncoin.fr")) {
             $errors["test"]["lbc"] = $client->getError();
         }
     } else {

@@ -50,7 +50,7 @@ class Main
         $this->_lock();
         $this->_running = true;
 
-        $this->_logger->info("Vérification des alertes.");
+        $this->_logger->info("[Pid ".getmypid()."] Vérification des alertes.");
 
         $this->_mailer = new PHPMailer($exceptions=true);
         $this->_mailer->setLanguage("fr", DOCUMENT_ROOT."/lib/PHPMailer/language/");
@@ -103,10 +103,9 @@ class Main
         }
         $hour = (int)date("G");
         if ($hour < $checkStart || $hour >= $checkEnd) {
-            $this->_logger->info("Hors de la plage horaire. Contrôle annulé.");
+            $this->_logger->info("[Pid ".getmypid()."] Hors de la plage horaire. Contrôle annulé.");
             return;
         }
-        $this->_logger->info("Contrôle des alertes.");
         $this->_checkConnection();
         $users = $this->_userStorage->fetchAll();
 
@@ -121,14 +120,14 @@ class Main
         foreach ($users AS $user) {
             if ($storageType == "db") {
                 $storage = new \App\Storage\Db\Alert($this->_userStorage->getDbConnection(), $user);
-                $this->_logger->info("User: ".$user->getUsername());
+                $this->_logger->info("[Pid ".getmypid()."] USER : ".$user->getUsername());
             } else {
                 $file = DOCUMENT_ROOT."/var/configs/".$user->getUsername().".csv";
                 if (!is_file($file)) {
                     continue;
                 }
                 $storage = new \App\Storage\File\Alert($file);
-                $this->_logger->debug("Fichier config: ".$file);
+                $this->_logger->info("[Pid ".getmypid()."] USER : ".$user->getUsername()." (".$file.")");
             }
 
             $reset_filename = DOCUMENT_ROOT."/var/tmp/reset_".$user->getId();
@@ -147,21 +146,36 @@ class Main
                     }
                     try {
                         $notifications[$notification_name] = \Message\AdapterFactory::factory($notification_name, $options);
-                        $this->_logger->debug("notification ".get_class($notifications[$notification_name])." activée");
+                        $this->_logger->debug(
+                            "[Pid ".getmypid()."] USER : ".$user->getUsername().
+                            " -> Notification ".get_class($notifications[$notification_name])." activée"
+                        );
                     } catch (\Exception $e) {
-                        $this->_logger->warn("notification ".$notification_name." invalide");
+                        $this->_logger->warn(
+                            "[Pid ".getmypid()."] USER : ".$user->getUsername().
+                            " -> Notification ".$notification_name." invalide"
+                        );
                     }
                 }
             }
 
             $alerts = $storage->fetchAll();
-            $this->_logger->info(count($alerts)." alerte".
-                (count($alerts) > 1?"s":"")." trouvée".(count($alerts) > 1?"s":""));
+            $this->_logger->info(
+                "[Pid ".getmypid()."] USER : ".$user->getUsername()." -> ".
+                count($alerts)." alerte".(count($alerts) > 1 ? "s" : "").
+                " trouvée".(count($alerts) > 1 ? "s" : ""));
             if (count($alerts) == 0) {
                 continue;
             }
             foreach ($alerts AS $i => $alert) {
-                $config = SiteConfigFactory::factory($alert->url);
+                $log_id = "[Pid ".getmypid()."] USER : ".$user->getUsername()." - ALERT ID : ".$alert->id." -> ";
+
+                try {
+                    $config = SiteConfigFactory::factory($alert->url);
+                } catch (Exception $e) {
+                    $this->_logger->warn($log_id.$e->getMessage());
+                    continue;
+                }
 
                 $unique_ads = $user->getOption("unique_ads");
 
@@ -179,7 +193,7 @@ class Main
                 }
                 if ($reset) {
                     $alert->time_updated = 0;
-                    $alert->last_id = 0;
+                    $alert->last_id = array();
                     $alert->max_id = 0;
                     $alert->time_last_ad = 0;
                 }
@@ -187,19 +201,27 @@ class Main
                     || $alert->suspend) {
                     continue;
                 }
-                $this->_logger->info("Contrôle de l'alerte ".$alert->url);
+                $this->_logger->info($log_id."URL : ".$alert->url);
                 try {
                     $parser = \AdService\ParserFactory::factory($alert->url);
                 } catch (\AdService\Exception $e) {
-                    $this->_logger->info("\t".$e->getMessage());
+                    $this->_logger->err($log_id." ".$e->getMessage());
                     continue;
                 }
 
-                $this->_logger->debug("Dernière mise à jour : ".(!empty($alert->time_updated)?date("d/m/Y H:i", (int)$alert->time_updated):"inconnue"));
-                $this->_logger->debug("Dernière annonce : ".(!empty($alert->time_last_ad)?date("d/m/Y H:i", (int)$alert->time_last_ad):"inconnue"));
+                $this->_logger->debug($log_id."Dernière mise à jour : ".(
+                    !empty($alert->time_updated) ?
+                        date("d/m/Y H:i", (int) $alert->time_updated) :
+                        "inconnue"
+                ));
+                $this->_logger->debug($log_id."Dernière annonce : ".(
+                    !empty($alert->time_last_ad) ?
+                        date("d/m/Y H:i", (int) $alert->time_last_ad) :
+                        "inconnue"
+                ));
                 $alert->time_updated = $currentTime;
                 if (!$content = $this->_httpClient->request($alert->url)) {
-                    $this->_logger->error("Curl Error : ".$this->_httpClient->getError());
+                    $this->_logger->error($log_id."Curl Error : ".$this->_httpClient->getError());
                     continue;
                 }
                 $cities = array();
@@ -213,7 +235,7 @@ class Main
                     "price_strict" => (bool)$alert->price_strict,
                     "categories" => $alert->getCategories(),
                     "min_id" => $unique_ads ? $alert->max_id : 0,
-                    "last_id" => $alert->last_id,
+                    "exclude_ids" => $alert->last_id,
                 ));
                 $ads = $parser->process(
                     $content,
@@ -221,32 +243,60 @@ class Main
                     parse_url($alert->url, PHP_URL_SCHEME)
                 );
                 $countAds = count($ads);
+
+                /**
+                 * Migrer vers le nouveau système de détection d'annonce.
+                 */
+                if (is_numeric($alert->last_id)) {
+                    $filter->setExcludeIds(array());
+                    $alert->last_id = array();
+                    $tmp_ads = $parser->process(
+                        $content,
+                        $filter,
+                        parse_url($alert->url, PHP_URL_SCHEME)
+                    );
+                    foreach ($tmp_ads AS $tmp_ad) {
+                        $alert->last_id[] = $tmp_ad->getId();
+                    }
+                    unset($tmp_ads, $tmp_ad);
+                }
+
                 if ($countAds == 0) {
                     $storage->save($alert);
                     continue;
                 }
                 $siteConfig = \AdService\SiteConfigFactory::factory($alert->url);
-                if ($ad = current($ads)) {
-                    $alert->last_id = $ad->getId();
-                }
                 $newAds = array();
                 foreach ($ads AS $ad) {
                     $time = $ad->getDate();
-                    $newAds[$ad->getId()] = require DOCUMENT_ROOT."/app/mail/views/mail-ad.phtml";
+                    $id = $ad->getId();
+                    $newAds[$id] = require DOCUMENT_ROOT."/app/mail/views/mail-ad.phtml";
+                    if (!in_array($id, $alert->last_id)) {
+                        array_unshift($alert->last_id, $id);
+                    }
                     if ($time && $alert->time_last_ad < $time) {
                         $alert->time_last_ad = $time;
                     }
-                    if ($unique_ads && $ad->getId() > $alert->max_id) {
-                        $alert->max_id = $ad->getId();
+                    if ($unique_ads && $id > $alert->max_id) {
+                        $alert->max_id = $id;
                     }
                 }
+
+                // On conserve 250 IDs d'annonce vues.
+                if (250 < count($alert->last_id)) {
+                    $alert->last_id = array_slice($alert->last_id, 0, 250);
+                }
+
                 if (!$newAds) {
                     $storage->save($alert);
                     continue;
                 }
                 $countAds = count($newAds);
-                $this->_logger->info($countAds." annonce".
-                    ($countAds > 1?"s":"")." trouvée".($countAds > 1?"s":""));
+                $this->_logger->info(
+                    $log_id.$countAds.
+                    " annonce".($countAds > 1 ? "s" : "").
+                    " trouvée".($countAds > 1?"s":"")
+                );
                 $this->_mailer->clearAddresses();
                 $error = false;
                 if ($alert->send_mail) {
@@ -256,7 +306,7 @@ class Main
                             $this->_mailer->addAddress(trim($email));
                         }
                     } catch (phpmailerException $e) {
-                        $this->_logger->warn($e->getMessage());
+                        $this->_logger->warn($log_id.$e->getMessage());
                         $error = true;
                     }
                     if (!$error) {
@@ -292,7 +342,7 @@ class Main
                             try {
                                 $this->_mailer->send();
                             } catch (phpmailerException $e) {
-                                $this->_logger->warn($e->getMessage());
+                                $this->_logger->warn($log_id.$e->getMessage());
                             }
                         } else {
                             $newAds = array_reverse($newAds, true);
@@ -321,7 +371,7 @@ class Main
                                 try {
                                     $this->_mailer->send();
                                 } catch (phpmailerException $e) {
-                                    $this->_logger->warn($e->getMessage());
+                                    $this->_logger->warn($log_id.$e->getMessage());
                                 }
                             }
                         }
@@ -339,7 +389,7 @@ class Main
                             $ad = $ads[$id]; // récupère l'objet.
                             $url = $ad->getLink();
                             if (false !== strpos($url, "leboncoin")) {
-                                $url = "http://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
+                                $url = "https://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
                             }
                             curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$url);
                             if ($url = curl_exec($curlTinyurl)) {
@@ -376,7 +426,12 @@ class Main
                                         try {
                                             $notifier->send($msg, $params);
                                         } catch (Exception $e) {
-                                            $this->_logger->warn("Erreur sur envoi via ".get_class($notifier).": (".$e->getCode().") ".$e->getMessage());
+                                            $this->_logger->warn(
+                                                $log_id."Erreur sur envoi via ".
+                                                get_class($notifier).
+                                                ": (".$e->getCode().") ".
+                                                $e->getMessage()
+                                            );
                                         }
                                     }
                                 }
@@ -408,7 +463,12 @@ class Main
                                     try {
                                         $notifier->send($msg, $params);
                                     } catch (Exception $e) {
-                                        $this->_logger->warn("Erreur sur envoi via ".get_class($notifier).": (".$e->getCode().") ".$e->getMessage());
+                                        $this->_logger->warn(
+                                            $log_id."Erreur sur envoi via ".
+                                            get_class($notifier).
+                                            ": (".$e->getCode().") ".
+                                            $e->getMessage()
+                                        );
                                     }
                                 }
                             }
@@ -433,7 +493,7 @@ class Main
     public function sigHandler($no)
     {
         if (in_array($no, array(SIGTERM, SIGINT))) {
-            $this->_logger->info("QUIT (".$no.")");
+            $this->_logger->info("[Pid ".getmypid()."] QUIT (".$no.")");
             $this->shutdown();
             exit;
         }
@@ -443,12 +503,12 @@ class Main
     {
         // teste la connexion
         $this->_httpClient->setDownloadBody(false);
-        if (false === $this->_httpClient->request("http://www.leboncoin.fr")) {
-            throw new Exception("Connexion vers http://www.leboncoin.fr échouée".
+        if (false === $this->_httpClient->request("https://www.leboncoin.fr")) {
+            throw new Exception("Connexion vers https://www.leboncoin.fr échouée".
                 (($error = $this->_httpClient->getError())?" (erreur: ".$error.")":"").".");
         }
-        if (200 != $this->_httpClient->getRespondCode()) {
-            throw new Exception("Code HTTP différent de 200.");
+        if (200 != $code = $this->_httpClient->getRespondCode()) {
+            throw new Exception("Code HTTP différent de 200 : ".$code);
         }
         $this->_httpClient->setDownloadBody(true);
     }

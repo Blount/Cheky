@@ -47,10 +47,17 @@ class Alert implements \App\Storage\Alert
                 $nb_columns = count($header);
                 while (false !== $values = fgetcsv($fopen, 0, ",", '"')) {
                     $alert = new \App\Mail\Alert();
-                    $alert->fromArray(array_combine(
+                    $options = array_combine(
                         $header,
-                        array_slice($values, 0, $nb_columns)
-                    ));
+                        array_slice($values, 0, count($header))
+                    );
+                    if (isset($options["last_id"]) && !is_numeric($options["last_id"])) {
+                        $options["last_id"] = json_decode($options["last_id"], true);
+                        if (!is_array($options["last_id"])) {
+                            $options["last_id"] = array();
+                        }
+                    }
+                    $alert->fromArray($options);
                     $alerts[$alert->id] = $alert;
                 }
             }
@@ -71,6 +78,12 @@ class Alert implements \App\Storage\Alert
                         array_slice($values, 0, count($header))
                     );
                     if ($options["id"] == $id) {
+                        if (isset($options["last_id"]) && !is_numeric($options["last_id"])) {
+                            $options["last_id"] = json_decode($options["last_id"], true);
+                            if (!is_array($options["last_id"])) {
+                                $options["last_id"] = array();
+                            }
+                        }
                         $alert = new \App\Mail\Alert();
                         $alert->fromArray($options);
                         break;
@@ -97,7 +110,11 @@ class Alert implements \App\Storage\Alert
                 $a = $alert;
                 $updated = true;
             }
-            fputcsv($fpNewFile, $a->toArray(), ",", '"');
+            $data = $a->toArray();
+            if (is_array($data["last_id"])) {
+                $data["last_id"] = json_encode($data["last_id"]);
+            }
+            fputcsv($fpNewFile, $data, ",", '"');
         }
         if (!$updated && !$alert->id) {
             $alert->id = sha1(uniqid());

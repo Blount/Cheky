@@ -21,7 +21,7 @@ class Alert
     public $group_ads = 1;
     public $send_mail = 1;
     public $send_sms_free_mobile = 0;
-    public $last_id = 0;
+    public $last_id = array();
     public $max_id = 0;
     public $send_sms_ovh = 0;
     public $send_pushbullet = 0;
@@ -38,10 +38,10 @@ class Alert
         }
 
         /**
-         * Depuis 3.1, last_id contient le dernier ID de la liste d'annonce
+         * Depuis 3.1, last_id contient les derniers IDs de la liste d'annonce
          * et max_id l'ID max trouvé.
          */
-        if ($this->last_id && !$this->max_id) {
+        if ($this->last_id && is_numeric($this->last_id) && !$this->max_id) {
             $this->max_id = $this->last_id;
         }
     }
@@ -77,7 +77,7 @@ class Alert
             "categories" => $this->categories,
             "send_mail" => $this->send_mail,
             "send_sms_free_mobile" => $this->send_sms_free_mobile,
-            "last_id" => (int) $this->last_id,
+            "last_id" => $this->last_id,
             "max_id" => (int) $this->max_id,
             "send_sms_ovh" => $this->send_sms_ovh,
             "send_pushbullet" => $this->send_pushbullet,

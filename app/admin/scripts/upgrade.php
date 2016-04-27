@@ -32,7 +32,7 @@ $allow_update = true;
 if (!is_writable(DOCUMENT_ROOT."/version.php")) {
     $allow_update = false;
     $errors[] = "Le fichier version.php est en lecture seule, la mise à jour automatique ne peut être effectuée.".
-        "<br />Vérifiez que tous les fichiers soient accéssibles en écriture.";
+        "<br />Vérifiez que tous les fichiers soient accéssibles en écriture (pas seulement le fichier version.php).";
 } elseif (is_file(DOCUMENT_ROOT."/var/.lock")) {
     $allow_update = false;
     $errors[] = "Une vérification de nouvelle annonce est en cours, veuillez attendre la fin de celle-ci pour mettre à jour.";

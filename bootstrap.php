@@ -118,6 +118,9 @@ class Bootstrap
                 if (false !== $pos = strpos($request_uri, "?")) {
                     $request_uri = mb_substr($request_uri, 0, $pos);
                 }
+                if (false !== strpos($request_uri, ".php")) {
+                    $request_uri = substr($request_uri, 0, strrpos($request_uri, "/"));
+                }
                 if ($request_uri) {
                     $base_url .= trim($request_uri, "/")."/";
                 }
@@ -182,30 +185,4 @@ if ("db" == $config->get("storage", "type", "files")) {
     $dbConnection = new mysqli($options["host"], $options["user"],
         $options["password"], $options["dbname"]);
     unset($options);
-}
-
-
-### Fonctions ###
-
-/**
- * Test la connexion HTTP.
- * @param HttpClientAbstract $client
- * @return string|boolean
- */
-function testHTTPConnection(HttpClientAbstract $client) {
-    // teste la connexion
-    $client->setDownloadBody(false);
-    if (false === $client->request("http://www.google.fr")) {
-        return "Connexion vers http://www.google.fr échouée: cet hébergement ne semble pas accepter les connexions distantes.";
-    }
-    if (200 != $client->getRespondCode()) {
-        return "Code HTTP différent de 200.";
-    }
-    if (false === $client->request("http://www.leboncoin.fr")) {
-        return "Connexion vers http://www.leboncoin.fr échouée: cet hébergement (ou le proxy) semble blacklisté par Leboncoin";
-    }
-    if (200 != $client->getRespondCode()) {
-        return "Code HTTP différent de 200.";
-    }
-    return true;
 }

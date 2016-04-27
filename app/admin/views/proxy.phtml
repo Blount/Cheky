@@ -7,7 +7,7 @@
         <?php else: ?>
         <li>utilisation d'un proxy pour la connexion.</li>
         <?php endif; ?>
-        <li>Connexion à <a href="http://www.free.fr">Free.fr</a> :
+        <li>Connexion à <a href="http://portail.free.fr">portail.free.fr</a> :
             <?php if (isset($errors["test"]["site"])) : ?>
             <span style="color: red;">échec</span>
             (erreur: <?php echo htmlspecialchars($errors["test"]["site"]); ?>)
@@ -15,7 +15,7 @@
             <span style="color: #009900;">réussi</span>
             <?php endif; ?>
         </li>
-        <li>Connexion à <a href="http://www.leboncoin.fr">Leboncoin</a> :
+        <li>Connexion à <a href="https://www.leboncoin.fr">Leboncoin</a> :
             <?php if (isset($errors["test"]["lbc"])) : ?>
             <span style="color: red;">échec</span>
             (erreur: <?php echo htmlspecialchars($errors["test"]["lbc"]); ?>)

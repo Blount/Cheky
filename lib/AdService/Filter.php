@@ -6,7 +6,7 @@ class Filter
 {
     protected $min_id = 0;
 
-    protected $last_id = 0;
+    protected $exclude_ids = array();
 
     protected $price_min = -1;
 
@@ -79,21 +79,21 @@ class Filter
     }
 
     /**
-     * @param int $last_id
+     * @param array $exclude_ids
      * @return Filter
      */
-    public function setLastId($last_id)
+    public function setExcludeIds($exclude_ids)
     {
-        $this->last_id = $last_id;
+        $this->exclude_ids = $exclude_ids;
         return $this;
     }
 
     /**
-     * @return int
+     * @return array
      */
-    public function getLastId()
+    public function getExcludeIds()
     {
-        return $this->last_id;
+        return $this->exclude_ids;
     }
 
     /**
