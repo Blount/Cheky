@@ -5,6 +5,14 @@
 <br />
 <?php endif; ?>
 
+<?php if ($upgradeStarted || $upgradeAvailable) : ?>
+<p>
+    <strong><span style="color: #EF0000;">ATTENTION :</span>
+    avant de lancer la mise à jour automatique,
+    merci d'effectuer une sauvegarde de vos données actuelles.</strong>
+</p>
+<?php endif; ?>
+
 <?php if ($upgradeStarted) : ?>
 
 <form action="" method="post">
