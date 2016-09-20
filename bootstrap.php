@@ -182,7 +182,12 @@ if ("db" == $config->get("storage", "type", "files")) {
         "password" => "",
         "dbname" => ""
     ), $config->get("storage", "options"));
-    $dbConnection = new mysqli($options["host"], $options["user"],
-        $options["password"], $options["dbname"]);
+    $dbConnection = new mysqli(
+        $options["host"],
+        $options["user"],
+        $options["password"],
+        $options["dbname"]
+    );
+    $dbConnection->set_charset("utf8");
     unset($options);
 }

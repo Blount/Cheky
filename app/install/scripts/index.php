@@ -48,6 +48,7 @@ if (!$errors && $_SERVER["REQUEST_METHOD"] == "POST") {
         }
         $config->set("general", "version", APPLICATION_VERSION);
         if (isset($dbConnection)) {
+            $dbConnection->set_charset("utf8");
             $config->set("storage", "type", "db");
             $config->set("storage", "options", array(
                 "host" => $_POST["db"]["host"],
