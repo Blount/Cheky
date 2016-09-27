@@ -11,6 +11,37 @@ class Update_33 extends Update
         }
 
         if ("db" == $this->_storage) {
+            $tables = array("LBC_User", "LBC_Alert");
+            foreach ($tables AS $table) {
+                $this->_dbConnection->set_charset("latin1");
+                $rows = $this->_dbConnection->query("SELECT * FROM `".$table."`");
+                $datas = array();
+                while ($row = $rows->fetch_assoc()) {
+                    $datas[] = $row;
+                }
+
+                $this->_dbConnection->set_charset("utf8");
+
+                foreach ($datas AS $data) {
+                    $id = $data["id"];
+                    unset($data["id"]);
+                    $sqlOptions = array();
+                    foreach ($data AS $key => $value) {
+                        if ($value === null) {
+                            $value = "NULL";
+                        } elseif (is_bool($value)) {
+                            $value = (int) $value;
+                        } elseif (!is_numeric($value)) {
+                            $value = "'".$this->_dbConnection->real_escape_string($value)."'";
+                        }
+                        $sqlOptions[] = "`".$key."` = ".$value;
+                    }
+                    $this->_dbConnection->query("UPDATE `".$table."` SET ".
+                        implode(", ", $sqlOptions).
+                        " WHERE `id` = ".$id);
+                }
+            }
+
             $this->_dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_BackupAd` (
                 `aid` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
                 `id` INTEGER UNSIGNED NOT NULL,
