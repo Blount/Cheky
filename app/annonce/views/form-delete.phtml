@@ -1,0 +1,14 @@
+<form action="" method="post">
+    <fieldset>
+        <legend>Supprimer cette annonce ?</legend>
+        <ul>
+            <li>Titre : <?php echo htmlspecialchars($ad->getTitle()); ?></li>
+            <li>Url : <?php echo htmlspecialchars($ad->getLink()); ?></li>
+        </ul>
+        <p>
+            <input type="hidden" name="id" value="<?php echo $_GET["id"]; ?>" />
+            <input type="submit" value="Oui" style="font-weight: bold;" />
+            | <a href="?mod=annonce">Non</a>
+        </p>
+    </fieldset>
+</form>

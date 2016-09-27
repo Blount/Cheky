@@ -3,6 +3,10 @@ ob_start();
 ?>
 <?php if ($ad->getDate()) : ?>
 Publié le <strong><?php echo date("d/m/Y H:i", $ad->getDate()); ?></strong>
+<?php if (!empty($baseurl) && isset($siteConfig) && $siteConfig->getOption("allow_backup")) : ?>
+- <a href="<?php echo $baseurl; ?>?mod=annonce&amp;a=backup&amp;aurl=<?php echo $ad->getLink(); ?>"
+    target="_blank">SAUVEGARDER</a>
+<?php endif; ?>
 <br />
 <br />
 <?php endif; ?>

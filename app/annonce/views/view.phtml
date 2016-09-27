@@ -1,0 +1,79 @@
+<?php
+$date = implode("/", array_reverse(explode("-", $ad->getDate())));
+?>
+<p>
+    <a href="?mod=annonce">Retour</a>
+</p>
+
+<h2>
+    <?php echo htmlspecialchars($ad->getTitle()); ?>
+    <a href="<?php echo $ad->getLink(); ?>"
+        target="_blank"
+        title="Ouvrir sur <?php echo $ad_config->getOption("site_name");
+        ?>"><span class="fa fa-external-link"></span></a>
+</h2>
+<div class="annonce">
+    <div class="annonce-data">
+        <ul>
+            <li class="annonce-data-line">
+                <span class="annonce-label">Auteur</span><span
+                    class="annonce-value"><?php echo $ad->getAuthor(); ?></span>
+            </li>
+            <?php if ($value = $ad->getPrice()) : ?>
+            <li class="annonce-data-line">
+                <span class="annonce-label">Prix</span><span
+                    class="annonce-value"><?php
+                    echo number_format($value, 0, ",", " ")." ";
+                    echo htmlspecialchars($ad->getCurrency());
+                ?></span>
+            </li>
+            <?php endif; ?>
+            <li class="annonce-data-line">
+                <span class="annonce-label">Date</span><span
+                    class="annonce-value"><?php
+                    echo $date; ?></span>
+            </li>
+            <li class="annonce-data-line">
+                <span class="annonce-label">Catégorie</span><span
+                    class="annonce-value"><?php
+                    echo htmlspecialchars($ad->getCategory()); ?></span>
+            </li>
+            <?php if ($value = $ad->getCity()) : ?>
+            <li class="annonce-data-line">
+                <span class="annonce-label">Ville</span><span
+                    class="annonce-value">
+                    <?php echo htmlspecialchars($ad->getZipCode()); ?>
+                    <?php echo htmlspecialchars($value); ?>
+                </span>
+            </li>
+            <?php endif; ?>
+
+            <?php foreach ($ad->getProperties() AS $name => $value) : ?>
+            <?php if ($value) : ?>
+            <li class="annonce-data-line">
+                <span class="annonce-label"><?php echo htmlspecialchars($name); ?></span><span
+                    class="annonce-value">
+                    <?php echo htmlspecialchars($value); ?>
+                </span>
+            </li>
+            <?php endif; ?>
+            <?php endforeach; ?>
+        </ul>
+        <div class="annonce-description">
+            <span class="annonce-label">Description</span>
+            <p><?php
+                echo nl2br(htmlspecialchars($ad->getDescription())); ?></p>
+        </div>
+    </div>
+    <?php $photos = $ad->getPhotos(); ?>
+    <div class="annonce-photos">
+        <?php foreach ($photos AS $photo) : ?>
+        <div class="annonce-photo">
+            <a href="static/media/annonce/<?php echo $photo["local"];
+                ?>" target="_blank"><img
+                src="static/media/annonce/<?php echo $photo["local"]; ?>"
+                alt="" class="annonce-photo-img" /></a>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>

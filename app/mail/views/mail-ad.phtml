@@ -2,6 +2,10 @@
 <div>
     <?php if ($ad->getDate()) : ?>
     <strong>Publié le <?php echo date("d/m/Y à H:i", $ad->getDate()); ?></strong>
+    <?php if (!empty($baseurl) && isset($config) && $config->getOption("allow_backup")) : ?>
+    - <a href="<?php echo $baseurl; ?>?mod=annonce&amp;a=backup&amp;aurl=<?php echo $ad->getLink(); ?>"
+        target="_blank">Sauvegarder</a>
+    <?php endif; ?>
     <br />
     <?php endif; ?>
 

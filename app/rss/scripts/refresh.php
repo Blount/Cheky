@@ -49,6 +49,7 @@ $content = $client->request($_GET["url"]);
 
 $filter = new \AdService\Filter($params);
 $siteConfig = \AdService\SiteConfigFactory::factory($_GET["url"]);
+$baseurl = $config->get("general", "baseurl", "");
 
 $ads = $parser->process(
     $content,
