@@ -1,9 +1,9 @@
 <p>
     <?php if (0 < $nbAds = count($ads)) : ?>
     <strong><?php echo $nbAds ?> <?php
-        echo $nbAds > 1?"annonces enregistrées":"annonce enregistrée"; ?></strong> |
+        echo $nbAds > 1?"annonces sauvegardées":"annonce sauvegardée"; ?></strong> |
     <?php endif; ?>
-    <a href="?mod=annonce&amp;a=form" class="link-create-ad">Ajouter une annonce</a>
+    <a href="?mod=annonce&amp;a=form" class="link-create-ad">Sauvegarder une annonce</a>
 </p>
 
 <table style="width: 100%;">
@@ -64,7 +64,7 @@
     </thead>
     <tbody>
         <?php if (0 == $nbAds) : ?>
-        <tr><td colspan="11">Aucune annonce enregistrée</td></tr>
+        <tr><td colspan="11">Aucune annonce sauvegardée</td></tr>
         <?php else: ?>
         <?php $i = 1; foreach ($ads AS $ad) : ?>
             <?php
