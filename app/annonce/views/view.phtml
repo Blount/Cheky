@@ -64,6 +64,20 @@ $date = implode("/", array_reverse(explode("-", $ad->getDate())));
             <p><?php
                 echo nl2br(htmlspecialchars($ad->getDescription())); ?></p>
         </div>
+        <div class="annonce-comment">
+            <span class="annonce-label">Note</span>
+            <div>
+                <p><?php echo nl2br(htmlspecialchars($note = $ad->getComment())); ?></p>
+                <p><a href="?mod=annonce&amp;a=form-comment&amp;id=<?php echo $ad->getId(); ?>"
+                    class="button">
+                    <?php if (!$note) : ?>
+                    Ajouter une note
+                    <?php else: ?>
+                    Modifier la note
+                    <?php endif; ?>
+                </a></p>
+            </div>
+        </div>
     </div>
     <?php $photos = $ad->getPhotos(); ?>
     <div class="annonce-photos">

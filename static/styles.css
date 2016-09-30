@@ -153,7 +153,8 @@ form dd label {
 	margin: 0 40px 0 1%;
     cursor: pointer;
 }
-form input[type=submit] {
+form input[type=submit],
+a.button {
     padding: 0 10px;
     font-size: 1.2em;
     background: #FFFFFF;
@@ -166,7 +167,13 @@ form input[type=submit] {
     height: 36px;
     transition: all linear 200ms;
 }
-form input[type=submit]:hover {
+a.button {
+    display: inline-block;
+    line-height: 36px;
+    height: auto;
+}
+form input[type=submit]:hover,
+a.button:hover {
     box-shadow: 0 0 5px #AAA;
 }
 form .description {
@@ -206,6 +213,11 @@ footer {
     line-height: 30px;
     border-top: 1px solid #CCCCCC;
     font-size: .85em;
+}
+
+.message-success {
+    font-weight: bold;
+    color: #339933;
 }
 
 .topmenu {
@@ -393,14 +405,24 @@ form .categories input[type=checkbox] {
     width: 70%;
     border-right: 1px solid #424242;
 }
-.annonce-description {
+.annonce-description,
+.annonce-comment {
     margin-top: 10px;
 }
-.annonce-description p {
+.annonce-description p,
+.annonce-comment > div {
     box-sizing: border-box;
     border: 1px solid #424242;
     padding: 10px;
     margin: 0;
+}
+.annonce-comment p {
+    margin: 0;
+}
+.annonce-comment .button {
+    margin-top: 10px;
+    font-size: 1em;
+    line-height: 2;
 }
 
 

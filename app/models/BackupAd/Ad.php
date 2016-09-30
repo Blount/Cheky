@@ -6,6 +6,7 @@ class Ad extends \AdService\Ad
 {
     protected $_aid;
     protected $_date_created;
+    protected $_comment;
 
     /**
     * @param int $id
@@ -44,12 +45,31 @@ class Ad extends \AdService\Ad
     }
 
     /**
+    * @param string $comment
+    * @return Ad
+    */
+    public function setComment($comment)
+    {
+        $this->_comment = $comment;
+        return $this;
+    }
+
+    /**
+    * @return string
+    */
+    public function getComment()
+    {
+        return $this->_comment;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
     {
         $data = parent::toArray();
-        $data["date_created"] = $this->_date_created;
+        $data["date_created"] = (string) $this->_date_created;
+        $data["comment"] = (string) $this->_comment;
         return $data;
     }
 }

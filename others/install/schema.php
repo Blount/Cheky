@@ -65,6 +65,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_BackupAd` (
     `photos` TEXT DEFAULT NULL,
     `properties` TEXT DEFAULT NULL,
     `description` TEXT NOT NULL,
+    `comment` TEXT NOT NULL,
     `user_id` MEDIUMINT UNSIGNED NOT NULL,
     PRIMARY KEY (`aid`),
     CONSTRAINT `LBCKey_BackupAd_User`
