@@ -6,6 +6,10 @@ $values = array(
 
 $categoryCollection = new \Lbc\CategoryCollection();
 
+if (isset($_GET["preurl"])) {
+    $values["url"] = $_GET["preurl"];
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($_POST AS $name => $value) {
         if (is_array($value)) {

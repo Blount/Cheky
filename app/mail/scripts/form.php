@@ -6,6 +6,10 @@ if (empty($alert)) {
     $alert = new App\Mail\Alert();
 }
 
+if (isset($_GET["preurl"])) {
+    $alert->url = $_GET["preurl"];
+}
+
 $categoryCollection = new \Lbc\CategoryCollection();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
