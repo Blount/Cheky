@@ -21,7 +21,7 @@ class Lbc extends AbstractParser
             return;
         }
         $this->scheme = $scheme;
-        $this->loadHTML($content);
+        $this->loadHTML('<?xml encoding="UTF-8">'.$content);
 
         $timeToday = strtotime(date("Y-m-d")." 23:59:59");
         $dateYesterday = $timeToday - 24*3600;
