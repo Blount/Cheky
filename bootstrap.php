@@ -152,6 +152,11 @@ class Bootstrap
 
     public function __construct()
     {
+        set_exception_handler(array($this, "_exceptionHandler"));
+        set_error_handler(
+            array($this, "_errorHandler"),
+            E_ERROR | E_WARNING | E_USER_ERROR | E_USER_WARNING
+        );
     }
 
     public function bootstrap(Config_Lite $config)
@@ -162,6 +167,24 @@ class Bootstrap
                 $this->$method();
             }
         }
+    }
+
+    public function _exceptionHandler($e)
+    {
+        Logger::getLogger("main")->error(
+            get_class($e)." : #".
+                $e->getCode()." ".
+                $e->getMessage()." (".$e->getFile().":".$e->getLine().")"
+        );
+        die("Un problème est survenu lors de l'exécution du programme.\n");
+    }
+
+    public function _errorHandler($errno, $errstr, $errfile, $errline)
+    {
+        Logger::getLogger("main")->error(
+            "#".$errno." ".$errstr." (".$errfile.":".$errline.")"
+        );
+        die("Un problème est survenu lors de l'exécution du programme.\n");
     }
 }
 
@@ -188,6 +211,16 @@ if ("db" == $config->get("storage", "type", "files")) {
         $options["password"],
         $options["dbname"]
     );
+    if ($dbConnection->connect_error) {
+        Logger::getLogger("main")->error(
+            "Connexion à la base de données échouée : ".
+            $dbConnection->connect_error
+        );
+        echo "Un problème est survenu lors de la génération de la page.";
+        exit;
+    }
+    $driver = new mysqli_driver();
+    $driver->report_mode = MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT;
     $dbConnection->set_charset("utf8");
     unset($options);
 }

@@ -205,7 +205,7 @@ class Main
                 try {
                     $parser = \AdService\ParserFactory::factory($alert->url);
                 } catch (\AdService\Exception $e) {
-                    $this->_logger->err($log_id." ".$e->getMessage());
+                    $this->_logger->warn($log_id." ".$e->getMessage());
                     continue;
                 }
 
@@ -548,11 +548,7 @@ try {
     return;
 }
 
-try {
-    $main->check();
-} catch (\Exception $e) {
-    Logger::getLogger("main")->warn($e->getMessage());
-}
+$main->check();
 $main->shutdown();
 
 
