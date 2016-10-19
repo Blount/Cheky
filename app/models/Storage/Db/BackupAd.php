@@ -128,6 +128,15 @@ class BackupAd implements \App\Storage\BackupAd
     {
         $this->_connection->query("DELETE FROM ".$this->_table."
             WHERE `aid` = ".$ad->getAid());
+
+        // Supprime les photos
+        foreach ($ad->getPhotos() AS $photo) {
+            $filename = DOCUMENT_ROOT."/static/media/annonce/".$photo["local"];
+            if (is_file($filename)) {
+                unlink($filename);
+            }
+        }
+
         return $this;
     }
 

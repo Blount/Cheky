@@ -140,7 +140,15 @@ class BackupAd implements \App\Storage\BackupAd
         file_put_contents($this->_filename, file_get_contents($this->_filename.".new"));
         unlink($this->_filename.".new");
 
-        // Si aucune annonce trouvée,
+        // Supprime les photos
+        foreach ($ad->getPhotos() AS $photo) {
+            $filename = DOCUMENT_ROOT."/static/media/annonce/".$photo["local"];
+            if (is_file($filename)) {
+                unlink($filename);
+            }
+        }
+
+        // Si aucune annonce trouvée, on supprime le fichier CSV
         $ads = $this->fetchAll();
         if (0 == count($ads) && is_file($this->_filename)) {
 			unlink($this->_filename);
