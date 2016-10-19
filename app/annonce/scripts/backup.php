@@ -4,13 +4,7 @@ $url = !empty($_GET["aurl"]) ? $_GET["aurl"] : null;
 
 $logger = Logger::getLogger("main");
 
-//$filename = DOCUMENT_ROOT."/var/tmp/annonce_".sha1($url).".html";
-//if (!is_file($filename)) {
-    $content = $client->request($url);
-    //file_put_contents($filename, $content);
-//} else {
-    //$content = file_get_contents($filename);
-//}
+$content = $client->request($url);
 
 try {
     $parser = \AdService\ParserFactory::factory($url);
