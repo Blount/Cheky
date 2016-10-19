@@ -81,7 +81,7 @@
             <td class="title"><a href="?mod=annonce&amp;a=view&amp;id=<?php echo $ad->getId(); ?>"><?php
                 echo $ad->getTitle()?htmlspecialchars($ad->getTitle()):"-"; ?></a></td>
             <td><?php echo htmlspecialchars($ad->getAuthor()); ?></td>
-            <td><?php echo htmlspecialchars($ad->getDateCreated()); ?></td>
+            <td><?php echo date("d/m/Y à H:i", strtotime($ad->getDateCreated())); ?></td>
             <td><?php echo htmlspecialchars($date); ?></td>
             <td><?php echo htmlspecialchars($ad->getCategory()); ?></td>
             <td style="text-align: right;">
