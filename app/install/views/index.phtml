@@ -1,6 +1,11 @@
 <?php if (!empty($errors)) : ?>
 <ul class="error"><li><?php echo implode("</li><li>", $errors); ?></li></ul>
 <?php else: ?>
+
+<?php if (!empty($warnings)) : ?>
+<ul class="warning"><li><?php echo implode("</li><li>", $warnings); ?></li></ul>
+<?php endif; ?>
+
 <form action="" method="post">
     <fieldset>
         <legend>Nouvelle installation</legend>
@@ -35,13 +40,16 @@
             <dd>
                 <label for="typefiles">
                     <input type="radio" id="typefiles" name="type" value="files"<?php
-                        echo isset($_POST["type"]) && "files" == $_POST["type"] ? ' checked="checked"' : ""
+                        echo isset($warnings["mysqli"])
+                            || isset($_POST["type"]) && "files" == $_POST["type"] ?
+                            ' checked="checked"' : ""
                     ?> />
                     fichiers
                 </label>
                 <label for="typedb" style="margin-left: 40px;">
                     <input type="radio" id="typedb" name="type" value="db"<?php
-                        echo isset($_POST["type"]) && "db" == $_POST["type"] ? ' checked="checked"' : ""
+                        echo isset($_POST["type"]) && "db" == $_POST["type"] ? ' checked="checked"' : "";
+                        echo isset($warnings["mysqli"]) ? ' disabled="disabled"' : "";
                     ?> />
                     base de données MySQL
                 </label>

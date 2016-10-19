@@ -66,6 +66,11 @@ table img {
     font-weight: bold;
     margin: 0;
 }
+.warning {
+    color: #EA8600;
+    font-weight: bold;
+    margin: 0;
+}
 form {
 	width: 100%;
 	max-width: 800px;

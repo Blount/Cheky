@@ -8,6 +8,10 @@ if (!function_exists("curl_init")) {
     $errors[] = "php-curl doit être installé pour continuer l'installation";
 }
 
+if (!class_exists("mysqli")) {
+    $warnings["mysqli"] = "mysqli doit être installé pour utiliser le stockage en base de données";
+}
+
 if (!is_writable(DOCUMENT_ROOT."/var")) {
     $errors[] = "Il est nécessaire de pouvoir écrire dans le dossier 'var' (".DOCUMENT_ROOT."/var".").";
 }
