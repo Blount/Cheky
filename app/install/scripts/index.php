@@ -4,6 +4,10 @@ $errors = array();
 $formErrors = array();
 $messages = array();
 
+if (!function_exists("curl_init")) {
+    $errors[] = "php-curl doit être installé pour continuer l'installation";
+}
+
 if (!is_writable(DOCUMENT_ROOT."/var")) {
     $errors[] = "Il est nécessaire de pouvoir écrire dans le dossier 'var' (".DOCUMENT_ROOT."/var".").";
 }
