@@ -12,3 +12,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     header("LOCATION: ./?mod=annonce"); exit;
 }
+
+$referer = isset($_GET["r"]) ? $_GET["r"] : "";

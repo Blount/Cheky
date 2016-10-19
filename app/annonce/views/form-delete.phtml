@@ -8,7 +8,8 @@
         <p>
             <input type="hidden" name="id" value="<?php echo $_GET["id"]; ?>" />
             <input type="submit" value="Oui" style="font-weight: bold;" />
-            | <a href="?mod=annonce">Non</a>
+            | <a href="?mod=annonce<?php
+            echo $referer == "view" ? '&amp;a=view&amp;id='.$ad->getId() : ''; ?>">Non</a>
         </p>
     </fieldset>
 </form>
