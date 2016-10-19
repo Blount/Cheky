@@ -2,7 +2,9 @@
 $date = implode("/", array_reverse(explode("-", $ad->getDate())));
 ?>
 <p>
-    <a href="?mod=annonce">Retour</a>
+    <a href="?mod=annonce">&lt; retour à la liste des annonces sauvegardées</a> |
+    <a href="?mod=annonce&amp;a=form-delete&amp;id=<?php echo $ad->getId(); ?>&amp;r=view"
+        title="Supprimer l'annonce"><span class="fa fa-times"></span> supprimer l'annonce</a>
 </p>
 
 <h2>
