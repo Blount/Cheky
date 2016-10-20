@@ -107,6 +107,12 @@ class BackupAd implements \App\Storage\BackupAd
 			}
             fputcsv($fpNewFile, $data, ",", '"');
         }
+        foreach ($ad->getPhotos() AS $photo) {
+            $filename = DOCUMENT_ROOT."/static/media/annonce/".$photo["local"];
+            if (!is_file($filename)) {
+                copy($photo["remote"], $filename);
+            }
+        }
 
         fclose($fpNewFile);
         fclose($fopen);
