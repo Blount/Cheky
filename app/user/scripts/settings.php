@@ -51,8 +51,8 @@ $errors = array();
 $errorsTest = array();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $params = array_merge($params, $_POST);
     $params = array_replace_recursive($params, $_POST);
+    $form_values = array_replace_recursive($form_values, $_POST);
 
     // test config Free Mobile
     foreach ($params["notification"] AS $section => $options) {
