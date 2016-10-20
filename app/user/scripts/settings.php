@@ -1,41 +1,58 @@
 <?php
 
+if (!$userAuthed->getApiKey()) {
+    $userAuthed->setApiKey(
+        sha1(
+            str_repeat(
+                uniqid($_SERVER["HTTP_HOST"], true),
+                rand(10, 100)
+            )
+        )
+    );
+    $userStorage->save($userAuthed);
+}
+
 $params = array(
     "notification" => $userAuthed->getOption("notification"),
-    "unique_ads" => $userAuthed->getOption("unique_ads", false)
+    "unique_ads" => $userAuthed->getOption("unique_ads", false),
+    "api_key" => $userAuthed->getApiKey(),
 );
 if (!is_array($params["notification"])) {
     $params["notification"] = array();
 }
-$form_values["notification"] = array_replace_recursive(array(
-    "freeMobile" => array(
-        "user" => "",
-        "key" => "",
-    ),
-    "notifymyandroid" => array(
-        "token" => "",
-    ),
-    "pushbullet" => array(
-        "token" => "",
-    ),
-    "ovh" => array(
-        "account" => "",
-        "login" => "",
-        "password" => "",
-        "from" => "",
-        "to" => "",
-    ),
-    "pushover" => array(
-        "token" => "",
-        "user_key" => "",
-    ),
-), $params["notification"]);
+$form_values = array(
+    "api_key" => $params["api_key"],
+    "notification" => array_replace_recursive(array(
+        "freeMobile" => array(
+            "user" => "",
+            "key" => "",
+        ),
+        "notifymyandroid" => array(
+            "token" => "",
+        ),
+        "pushbullet" => array(
+            "token" => "",
+        ),
+        "ovh" => array(
+            "account" => "",
+            "login" => "",
+            "password" => "",
+            "from" => "",
+            "to" => "",
+        ),
+        "pushover" => array(
+            "token" => "",
+            "user_key" => "",
+        ),
+    ), $params["notification"])
+);
 
 $errors = array();
 $errorsTest = array();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $params = array_merge($params, $_POST);
+    $params = array_replace_recursive($params, $_POST);
 
     // test config Free Mobile
     foreach ($params["notification"] AS $section => $options) {
@@ -111,6 +128,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
         } else {
+            if (!empty($params["api_key_reset"])) {
+                $userAuthed->setApiKey(
+                    sha1(
+                        str_repeat(
+                            uniqid($_SERVER["HTTP_HOST"], true),
+                            rand(10, 100)
+                        )
+                    )
+                );
+                unset($params["api_key_reset"]);
+            }
             $userAuthed->mergeOptions($params);
             $userStorage->save($userAuthed);
             $_SESSION["userSettingsSaved"] = true;

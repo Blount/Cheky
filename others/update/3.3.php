@@ -70,6 +70,9 @@ class Update_33 extends Update
                     REFERENCES `LBC_User` (`id`)
                     ON DELETE CASCADE
             ) ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_general_ci");
+
+            $this->_dbConnection->query("ALTER TABLE `LBC_User`
+                ADD `api_key` CHAR(40) DEFAULT NULL UNIQUE AFTER `password`");
         }
     }
 }

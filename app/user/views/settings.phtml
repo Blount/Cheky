@@ -21,6 +21,26 @@
                 Cochez la case pour ne pas recevoir les annonces remontées (évite les doublons).
             </label>
         </dt>
+        <dt>
+            <label>Clé API</label>
+        </dt>
+        <dd>
+            <input type="text" id="api_key" value="<?php
+                echo htmlspecialchars($form_values["api_key"]);
+            ?>" readonly="readonly" />
+            <label for="api_key_reset">
+                <input type="checkbox"
+                    id="api_key_reset"
+                    name="api_key_reset"
+                    value="1"
+                /> cocher la case pour réinitiliaser la clé.
+                La clé actuelle ne sera plus fonctionnelle.
+            </label>
+
+            <?php if (isset($errors["api_key"])) : ?>
+            <p class="error"><?php echo $errors["api_key"]; ?></p>
+            <?php endif; ?>
+        </dd>
     </dl>
 
     <h2 id="configFreeMobile" class="formbox">Configuration SMS via Free Mobile</h2>

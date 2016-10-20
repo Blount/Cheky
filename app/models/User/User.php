@@ -7,6 +7,7 @@ class User
     protected $_id;
     protected $_username;
     protected $_password;
+    protected $_api_key;
     protected $_options = array();
     protected $_optionsLoaded = false;
 
@@ -20,6 +21,9 @@ class User
         }
         if (isset($options["password"])) {
             $this->setPassword($options["password"]);
+        }
+        if (isset($options["api_key"])) {
+            $this->setApiKey($options["api_key"]);
         }
     }
 
@@ -60,6 +64,24 @@ class User
     public function getUsername()
     {
         return $this->_username;
+    }
+
+    /**
+    * @param string $key
+    * @return User
+    */
+    public function setApiKey($key)
+    {
+        $this->_api_key = $key;
+        return $this;
+    }
+
+    /**
+    * @return string
+    */
+    public function getApiKey()
+    {
+        return $this->_api_key;
     }
 
     /**

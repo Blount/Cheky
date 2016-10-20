@@ -24,7 +24,8 @@ class User implements \App\Storage\User
             $user = new \App\User\User();
             $user->setId($userDb->id)
                 ->setPassword($userDb->password)
-                ->setUsername($userDb->username);
+                ->setUsername($userDb->username)
+                ->setApiKey($userDb->api_key);
             if (!empty($userDb->options)) {
                 $options = json_decode($userDb->options, true);
                 if (is_array($options)) {
@@ -47,7 +48,8 @@ class User implements \App\Storage\User
             $user = new \App\User\User();
             $user->setId($userDb->id)
                 ->setPassword($userDb->password)
-                ->setUsername($userDb->username);
+                ->setUsername($userDb->username)
+                ->setApiKey($userDb->api_key);
             if (!empty($userDb->options)) {
                 $options = json_decode($userDb->options, true);
                 if (is_array($options)) {
@@ -60,16 +62,23 @@ class User implements \App\Storage\User
 
     public function save(\App\User\User $user)
     {
+        if (!$api_key = $user->getApiKey()) {
+            $api_key = null;
+        } else {
+            $api_key = "'".$this->_connection->real_escape_string($api_key)."'";
+        }
         if (!$this->fetchByUsername($user->getUsername())) {
             $this->_connection->query("INSERT INTO `".$this->_table.
-                "` (`username`, `password`, `options`) VALUES (
+                "` (`username`, `password`, `api_key` `options`) VALUES (
                     '".$this->_connection->real_escape_string($user->getUsername())."',
                     '".$this->_connection->real_escape_string($user->getPassword())."',
+                    ".$api_key.",
                     '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
                 )");
         } else {
             $this->_connection->query("UPDATE `".$this->_table."` SET
                 `password` = '".$this->_connection->real_escape_string($user->getPassword())."',
+                `api_key` = ".$api_key.",
                 `options` = '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
             WHERE id = ".$user->getId());
         }
