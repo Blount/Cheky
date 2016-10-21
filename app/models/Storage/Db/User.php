@@ -26,12 +26,7 @@ class User implements \App\Storage\User
                 ->setPassword($userDb->password)
                 ->setUsername($userDb->username)
                 ->setApiKey($userDb->api_key);
-            if (!empty($userDb->options)) {
-                $options = json_decode($userDb->options, true);
-                if (is_array($options)) {
-                    $user->setOptions($options);
-                }
-            }
+            $this->_loadUserOptions($user, $userDb->options);
             $users[] = $user;
         }
         return $users;
@@ -50,14 +45,33 @@ class User implements \App\Storage\User
                 ->setPassword($userDb->password)
                 ->setUsername($userDb->username)
                 ->setApiKey($userDb->api_key);
-            if (!empty($userDb->options)) {
-                $options = json_decode($userDb->options, true);
-                if (is_array($options)) {
-                    $user->setOptions($options);
+            $this->_loadUserOptions($user, $userDb->options);
+        }
+        return $user;
+    }
+
+    protected function _loadUserOptions(\App\User\User $user, $options)
+    {
+        if (empty($options)) {
+            return $this;
+        }
+
+        $options = json_decode($options, true);
+        if (!is_array($options)) {
+            return $this;
+        }
+
+        if (!empty($options["notification"]) && is_array($options["notification"])) {
+            foreach ($options["notification"] AS $key => $params) {
+                if ($params && !isset($params["active"])) {
+                    $options["notification"][$key]["active"] = true;
                 }
             }
         }
-        return $user;
+
+        $user->setOptions($options);
+
+        return $this;
     }
 
     public function save(\App\User\User $user)

@@ -1,0 +1,83 @@
+<form action="" method="post" autocomplete="off">
+    <?php if (!empty($errorsTest)) : ?>
+    <p class="error big">
+        Le test d'envoi a échoué :<br />
+        <?php echo htmlspecialchars($errorsTest); ?>
+    </p>
+    <?php elseif (empty($errors) && !empty($_POST["test-config"])) : ?>
+    <p class="message-success">
+        Vous devriez recevoir un SMS contenant le message suivant:
+        «&nbsp;La notification SMS est fonctionnelle&nbsp;».<br />
+        <span style="text-decoration: underline;">Pensez à confirmer
+        la configuration en cliquant sur "Enregistrer".</span>
+    </p>
+    <?php endif;?>
+
+    <h2>Configuration SMS via OVH Telecom</h2>
+    <dl>
+        <dt>
+            <label for="account">Numéro de compte</label>
+        </dt>
+        <dd>
+            <input type="text" id="account" name="account" value="<?php
+                echo htmlspecialchars($form_values["account"]);
+            ?>" placeholder="De la forme : sms-xxxxxxxx-x" />
+            <?php if (isset($errors["account"])) : ?>
+            <p class="error"><?php echo $errors["account"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="login">Utilisateur</label>
+        </dt>
+        <dd>
+            <input type="text" id="login" name="login" value="<?php
+                echo htmlspecialchars($form_values["login"]);
+            ?>" />
+            <?php if (isset($errors["login"])) : ?>
+            <p class="error"><?php echo $errors["login"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="password">Mot de passe</label>
+        </dt>
+        <dd>
+            <input type="text" id="password" name="password" value="<?php
+                echo htmlspecialchars($form_values["password"]);
+            ?>" />
+            <?php if (isset($errors["password"])) : ?>
+            <p class="error"><?php echo $errors["password"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="from">Expéditeur</label>
+        </dt>
+        <dd>
+            <input type="text" id="from" name="from" value="<?php
+                echo htmlspecialchars($form_values["from"]);
+            ?>" />
+            <?php if (isset($errors["from"])) : ?>
+            <p class="error"><?php echo $errors["from"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="to">Destinataire</label>
+        </dt>
+        <dd>
+            <input type="text" id="to" name="to" value="<?php
+                echo htmlspecialchars($form_values["to"]);
+            ?>" placeholder="Forme international (Ex: +33605040301)" />
+            <?php if (isset($errors["to"])) : ?>
+            <p class="error"><?php echo $errors["to"]; ?></p>
+            <?php endif; ?>
+        </dd>
+    </dl>
+
+    <p>
+        <input type="submit" name="test-config" value="Effectuer un test d'envoi SMS" />
+        <input type="submit" value="Enregistrer" />
+        <?php if ($data_user) : ?>
+        <input type="submit" name="delete-config" value="Supprimer la configuration" />
+        <?php endif; ?>
+        <input type="submit" name="cancel-config" value="Annuler" />
+    </p>
+</form>

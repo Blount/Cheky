@@ -1,270 +1,106 @@
-<form action="" method="post" autocomplete="off">
-    <?php if (!empty($errors)) : ?>
-    <p class="error" style="font-size: 1.3em; background: #AB0000; color: #FFF; text-align: center; line-height: 200%;">
-        Il y a au moins une erreur présente dans le formulaire.</p>
-    <?php elseif (!empty($errorsTest)) : ?>
-    <p class="error" style="font-size: 1.3em; background: #AB0000; color: #FFF; text-align: center; line-height: 200%;">
-        Le test d'envoi a échoué. Voir ci-dessous pour le message d'erreur.</p>
-    <?php elseif ($userSettingsSaved) : ?>
-    <p style="font-size: 1.3em; background: #00AB00; color: #FFF; text-align: center; line-height: 200%;">
-        Les paramètres ont été enregistrés.</p>
-    <?php endif;?>
 
-    <h2>Options générales</h2>
-    <dl>
-        <dt style="margin-bottom: 10px;">
-            <input type="hidden" name="unique_ads" value="0" />
-            <label for="unique_ads">
-                <input type="checkbox" id="unique_ads" name="unique_ads" value="1"<?php
-                    echo $params["unique_ads"] ?' checked="checked"':''
-                ?> style="margin-left: 0;" />
-                Cochez la case pour ne pas recevoir les annonces remontées (évite les doublons).
-            </label>
-        </dt>
-        <dt>
-            <label>Clé API</label>
-        </dt>
-        <dd>
-            <input type="text" id="api_key" value="<?php
-                echo htmlspecialchars($form_values["api_key"]);
-            ?>" readonly="readonly" />
-            <label for="api_key_reset">
-                <input type="checkbox"
-                    id="api_key_reset"
-                    name="api_key_reset"
-                    value="1"
-                /> cocher la case pour réinitiliaser la clé.
-                La clé actuelle ne sera plus fonctionnelle.
-            </label>
+<?php if ($userSettingsSaved) : ?>
+<p style="font-size: 1.3em; background: #00AB00; color: #FFF; text-align: center; line-height: 200%;">
+    Les paramètres ont été enregistrés.</p>
+<?php endif;?>
+<div class="user-settings-container">
 
-            <?php if (isset($errors["api_key"])) : ?>
-            <p class="error"><?php echo $errors["api_key"]; ?></p>
-            <?php endif; ?>
-        </dd>
-    </dl>
+    <div class="block user-settings-notification">
+        <h2 class="block-title">Configuration des systèmes d'alerte</h2>
+        <div class="block-content">
+            <table class="user-notifications">
+                <thead>
+                    <tr class="user-notifications-header">
+                        <th class="user-notifications-type">Service</th>
+                        <th class="user-notifications-cost">Coût / Limitation</th>
+                        <th class="user-notifications-active">Actif</th>
+                        <th class="user-notifications-action">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($notifications AS $name => $notification) : ?>
+                    <tr>
+                        <td class="user-notifications-type">
+                            <?php echo htmlspecialchars($notification["label"]); ?>
+                            <?php if (!empty($notification["link"])) : ?>
+                            <a class="user-notifications-link"
+                                href="<?php echo $notification["link"]; ?>"
+                                title="Plus d'informations sur <?php echo $notification["link"]; ?> (nouvelle fenêtre)"
+                                target="_blank"><span class="fa fa-info-circle fa-fw"></span></a>
+                            <?php endif; ?>
+                        </td>
+                        <td class="user-notifications-cost">
+                            <?php if (empty($notification["cost"])) : ?>
+                            Gratuit
+                            <?php else: ?>
+                            <?php echo htmlspecialchars($notification["cost"]); ?>
+                            <?php endif; ?>
+                        </td>
+                        <td class="user-notifications-active">
+                            <span class="fa fa-<?php
+                            echo $notification["active"] ? "check active" : "minus";
+                            ?>"></span>
+                        </td>
+                        <td class="user-notifications-action">
+                            <?php if ($notification["active"]) : ?>
+                            <a href="?mod=user&amp;a=settings-<?php echo $name; ?>">Configurer</a> |
+                            <a href="?mod=user&amp;a=settings-disable-notification&amp;s=<?php echo $name; ?>">Désactiver</a>
+                            <?php else: ?>
+                            <a href="?mod=user&amp;a=settings-<?php echo $name; ?>">Activer</a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <h2 id="configFreeMobile" class="formbox">Configuration SMS via Free Mobile</h2>
-    <dl id="configFreeMobile-content" style="display: <?php echo !empty($form_values["notification"]["freeMobile"]["user"]) ? "block" : "none"; ?>;">
-        <dt>
-            <label for="free_mobile_user">ID utilisateur</label>
-        </dt>
-        <dd>
-            <input type="text" id="free_mobile_user" name="notification[freeMobile][user]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["freeMobile"]["user"]);
-            ?>" />
-            <?php if (isset($errors["notification"]["freeMobile"]["user"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["freeMobile"]["user"]; ?></p>
-            <?php endif; ?>
-        </dd>
-        <dt>
-            <label for="free_mobile_key">Clé d'identification</label>
-        </dt>
-        <dd>
-            <input type="text" id="free_mobile_key" name="notification[freeMobile][key]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["freeMobile"]["key"]);
-            ?>" />
-            <?php if (isset($errors["notification"]["freeMobile"]["key"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["freeMobile"]["key"]; ?></p>
-            <?php endif; ?>
-        </dd>
-        <dt style="border: none;">
-            <input type="submit" name="testFreeMobile" value="Effectuer un test d'envoi SMS" />
-        </dt>
-        <?php if (empty($errors) && !empty($_POST["testFreeMobile"])) : ?>
-        <dd>
-        <?php if (isset($errorsTest["freeMobile"])) : ?>
-        <p style="font-weight: bold; color: #AB0000;"><?php
-            echo htmlspecialchars($errorsTest["freeMobile"]);
-        ?></p>
-        <?php else: ?>
-        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir un SMS contenant le message suivant:
-            « La notification SMS est fonctionnelle ».</p>
-        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
-        <?php endif; ?>
-        </dd>
-        <?php endif; ?>
-    </dl>
+    <div class="block user-settings-apikey">
+        <h2 class="block-title">Accès API</h2>
+        <div class="block-content">
+            <p>
+                Cette clé vous permet d'interagir avec votre compte
+                LBCAlerte à partir d'autre application.
+            </p>
+            <form action="" method="post" autocomplete="off"
+                onsubmit="return window.confirm('Êtes-vous sur de vouloir réinitialiser la clé ?');">
+                <dl>
+                    <dd>
+                        <input type="text" id="api_key" value="<?php
+                            echo htmlspecialchars($form_values["api_key"]);
+                        ?>" readonly="readonly" />
+                    </dd>
+                </dl>
 
-    <h2 id="configPushbullet" class="formbox">Configuration alerte via Pushbullet</h2>
-    <dl id="configPushbullet-content" style="display: <?php echo !empty($form_values["notification"]["pushbullet"]["token"]) ? "block" : "none"; ?>;">
-        <dt>
-            <label for="pushbullet_token">Clé du service</label>
-        </dt>
-        <dd>
-            <input type="text" id="pushbullet_token" name="notification[pushbullet][token]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["pushbullet"]["token"]);
-            ?>" />
-            <?php if (isset($errors["notification"]["pushbullet"]["token"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["pushbullet"]["token"]; ?></p>
-            <?php endif; ?>
-        </dd>
-        <dt style="border: none;">
-            <input type="submit" name="testPushbullet" value="Effectuer un test d'envoi de message" />
-        </dt>
-        <?php if (empty($errors) && !empty($_POST["testPushbullet"])) : ?>
-        <dd>
-        <?php if (isset($errorsTest["pushbullet"])) : ?>
-        <p style="font-weight: bold; color: #AB0000;"><?php
-            echo htmlspecialchars($errorsTest["pushbullet"]);
-        ?></p>
-        <?php else: ?>
-        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir une notification contenant le message suivant:
-            « La notification Pushbullet est fonctionnelle ».</p>
-        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
-        <?php endif; ?>
-        </dd>
-        <?php endif; ?>
-    </dl>
+                <p>
+                    Si nécessaire, vous pouvez réinitialiser votre clé.
+                    Il faudra configurer la nouvelle clé dans vos applications.
+                </p>
+                <p><input type="submit" name="regenerate-apikey"
+                    value="Régénérer" /></p>
+            </form>
+        </div>
+    </div>
 
-    <h2 id="configOvh" class="formbox">Configuration SMS via OVH Telecom</h2>
-    <dl id="configOvh-content" style="display: <?php echo !empty($form_values["notification"]["ovh"]["account"]) ? "block" : "none"; ?>;">
-        <dt>
-            <label for="ovh_account">Numéro de compte</label>
-        </dt>
-        <dd>
-            <input type="text" id="ovh_account" name="notification[ovh][account]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["ovh"]["account"]);
-            ?>" placeholder="De la forme : sms-xxxxxxxx-x" />
-            <?php if (isset($errors["notification"]["ovh"]["account"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["ovh"]["account"]; ?></p>
-            <?php endif; ?>
-        </dd>
-        <dt>
-            <label for="ovh_login">Utilisateur</label>
-        </dt>
-        <dd>
-            <input type="text" id="ovh_login" name="notification[ovh][login]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["ovh"]["login"]);
-            ?>" />
-            <?php if (isset($errors["notification"]["ovh"]["login"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["ovh"]["login"]; ?></p>
-            <?php endif; ?>
-        </dd>
-        <dt>
-            <label for="ovh_password">Mot de passe</label>
-        </dt>
-        <dd>
-            <input type="text" id="ovh_password" name="notification[ovh][password]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["ovh"]["password"]);
-            ?>" />
-            <?php if (isset($errors["notification"]["ovh"]["password"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["ovh"]["password"]; ?></p>
-            <?php endif; ?>
-        </dd>
-        <dt>
-            <label for="ovh_from">Expéditeur</label>
-        </dt>
-        <dd>
-            <input type="text" id="ovh_from" name="notification[ovh][from]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["ovh"]["from"]);
-            ?>" />
-            <?php if (isset($errors["notification"]["ovh"]["from"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["ovh"]["from"]; ?></p>
-            <?php endif; ?>
-        </dd>
-        <dt>
-            <label for="ovh_to">Destinataire</label>
-        </dt>
-        <dd>
-            <input type="text" id="ovh_to" name="notification[ovh][to]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["ovh"]["to"]);
-            ?>" placeholder="Forme international (Ex: +33605040301)" />
-            <?php if (isset($errors["notification"]["ovh"]["to"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["ovh"]["to"]; ?></p>
-            <?php endif; ?>
-        </dd>
+    <div class="block user-settings-general">
+        <h2 class="block-title">Options diverses</h2>
+        <div class="block-content">
+            <form action="" method="post" autocomplete="off">
+                <dl>
+                    <dt style="margin-bottom: 10px;">
+                        <input type="hidden" name="unique_ads" value="0" />
+                        <label for="unique_ads">
+                            <input type="checkbox" id="unique_ads" name="unique_ads" value="1"<?php
+                                echo $params["unique_ads"] ?' checked="checked"':''
+                            ?> style="margin-left: 0;" />
+                            Cochez la case pour ne pas recevoir les annonces remontées (évite les doublons).
+                        </label>
+                    </dt>
+                </dl>
 
-        <dt style="border: none;">
-            <input type="submit" name="testOvh" value="Effectuer un test d'envoi SMS" />
-        </dt>
-        <?php if (empty($errors) && !empty($_POST["testOvh"])) : ?>
-        <dd>
-        <?php if (isset($errorsTest["ovh"])) : ?>
-        <p style="font-weight: bold; color: #AB0000;"><?php
-            echo htmlspecialchars($errorsTest["ovh"]);
-        ?></p>
-        <?php else: ?>
-        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir un SMS contenant le message suivant:
-            « La notification SMS est fonctionnelle ».</p>
-        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
-        <?php endif; ?>
-        </dd>
-        <?php endif; ?>
-    </dl>
-
-    <h2 id="configNotifyMyAndroid" class="formbox">Configuration alerte via NotifyMyAndroid</h2>
-    <dl id="configNotifyMyAndroid-content" style="display: <?php echo !empty($form_values["notification"]["notifymyandroid"]["token"]) ? "block" : "none"; ?>;">
-        <dt>
-            <label for="notifymyandroid_token">Clé du service</label>
-        </dt>
-        <dd>
-            <input type="text" id="notifymyandroid_token" name="notification[notifymyandroid][token]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["notifymyandroid"]["token"]);
-            ?>" />
-            <?php if (isset($errors["notification"]["notifymyandroid"]["token"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["notifymyandroid"]["token"]; ?></p>
-            <?php endif; ?>
-        </dd>
-        <dt style="border: none;">
-            <input type="submit" name="testNotifyMyAndroid" value="Effectuer un test d'envoi de message" />
-        </dt>
-        <?php if (empty($errors) && !empty($_POST["testNotifyMyAndroid"])) : ?>
-        <dd>
-        <?php if (isset($errorsTest["notifymyandroid"])) : ?>
-        <p style="font-weight: bold; color: #AB0000;"><?php
-            echo htmlspecialchars($errorsTest["notifymyandroid"]);
-        ?></p>
-        <?php else: ?>
-        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir une notification contenant le message suivant:
-            « La notification NotifyMyAndroid est fonctionnelle ».</p>
-        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
-        <?php endif; ?>
-        </dd>
-        <?php endif; ?>
-    </dl>
-
-    <h2 id="configPushover" class="formbox">Configuration alerte via Pushover</h2>
-    <dl id="configPushover-content" style="display: <?php echo !empty($form_values["notification"]["pushover"]["token"]) ? "block" : "none"; ?>;">
-        <dt>
-            <label for="pushover_token">Clé application</label>
-        </dt>
-        <dd>
-            <input type="text" id="pushover_token" name="notification[pushover][token]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["pushover"]["token"]);
-            ?>" />
-            <?php if (isset($errors["notification"]["pushover"]["token"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["pushover"]["token"]; ?></p>
-            <?php endif; ?>
-        </dd>
-        <dt>
-            <label for="pushover_token">Clé utilisateur</label>
-        </dt>
-        <dd>
-            <input type="text" id="pushover_token" name="notification[pushover][user_key]" value="<?php
-                echo htmlspecialchars($form_values["notification"]["pushover"]["user_key"]);
-            ?>" />
-            <?php if (isset($errors["notification"]["pushover"]["user_key"])) : ?>
-            <p class="error"><?php echo $errors["notification"]["pushover"]["user_key"]; ?></p>
-            <?php endif; ?>
-        </dd>
-        <dt style="border: none;">
-            <input type="submit" name="testPushover" value="Effectuer un test d'envoi de message" />
-        </dt>
-        <?php if (empty($errors) && !empty($_POST["testPushover"])) : ?>
-        <dd>
-        <?php if (isset($errorsTest["pushover"])) : ?>
-        <p style="font-weight: bold; color: #AB0000;"><?php
-            echo htmlspecialchars($errorsTest["pushover"]);
-        ?></p>
-        <?php else: ?>
-        <p style="font-weight: bold; color: #333399;">Vous devriez recevoir une notification contenant le message suivant:
-            « La notification Pushover est fonctionnelle ».</p>
-        <p style="font-weight: bold; color: #339933;">Pensez à confirmer la configuration en cliquant sur "Enregistrer".</p>
-        <?php endif; ?>
-        </dd>
-        <?php endif; ?>
-    </dl>
-
-    <p><input type="submit" value="Enregistrer" />
-        | <a href="?mod=user&amp;a=settings">annuler les modifications</a></p>
-</form>
+                <p><input type="submit" value="Enregistrer" /></p>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+<form action="" method="post" autocomplete="off">
+    <?php if (!empty($errorsTest)) : ?>
+    <p class="error big">
+        Le test d'envoi a échoué :<br />
+        <?php echo htmlspecialchars($errorsTest); ?>
+    </p>
+    <?php elseif (empty($errors) && !empty($_POST["test-config"])) : ?>
+    <p class="message-success">
+        Vous devriez recevoir un SMS contenant le message suivant:
+        «&nbsp;La notification SMS est fonctionnelle&nbsp;».<br />
+        <span style="text-decoration: underline;">Pensez à confirmer
+        la configuration en cliquant sur "Enregistrer".</span>
+    </p>
+    <?php endif;?>
+
+    <h2>Configuration SMS via Free Mobile</h2>
+    <dl>
+        <dt>
+            <label for="free_mobile_user">ID utilisateur</label>
+        </dt>
+        <dd>
+            <input type="text" id="free_mobile_user" name="user" value="<?php
+                echo htmlspecialchars($form_values["user"]);
+            ?>" />
+            <?php if (isset($errors["user"])) : ?>
+            <p class="error"><?php echo $errors["user"]; ?></p>
+            <?php endif; ?>
+        </dd>
+        <dt>
+            <label for="free_mobile_key">Clé d'identification</label>
+        </dt>
+        <dd>
+            <input type="text" id="free_mobile_key" name="key" value="<?php
+                echo htmlspecialchars($form_values["key"]);
+            ?>" />
+            <?php if (isset($errors["key"])) : ?>
+            <p class="error"><?php echo $errors["key"]; ?></p>
+            <?php endif; ?>
+        </dd>
+    </dl>
+
+    <p>
+        <input type="submit" name="test-config" value="Effectuer un test d'envoi SMS" />
+        <input type="submit" value="Enregistrer" />
+        <?php if ($data_user) : ?>
+        <input type="submit" name="delete-config" value="Supprimer la configuration" />
+        <?php endif; ?>
+        <input type="submit" name="cancel-config" value="Annuler" />
+    </p>
+</form>

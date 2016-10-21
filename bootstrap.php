@@ -176,7 +176,11 @@ class Bootstrap
                 $e->getCode()." ".
                 $e->getMessage()." (".$e->getFile().":".$e->getLine().")"
         );
-        die("Un problème est survenu lors de l'exécution du programme.\n");
+        if ("development" == APPLICATION_ENV) {
+            var_dump($e);
+        } else {
+            die("Un problème est survenu lors de l'exécution du programme.\n");
+        }
     }
 
     public function _errorHandler($errno, $errstr, $errfile, $errline)
@@ -184,7 +188,11 @@ class Bootstrap
         Logger::getLogger("main")->error(
             "#".$errno." ".$errstr." (".$errfile.":".$errline.")"
         );
-        die("Un problème est survenu lors de l'exécution du programme.\n");
+        if ("development" == APPLICATION_ENV) {
+            var_dump($errno, $errstr, $errfile, $errline);
+        } else {
+            die("Un problème est survenu lors de l'exécution du programme.\n");
+        }
     }
 }
 

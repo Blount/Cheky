@@ -120,6 +120,13 @@ class User implements \App\Storage\User
                 unset($data["api_key"]);
             }
             if ($data && is_array($data)) {
+                if (!empty($data["notification"]) && is_array($data["notification"])) {
+                    foreach ($data["notification"] AS $key => $params) {
+                        if ($params && !isset($params["active"])) {
+                            $data["notification"][$key]["active"] = true;
+                        }
+                    }
+                }
                 $user->setOptions($data);
             }
         }

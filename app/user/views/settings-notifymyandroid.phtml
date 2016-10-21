@@ -1,0 +1,39 @@
+<form action="" method="post" autocomplete="off">
+    <?php if (!empty($errorsTest)) : ?>
+    <p class="error big">
+        Le test d'envoi a échoué :<br />
+        <?php echo htmlspecialchars($errorsTest); ?>
+    </p>
+    <?php elseif (empty($errors) && !empty($_POST["test-config"])) : ?>
+    <p class="message-success">
+        Vous devriez recevoir une notification contenant le message suivant:
+        «&nbsp;La notification NotifyMyAndroid est fonctionnelle&nbsp;».<br />
+        <span style="text-decoration: underline;">Pensez à confirmer
+        la configuration en cliquant sur "Enregistrer".</span>
+    </p>
+    <?php endif;?>
+
+    <h2>Configuration NotifyMyAndroid</h2>
+    <dl>
+        <dt>
+            <label for="token">Clé du service</label>
+        </dt>
+        <dd>
+            <input type="text" id="token" name="token" value="<?php
+                echo htmlspecialchars($form_values["token"]);
+            ?>" />
+            <?php if (isset($errors["token"])) : ?>
+            <p class="error"><?php echo $errors["token"]; ?></p>
+            <?php endif; ?>
+        </dd>
+    </dl>
+
+    <p>
+        <input type="submit" name="test-config" value="Effectuer un test d'envoi SMS" />
+        <input type="submit" value="Enregistrer" />
+        <?php if ($data_user) : ?>
+        <input type="submit" name="delete-config" value="Supprimer la configuration" />
+        <?php endif; ?>
+        <input type="submit" name="cancel-config" value="Annuler" />
+    </p>
+</form>
