@@ -103,58 +103,58 @@ class User
     }
 
     /**
-     * Retourne vrai si la notification SMS Free Mobile est activée.
+     * Indique si au moins un service de notification est activé.
+     *
      * @return boolean
      */
-    public function hasSMSFreeMobile()
+    public function hasNotification()
     {
-        return false != $this->getOption("notification.freeMobile");
+        $notifications = $this->getOption("notification");
+        if (!$notifications || !is_array($notifications)) {
+            return false;
+        }
+
+        foreach ($notifications AS $name => $params) {
+            if (is_array($params) && !empty($params["active"])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
-     * Retourne vrai si la notification SMS OVH est activée.
-     * @return boolean
+     * Retourne les systèmes d'alerte activés.
+     *
+     * @return array
      */
-    public function hasSMSOvh()
+    public function getNotificationsEnabled()
     {
-        return false != $this->getOption("notification.ovh");
+        $notifications = $this->getOption("notification");
+        if (!$notifications || !is_array($notifications)) {
+            return array();
+        }
+
+        $notifications_enabled = array();
+        foreach ($notifications AS $name => $params) {
+            if (is_array($params) && !empty($params["active"])) {
+                $notifications_enabled[$name] = $params;
+            }
+        }
+
+        return $notifications_enabled;
     }
 
     /**
-     * Retourne vrai si la notification Pushbullet est activée.
+     * Indique si un système d'alerte est actif ou non.
+     *
+     * @param string $name
      * @return boolean
      */
-    public function hasPushbullet()
+    public function notificationEnabled($name)
     {
-        return false != $this->getOption("notification.pushbullet");
-    }
-
-    /**
-     * Retourne vrai si la notification NotifyMyAndroid est activée.
-     * @return boolean
-     */
-    public function hasNotifyMyAndroid()
-    {
-        return false != $this->getOption("notification.notifymyandroid");
-    }
-
-    /**
-     * Retourne vrai si la notification Pushover est activée.
-     * @return boolean
-     */
-    public function hasPushover()
-    {
-        return false != $this->getOption("notification.pushover");
-    }
-
-    /**
-     * Retourne vrai si la notification Joaoapps / Join est activée.
-     * @return boolean
-     */
-    public function hasJoaoappsjoin()
-    {
-        return false != ($data = $this->getOption("notification.joaoappsjoin"))
-            && !empty($data["active"]);
+        $params = $this->getOption("notification.".$name);
+        return is_array($params) && !empty($params["active"]);
     }
 
     /**

@@ -377,14 +377,7 @@ class Main
                         }
                     }
                 }
-                if ($notifications && (
-                       $alert->send_sms_free_mobile
-                    || $alert->send_sms_ovh
-                    || $alert->send_pushbullet
-                    || $alert->send_notifymyandroid
-                    || $alert->send_pushover
-                    || $alert->send_joaoappsjoin
-                )) {
+                if ($notifications && $user->hasNotification()) {
                     if ($countAds < 5) { // limite à 5 SMS
                         foreach ($newAds AS $id => $ad) {
                             $ad = $ads[$id]; // récupère l'objet.

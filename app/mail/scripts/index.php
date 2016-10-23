@@ -67,21 +67,3 @@ if (in_array("Sans groupe", $groups)) {
     unset($groups[array_search("Sans groupe", $groups)]);
     $groups[] = "Sans groupe";
 }
-
-$notification["freeMobile"] = $userAuthed->hasSMSFreeMobile();
-$notification["ovh"] = $userAuthed->hasSMSOvh();
-$notification["pushbullet"] = $userAuthed->hasPushbullet();
-$notification["notifymyandroid"] = $userAuthed->hasNotifyMyAndroid();
-$notification["pushover"] = $userAuthed->hasPushover();
-$notification["joaoappsjoin"] = $userAuthed->hasJoaoappsjoin();
-
-
-
-
-
-
-
-
-
-
-

@@ -18,40 +18,7 @@ $params = array(
     "api_key" => $userAuthed->getApiKey(),
 );
 
-$notifications = array(
-    "sms-free-mobile" => array(
-        "label" => "SMS - Free Mobile",
-        "link" => "https://mobile.free.fr/moncompte/",
-        "active" => !empty($params["notification"]["freeMobile"]["active"]),
-    ),
-    "sms-ovh" => array(
-        "label" => "SMS - OVH Telecom",
-        "cost" => "À partir de 0,07 € / SMS",
-        "link" => "https://www.ovhtelecom.fr/sms/",
-        "active" => !empty($params["notification"]["ovh"]["active"]),
-    ),
-    "pushbullet" => array(
-        "label" => "Pushbullet",
-        "link" => "https://www.pushbullet.com/",
-        "active" => !empty($params["notification"]["pushbullet"]["active"]),
-    ),
-    "pushover" => array(
-        "label" => "Pushover",
-        "link" => "https://pushover.net/",
-        "active" => !empty($params["notification"]["pushover"]["active"]),
-    ),
-    "notifymyandroid" => array(
-        "label" => "NotifyMyAndroid",
-        "cost" => "5 notifications / jour (illimité en premium)",
-        "link" => "http://www.notifymyandroid.com/",
-        "active" => !empty($params["notification"]["notifymyandroid"]["active"]),
-    ),
-    "joaoappsjoin" => array(
-        "label" => "Joaoapps / Join",
-        "link" => "https://joaoapps.com/join/",
-        "active" => !empty($params["notification"]["joaoappsjoin"]["active"]),
-    ),
-);
+require DOCUMENT_ROOT."/app/data/notifications.php";
 
 $form_values = array(
     "api_key" => $params["api_key"],

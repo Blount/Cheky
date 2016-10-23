@@ -11,6 +11,7 @@ if (isset($_GET["preurl"])) {
 }
 
 $categoryCollection = new \Lbc\CategoryCollection();
+$errors = array();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($_POST AS $name => $value) {
@@ -21,16 +22,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     $alert->fromArray($_POST);
-    if (empty($alert->send_mail)
-        && empty($alert->send_sms_free_mobile)
-        && empty($alert->send_sms_ovh)
-        && empty($alert->send_pushbullet)
-        && empty($alert->send_notifymyandroid)
-        && empty($alert->send_pushover)
-        && empty($alert->send_joaoappsjoin)
-    ) {
+
+    $hasNotification = false;
+    foreach ($data_notifications AS $name => $notification) {
+        if (isset($notifications_enabled[$name]) && $alert->{$notification["form_name"]}) {
+            $hasNotification = true;
+            break;
+        }
+    }
+    if (!$hasNotification) {
         $errors["send_type"] = "Vous devez sélectionner au moins un moyen de communication.";
     }
+
     if (empty($alert->email)) {
         $errors["email"] = "Ce champ est obligatoire.";
     }

@@ -18,7 +18,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($notifications AS $name => $notification) : ?>
+                    <?php foreach ($data_notifications AS $name => $notification) : ?>
+                        <?php if (empty($notification["label"])) continue; ?>
                     <tr>
                         <td class="user-notifications-type">
                             <?php echo htmlspecialchars($notification["label"]); ?>
@@ -38,11 +39,11 @@
                         </td>
                         <td class="user-notifications-active">
                             <span class="fa fa-<?php
-                            echo $notification["active"] ? "check active" : "minus";
+                            echo $notification["enabled"] ? "check active" : "minus";
                             ?>"></span>
                         </td>
                         <td class="user-notifications-action">
-                            <?php if ($notification["active"]) : ?>
+                            <?php if ($notification["enabled"]) : ?>
                             <a href="?mod=user&amp;a=settings-<?php echo $name; ?>">Configurer</a> |
                             <a href="?mod=user&amp;a=settings-disable-notification&amp;s=<?php echo $name; ?>">Désactiver</a>
                             <?php else: ?>

@@ -30,33 +30,14 @@
             <?php if ($showCities) : ?>
             <th style="width: 200px">Villes</th>
             <?php endif; ?>
-            <?php if ($notification["freeMobile"]
-                || $notification["ovh"]
-                || $notification["pushbullet"]
-                || $notification["notifymyandroid"]
-                || $notification["pushover"]
-                || $notification["joaoappsjoin"]
-                ) : ?>
-            <th style="width: 140px">Envoyer par email</th>
-            <?php if ($notification["freeMobile"]) : ?>
-            <th style="width: 140px">SMS Free Mobile</th>
+
+            <?php if ($notifications_enabled) : ?>
+            <?php foreach ($data_notifications AS $name => $notification) : ?>
+                <?php if (!isset($notifications_enabled[$name])) continue; ?>
+            <th style="width: 140px"><?php echo $notification["list_label"]; ?></th>
+            <?php endforeach; ?>
             <?php endif; ?>
-            <?php if ($notification["ovh"]) : ?>
-            <th style="width: 140px">SMS OVH</th>
-            <?php endif; ?>
-            <?php if ($notification["pushbullet"]) : ?>
-            <th style="width: 140px">Pushbullet</th>
-            <?php endif; ?>
-            <?php if ($notification["notifymyandroid"]) : ?>
-            <th style="width: 140px">NotityMyAndroid</th>
-            <?php endif; ?>
-            <?php if ($notification["pushover"]) : ?>
-            <th style="width: 140px">Pushover</th>
-            <?php endif; ?>
-            <?php if ($notification["joaoappsjoin"]) : ?>
-            <th style="width: 140px">Joaoapps / Join</th>
-            <?php endif; ?>
-            <?php endif; ?>
+
             <th style="width: 70px">Actif</th>
             <th style="width: 170px">&nbsp;</th>
         </tr>
@@ -93,60 +74,18 @@
                 <?php endif; ?>
             </td>
             <?php endif; ?>
-            <?php if ($notification["freeMobile"]
-                || $notification["ovh"]
-                || $notification["pushbullet"]
-                || $notification["notifymyandroid"]
-                || $notification["pushover"]
-                || $notification["joaoappsjoin"]
-                ) : ?>
+
+            <?php if ($notifications_enabled) : ?>
+            <?php foreach ($data_notifications AS $name => $notification) : ?>
+                <?php if (!isset($notifications_enabled[$name])) continue; ?>
             <td>
-                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_mail&amp;id=<?php echo $alert->id;
-                    ?>"><img src="static/images/<?php
-                    echo !$alert->send_mail?"disable":"enable"; ?>.png" alt="" /></a>
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=<?php
+                    echo $notification["form_name"]; ?>&amp;id=<?php
+                    echo $alert->id; ?>"><img src="static/images/<?php
+                    echo !$alert->{$notification["form_name"]} ? "disable" : "enable";
+                ?>.png" alt="" /></a>
             </td>
-            <?php endif; ?>
-            <?php if ($notification["freeMobile"]) : ?>
-            <td>
-                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_sms_free_mobile&amp;id=<?php echo $alert->id;
-                    ?>"><img src="static/images/<?php
-                    echo !$alert->send_sms_free_mobile?"disable":"enable"; ?>.png" alt="" /></a>
-            </td>
-            <?php endif; ?>
-            <?php if ($notification["ovh"]) : ?>
-            <td>
-                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_sms_ovh&amp;id=<?php echo $alert->id;
-                    ?>"><img src="static/images/<?php
-                    echo !$alert->send_sms_ovh?"disable":"enable"; ?>.png" alt="" /></a>
-            </td>
-            <?php endif; ?>
-            <?php if ($notification["pushbullet"]) : ?>
-            <td>
-                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_pushbullet&amp;id=<?php echo $alert->id;
-                    ?>"><img src="static/images/<?php
-                    echo !$alert->send_pushbullet?"disable":"enable"; ?>.png" alt="" /></a>
-            </td>
-            <?php endif; ?>
-            <?php if ($notification["notifymyandroid"]) : ?>
-            <td>
-                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_notifymyandroid&amp;id=<?php echo $alert->id;
-                    ?>"><img src="static/images/<?php
-                    echo !$alert->send_notifymyandroid?"disable":"enable"; ?>.png" alt="" /></a>
-            </td>
-            <?php endif; ?>
-            <?php if ($notification["pushover"]) : ?>
-            <td>
-                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_pushover&amp;id=<?php echo $alert->id;
-                    ?>"><img src="static/images/<?php
-                    echo !$alert->send_pushover?"disable":"enable"; ?>.png" alt="" /></a>
-            </td>
-            <?php endif; ?>
-            <?php if ($notification["joaoappsjoin"]) : ?>
-            <td>
-                <a href="?mod=mail&amp;a=toggle_status&amp;s=send_joaoappsjoin&amp;id=<?php echo $alert->id;
-                    ?>"><img src="static/images/<?php
-                    echo !$alert->send_joaoappsjoin?"disable":"enable"; ?>.png" alt="" /></a>
-            </td>
+            <?php endforeach; ?>
             <?php endif; ?>
             <td>
                 <a href="?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id=<?php echo $alert->id;
