@@ -73,6 +73,8 @@ class Update_33 extends Update
 
             $this->_dbConnection->query("ALTER TABLE `LBC_User`
                 ADD `api_key` CHAR(40) DEFAULT NULL UNIQUE AFTER `password`");
+
+            $this->_dbConnection->query("ALTER TABLE `LBC_Alert` ADD `send_joaoappsjoin` TINYINT(1) NOT NULL AFTER `send_pushover`");
         }
     }
 }

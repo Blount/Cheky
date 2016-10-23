@@ -148,6 +148,16 @@ class User
     }
 
     /**
+     * Retourne vrai si la notification Joaoapps / Join est activée.
+     * @return boolean
+     */
+    public function hasJoaoappsjoin()
+    {
+        return false != ($data = $this->getOption("notification.joaoappsjoin"))
+            && !empty($data["active"]);
+    }
+
+    /**
      * Indique si l'utilisateur est administrateur.
      * @return boolean
      */

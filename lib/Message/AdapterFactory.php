@@ -27,6 +27,8 @@ class AdapterFactory
                 return new Adapter\Pushbullet($options);
             case "pushover":
                 return new Adapter\Pushover($options);
+            case "joaoappsjoin":
+                return new Adapter\Joaoappsjoin($options);
         }
         throw new \Exception("No service available");
     }

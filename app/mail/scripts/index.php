@@ -73,6 +73,7 @@ $notification["ovh"] = $userAuthed->hasSMSOvh();
 $notification["pushbullet"] = $userAuthed->hasPushbullet();
 $notification["notifymyandroid"] = $userAuthed->hasNotifyMyAndroid();
 $notification["pushover"] = $userAuthed->hasPushover();
+$notification["joaoappsjoin"] = $userAuthed->hasJoaoappsjoin();
 
 
 

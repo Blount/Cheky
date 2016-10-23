@@ -29,7 +29,8 @@ class Alert implements \App\Storage\Alert
         "send_sms_ovh",
         "send_pushbullet",
         "send_notifymyandroid",
-        "send_pushover"
+        "send_pushover",
+        "send_joaoappsjoin",
     );
 
     public function __construct($filename)

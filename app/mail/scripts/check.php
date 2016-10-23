@@ -383,6 +383,7 @@ class Main
                     || $alert->send_pushbullet
                     || $alert->send_notifymyandroid
                     || $alert->send_pushover
+                    || $alert->send_joaoappsjoin
                 )) {
                     if ($countAds < 5) { // limite à 5 SMS
                         foreach ($newAds AS $id => $ad) {

@@ -46,6 +46,11 @@ $notifications = array(
         "link" => "http://www.notifymyandroid.com/",
         "active" => !empty($params["notification"]["notifymyandroid"]["active"]),
     ),
+    "joaoappsjoin" => array(
+        "label" => "Joaoapps / Join",
+        "link" => "https://joaoapps.com/join/",
+        "active" => !empty($params["notification"]["joaoappsjoin"]["active"]),
+    ),
 );
 
 $form_values = array(

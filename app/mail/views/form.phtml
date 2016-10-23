@@ -40,6 +40,7 @@ $alertCategories = $alert->getCategories();
             <input type="hidden" name="send_pushbullet" value="0" />
             <input type="hidden" name="send_notifymyandroid" value="0" />
             <input type="hidden" name="send_pushover" value="0" />
+            <input type="hidden" name="send_joaoappsjoin" value="0" />
             <label for="alert_mail">
                 <input id="alert_mail" type="checkbox" name="send_mail" value="1"<?php
                     echo $alert->send_mail?' checked="checked"':''
@@ -84,6 +85,14 @@ $alertCategories = $alert->getCategories();
                     echo $alert->send_pushover?' checked="checked"':''
                 ?> />
                 par Pushover
+            </label>
+            <?php endif; ?>
+            <?php if ($userAuthed->hasJoaoappsjoin()) : ?>
+            <label for="alert_joaoappsjoin">
+                <input id="alert_joaoappsjoin" type="checkbox" name="send_joaoappsjoin" value="1"<?php
+                    echo $alert->send_joaoappsjoin?' checked="checked"':''
+                ?> />
+                par Joaoapps / Join
             </label>
             <?php endif; ?>
             <?php if (isset($errors["send_type"])) : ?>
