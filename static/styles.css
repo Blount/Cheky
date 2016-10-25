@@ -139,13 +139,14 @@ form select,
 form input[type=text],
 form input[type=password],
 form textarea {
+    box-sizing: border-box;
 	border: none;
 	padding: 0;
 	margin: 0;
 	height: 26px;
 	vertical-align: middle;
-	width: 98%;
-	padding: 0 1%;
+	width: 100%;
+	padding: 0 5px;
 	background: #424242;
 	color: #FFF;
 }
