@@ -4,6 +4,9 @@ if (isset($_GET["id"])) {
 }
 if (empty($alert)) {
     $alert = new App\Mail\Alert();
+    if ($emails = $userAuthed->getOption("addresses_mails")) {
+        $alert->email = $emails;
+    }
 }
 
 if (isset($_GET["preurl"])) {

@@ -57,6 +57,32 @@
         </div>
     </div>
 
+    <div class="block user-settings-mails">
+        <h2 class="block-title">Configuration mail</h2>
+        <div class="block-content">
+            <p>
+                Vous pouvez indiquer une ou plusieurs adresses mails. Ces
+                adresses seront utilisées lors de la création de vos alertes.
+            </p>
+            <form action="" method="post">
+                <dl>
+                    <dd>
+                        <input type="text"
+                            id="addresses_mails"
+                            name="addresses_mails"
+                            value="<?php echo htmlspecialchars($form_values["addresses_mails"]); ?>"
+                        />
+                    </dd>
+                </dl>
+                <p>
+                    Pour utiliser plusieurs adresses, séparez-les par une
+                    virgule.
+                </p>
+                <p><input type="submit" value="Enregistrer" /></p>
+            </form>
+        </div>
+    </div>
+
     <div class="block user-settings-apikey">
         <h2 class="block-title">Accès API</h2>
         <div class="block-content">

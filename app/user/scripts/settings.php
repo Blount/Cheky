@@ -16,6 +16,7 @@ $params = array(
     "notification" => $userAuthed->getOption("notification"),
     "unique_ads" => $userAuthed->getOption("unique_ads", false),
     "api_key" => $userAuthed->getApiKey(),
+    "addresses_mails" => $userAuthed->getOption("addresses_mails"),
 );
 
 require DOCUMENT_ROOT."/app/data/notifications.php";
@@ -23,6 +24,7 @@ require DOCUMENT_ROOT."/app/data/notifications.php";
 $form_values = array(
     "api_key" => $params["api_key"],
     "unique_ads" => $params["unique_ads"],
+    "addresses_mails" => $params["addresses_mails"],
 );
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
