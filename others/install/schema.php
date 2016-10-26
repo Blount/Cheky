@@ -37,6 +37,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_Alert` (
     `send_notifymyandroid` TINYINT(1) NOT NULL,
     `send_pushover` TINYINT(1) NOT NULL,
     `send_joaoappsjoin` TINYINT(1) NOT NULL,
+    `send_slack` TINYINT(1) NOT NULL,
     `last_id` TEXT DEFAULT NULL,
     `max_id` INTEGER UNSIGNED NOT NULL DEFAULT '0',
     `user_id` MEDIUMINT UNSIGNED NOT NULL,

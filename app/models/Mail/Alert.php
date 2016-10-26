@@ -28,6 +28,7 @@ class Alert
     public $send_notifymyandroid = 0;
     public $send_pushover = 0;
     public $send_joaoappsjoin = 0;
+    public $send_slack = 0;
 
     public function fromArray(array $values)
     {
@@ -85,6 +86,7 @@ class Alert
             "send_notifymyandroid" => $this->send_notifymyandroid,
             "send_pushover" => $this->send_pushover,
             "send_joaoappsjoin" => $this->send_joaoappsjoin,
+            "send_slack" => $this->send_slack,
         );
     }
 }

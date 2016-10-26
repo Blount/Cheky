@@ -63,4 +63,13 @@ $data_notifications = array(
         "form_name" => "send_joaoappsjoin",
         "enabled" => isset($notifications_enabled["joaoappsjoin"]),
     ),
+    "slack" => array(
+        "label" => "Slack",
+        "cost" => "Ofre gratuite et premium",
+        "link" => "https://slack.com",
+        "list_label" => "Slack",
+        "form_label" => "par Slack",
+        "form_name" => "send_slack",
+        "enabled" => isset($notifications_enabled["slack"]),
+    ),
 );

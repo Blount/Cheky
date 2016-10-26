@@ -31,6 +31,7 @@ class Alert implements \App\Storage\Alert
         "send_notifymyandroid",
         "send_pushover",
         "send_joaoappsjoin",
+        "send_slack",
     );
 
     public function __construct($filename)

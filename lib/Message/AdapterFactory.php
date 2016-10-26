@@ -29,6 +29,8 @@ class AdapterFactory
                 return new Adapter\Pushover($options);
             case "joaoappsjoin":
                 return new Adapter\Joaoappsjoin($options);
+            case "slack":
+                return new Adapter\Slack($options);
         }
         throw new \Exception("No service available");
     }
