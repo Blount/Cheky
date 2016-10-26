@@ -54,6 +54,9 @@ if (!$errors && $_SERVER["REQUEST_METHOD"] == "POST") {
         if (!is_dir(DOCUMENT_ROOT."/var/log")) {
             mkdir(DOCUMENT_ROOT."/var/log");
         }
+        if (!is_dir(DOCUMENT_ROOT."/var/tmp")) {
+            mkdir(DOCUMENT_ROOT."/var/tmp");
+        }
         $config->set("general", "version", APPLICATION_VERSION);
         if (isset($dbConnection)) {
             $dbConnection->set_charset("utf8");
