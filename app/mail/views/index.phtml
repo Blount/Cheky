@@ -31,12 +31,10 @@
             <th style="width: 200px">Villes</th>
             <?php endif; ?>
 
-            <?php if ($notifications_enabled) : ?>
             <?php foreach ($data_notifications AS $name => $notification) : ?>
-                <?php if (!isset($notifications_enabled[$name])) continue; ?>
+                <?php if (!$notification["enabled"]) continue; ?>
             <th style="width: 140px"><?php echo $notification["list_label"]; ?></th>
             <?php endforeach; ?>
-            <?php endif; ?>
 
             <th style="width: 70px">Actif</th>
             <th style="width: 170px">&nbsp;</th>
@@ -75,9 +73,8 @@
             </td>
             <?php endif; ?>
 
-            <?php if ($notifications_enabled) : ?>
             <?php foreach ($data_notifications AS $name => $notification) : ?>
-                <?php if (!isset($notifications_enabled[$name])) continue; ?>
+                <?php if (!$notification["enabled"]) continue; ?>
             <td>
                 <a href="?mod=mail&amp;a=toggle_status&amp;s=<?php
                     echo $notification["form_name"]; ?>&amp;id=<?php
@@ -86,7 +83,6 @@
                 ?>.png" alt="" /></a>
             </td>
             <?php endforeach; ?>
-            <?php endif; ?>
             <td>
                 <a href="?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id=<?php echo $alert->id;
                     ?>"><img src="static/images/<?php

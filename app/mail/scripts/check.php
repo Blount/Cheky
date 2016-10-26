@@ -138,24 +138,22 @@ class Main
 
             // configuration des notifications.
             $notifications = array();
-            $notifications_params = $user->getOption("notification");
-            if ($notifications_params && is_array($notifications_params)) {
-                foreach ($notifications_params AS $notification_name => $options) {
-                    if (!is_array($options)) {
-                        continue;
-                    }
-                    try {
-                        $notifications[$notification_name] = \Message\AdapterFactory::factory($notification_name, $options);
-                        $this->_logger->debug(
-                            "[Pid ".getmypid()."] USER : ".$user->getUsername().
-                            " -> Notification ".get_class($notifications[$notification_name])." activée"
-                        );
-                    } catch (\Exception $e) {
-                        $this->_logger->warn(
-                            "[Pid ".getmypid()."] USER : ".$user->getUsername().
-                            " -> Notification ".$notification_name." invalide"
-                        );
-                    }
+            $notifications_enabled = $user->getNotificationsEnabled();
+            foreach ($notifications_enabled AS $notification_name => $options) {
+                if (!is_array($options)) {
+                    continue;
+                }
+                try {
+                    $notifications[$notification_name] = \Message\AdapterFactory::factory($notification_name, $options);
+                    $this->_logger->debug(
+                        "[Pid ".getmypid()."] USER : ".$user->getUsername().
+                        " -> Notification ".get_class($notifications[$notification_name])." activée"
+                    );
+                } catch (\Exception $e) {
+                    $this->_logger->warn(
+                        "[Pid ".getmypid()."] USER : ".$user->getUsername().
+                        " -> Notification ".$notification_name." invalide"
+                    );
                 }
             }
 
@@ -167,8 +165,6 @@ class Main
             if (count($alerts) == 0) {
                 continue;
             }
-
-            $notifications_enabled = $user->getNotificationsEnabled();
 
             foreach ($alerts AS $i => $alert) {
                 $log_id = "[Pid ".getmypid()."] USER : ".$user->getUsername()." - ALERT ID : ".$alert->id." -> ";
@@ -369,7 +365,7 @@ class Main
                 }
 
                 $params = array();
-                if ($notifications && $user->hasNotification()) {
+                if ($notifications) {
                     if ($countAds < 5) { // limite à 5 SMS
                         foreach ($newAds AS $id => $ad) {
                             $ad = $ads[$id]; // récupère l'objet.
@@ -415,9 +411,6 @@ class Main
 
                     if ($params) {
                         foreach ($notifications AS $key => $notifier) {
-                            if (empty($notifications_enabled[$key]["active"])) {
-                                continue;
-                            }
                             switch ($key) {
                                 case "freeMobile":
                                     $key_test = "send_sms_free_mobile";

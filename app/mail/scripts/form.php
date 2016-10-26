@@ -26,17 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $alert->fromArray($_POST);
 
-    $hasNotification = false;
-    foreach ($data_notifications AS $name => $notification) {
-        if (isset($notifications_enabled[$name]) && $alert->{$notification["form_name"]}) {
-            $hasNotification = true;
-            break;
-        }
-    }
-    if (!$hasNotification) {
-        $errors["send_type"] = "Vous devez sélectionner au moins un moyen de communication.";
-    }
-
     if (empty($alert->email)) {
         $errors["email"] = "Ce champ est obligatoire.";
     }
