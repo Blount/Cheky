@@ -167,6 +167,9 @@ class Main
             if (count($alerts) == 0) {
                 continue;
             }
+
+            $notifications_enabled = $user->getNotificationsEnabled();
+
             foreach ($alerts AS $i => $alert) {
                 $log_id = "[Pid ".getmypid()."] USER : ".$user->getUsername()." - ALERT ID : ".$alert->id." -> ";
 
@@ -412,6 +415,9 @@ class Main
 
                     if ($params) {
                         foreach ($notifications AS $key => $notifier) {
+                            if (empty($notifications_enabled[$key]["active"])) {
+                                continue;
+                            }
                             switch ($key) {
                                 case "freeMobile":
                                     $key_test = "send_sms_free_mobile";
