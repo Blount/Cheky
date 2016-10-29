@@ -4,7 +4,7 @@ $ads = $storage->fetchAll();
 $sort = isset($_GET["sort"]) ? ucfirst($_GET["sort"]) : "";
 $order = isset($_GET["order"]) ? $_GET["order"] : "asc";
 
-if ($sort && method_exists(new \App\BackupAd\Ad(), "get".$sort)) {
+if ($sort && method_exists(new \App\Ad\Ad(), "get".$sort)) {
     setlocale(LC_CTYPE, "fr_FR.UTF-8");
     usort($ads, function ($ad1, $ad2) use ($sort) {
         $method = "get".$sort;

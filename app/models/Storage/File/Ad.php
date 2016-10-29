@@ -2,9 +2,9 @@
 
 namespace App\Storage\File;
 
-use App\BackupAd\Ad;
+use App\Ad\Ad as AdItem;
 
-class BackupAd implements \App\Storage\BackupAd
+class Ad implements \App\Storage\Ad
 {
     protected $_filename;
 
@@ -22,7 +22,7 @@ class BackupAd implements \App\Storage\BackupAd
             if ($header = fgetcsv($fopen, 0, ",", '"')) {
                 $nb_columns = count($header);
                 while (false !== $values = fgetcsv($fopen, 0, ",", '"')) {
-                    $ad = new Ad();
+                    $ad = new AdItem();
                     $options = array_combine(
                         $header,
                         array_slice($values, 0, count($header))
@@ -54,7 +54,7 @@ class BackupAd implements \App\Storage\BackupAd
                         array_slice($values, 0, count($header))
                     );
                     if ($options["id"] == $id) {
-                        $ad = new Ad();
+                        $ad = new AdItem();
                         if (!empty($options["photos"])) {
                             $options["photos"] = json_decode($options["photos"], true);
                         }
@@ -71,7 +71,7 @@ class BackupAd implements \App\Storage\BackupAd
         return $ad;
     }
 
-    public function save(Ad $ad)
+    public function save(AdItem $ad)
     {
         $ads = $this->fetchAll();
 
@@ -115,7 +115,7 @@ class BackupAd implements \App\Storage\BackupAd
         return $this;
     }
 
-    public function delete(Ad $ad)
+    public function delete(AdItem $ad)
     {
         $ads = $this->fetchAll();
         $fopen = fopen($this->_filename, "a");

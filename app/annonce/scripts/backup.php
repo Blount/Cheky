@@ -29,7 +29,7 @@ if ($ad_stored) {
 
 
 if (!$ad_stored) {
-    $ad_stored = new \App\BackupAd\Ad();
+    $ad_stored = new \App\Ad\Ad();
 }
 
 $ad_stored->setFromArray($ad->toArray());

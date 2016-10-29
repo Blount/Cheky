@@ -2,9 +2,9 @@
 
 namespace App\Storage\Db;
 
-use App\BackupAd\Ad;
+use App\Ad\Ad as AdItem;
 
-class BackupAd implements \App\Storage\BackupAd
+class Ad implements \App\Storage\Ad
 {
     /**
      * @var \mysqli
@@ -36,7 +36,7 @@ class BackupAd implements \App\Storage\BackupAd
                     $adDb[$key] = array();
                 }
             }
-            $ad = new Ad();
+            $ad = new AdItem();
             $ad->setFromArray($adDb);
             $ads[] = $ad;
         }
@@ -57,13 +57,13 @@ class BackupAd implements \App\Storage\BackupAd
                     $adDb[$key] = array();
                 }
             }
-            $ad = new Ad();
+            $ad = new AdItem();
             $ad->setFromArray($adDb);
         }
         return $ad;
     }
 
-    public function save(Ad $ad)
+    public function save(AdItem $ad)
     {
         $options = $ad->toArray();
         $options["photos"] = json_encode($options["photos"]);
@@ -118,7 +118,7 @@ class BackupAd implements \App\Storage\BackupAd
         return $this;
     }
 
-    public function delete(Ad $ad)
+    public function delete(AdItem $ad)
     {
         $this->_connection->query("DELETE FROM ".$this->_table."
             WHERE `aid` = ".$ad->getAid());
@@ -128,7 +128,7 @@ class BackupAd implements \App\Storage\BackupAd
 
     /**
      * @param \mysqli $dbConnection
-     * @return \App\Storage\Db\BackupAd
+     * @return \App\Storage\Db\Ad
      */
     public function setDbConnection($dbConnection)
     {

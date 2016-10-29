@@ -1,5 +1,5 @@
 <?php
-$ad = new App\BackupAd\Ad();
+$ad = new App\Ad\Ad();
 
 $link = "";
 
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $ad_stored = $storage->fetchById($ad->getId());
         if (!$ad_stored) {
-            $ad_stored = new \App\BackupAd\Ad();
+            $ad_stored = new \App\Ad\Ad();
         }
 
         $ad_stored->setFromArray($ad->toArray());

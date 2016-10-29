@@ -1,5 +1,5 @@
 <?php
-$ad = new App\BackupAd\Ad();
+$ad = new App\Ad\Ad();
 
 $link = "";
 
@@ -32,7 +32,7 @@ $ad = $parser->processAd(
 
 $ad_stored = $storage->fetchById($ad->getId());
 if (!$ad_stored) {
-    $ad_stored = new \App\BackupAd\Ad();
+    $ad_stored = new \App\Ad\Ad();
 }
 
 $ad_stored->setFromArray($ad->toArray());

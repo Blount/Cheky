@@ -2,7 +2,7 @@
 
 namespace App\Storage;
 
-use App\BackupAd\Ad;
+use App\Ad\Ad as AdItem;
 
 class AdPhoto
 {
@@ -27,7 +27,7 @@ class AdPhoto
         return DOCUMENT_ROOT."/static/media/annonce/".$this->_user->getUsername();
     }
 
-    public function import(Ad $ad, $override = false)
+    public function import(AdItem $ad, $override = false)
     {
         $destination = $this->getDestination();
         if (!is_dir($destination) && !mkdir($destination)) {
@@ -44,7 +44,7 @@ class AdPhoto
         return true;
     }
 
-    public function delete(Ad $ad)
+    public function delete(AdItem $ad)
     {
         $destination = $this->getDestination();
         foreach ($ad->getPhotos() AS $photo) {

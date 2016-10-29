@@ -1,6 +1,6 @@
 <?php
 
-namespace App\BackupAd;
+namespace App\Ad;
 
 class Ad extends \AdService\Ad
 {

@@ -19,7 +19,7 @@ $sort = "";
 $order = isset($_SESSION["backupad"]["order"])?$_SESSION["backupad"]["order"]:"asc";
 
 if (isset($_SESSION["backupad"]["sort"])
-    && method_exists(new \App\BackupAd\Ad(), "get".ucfirst($_SESSION["backupad"]["sort"]))) {
+    && method_exists(new \App\Ad\Ad(), "get".ucfirst($_SESSION["backupad"]["sort"]))) {
     $sort = $_SESSION["backupad"]["sort"];
     setlocale(LC_CTYPE, "fr_FR.UTF-8");
     usort($ads, function ($ad1, $ad2) {
