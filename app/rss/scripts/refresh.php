@@ -5,7 +5,6 @@ if (!isset($_GET["url"])) {
 }
 
 $disableLayout = true;
-$logFile = DOCUMENT_ROOT."/var/logs/rss.log";
 
 use \FeedWriter\RSS2;
 
