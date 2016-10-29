@@ -38,4 +38,7 @@ if (!$ad_stored) {
 $ad_stored->setFromArray($ad->toArray());
 $storage->save($ad_stored);
 
+$adPhoto = new App\Storage\AdPhoto($userAuthed);
+$adPhoto->import($ad_stored);
+
 return $ad_stored->toArray();

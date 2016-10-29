@@ -107,12 +107,6 @@ class BackupAd implements \App\Storage\BackupAd
 			}
             fputcsv($fpNewFile, $data, ",", '"');
         }
-        foreach ($ad->getPhotos() AS $photo) {
-            $filename = DOCUMENT_ROOT."/static/media/annonce/".$photo["local"];
-            if (!is_file($filename)) {
-                copy($photo["remote"], $filename);
-            }
-        }
 
         fclose($fpNewFile);
         fclose($fopen);
@@ -145,14 +139,6 @@ class BackupAd implements \App\Storage\BackupAd
         fclose($fopen);
         file_put_contents($this->_filename, file_get_contents($this->_filename.".new"));
         unlink($this->_filename.".new");
-
-        // Supprime les photos
-        foreach ($ad->getPhotos() AS $photo) {
-            $filename = DOCUMENT_ROOT."/static/media/annonce/".$photo["local"];
-            if (is_file($filename)) {
-                unlink($filename);
-            }
-        }
 
         // Si aucune annonce trouvée, on supprime le fichier CSV
         $ads = $this->fetchAll();

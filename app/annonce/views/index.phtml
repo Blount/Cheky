@@ -74,7 +74,7 @@
             <td><?php echo $i++; ?></td>
             <td>
                 <?php if ($photos = $ad->getPhotos()) : ?>
-                <img src="static/media/annonce/<?php echo $photos[0]["local"]; ?>" alt=""
+                <img src="<?php echo $adPhoto->getPublicDestination($photos[0]["local"]); ?>" alt=""
                     style="max-width: 100px; max-height: 100px;" />
                 <?php endif; ?>
             </td>

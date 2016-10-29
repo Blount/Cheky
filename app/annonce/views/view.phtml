@@ -85,9 +85,9 @@ $date = implode("/", array_reverse(explode("-", $ad->getDate())));
     <div class="annonce-photos">
         <?php foreach ($photos AS $photo) : ?>
         <div class="annonce-photo">
-            <a href="static/media/annonce/<?php echo $photo["local"];
+            <a href="<?php echo $adPhoto->getPublicDestination($photo["local"]);
                 ?>" target="_blank"><img
-                src="static/media/annonce/<?php echo $photo["local"]; ?>"
+                src="<?php echo $adPhoto->getPublicDestination($photo["local"]); ?>"
                 alt="" class="annonce-photo-img" /></a>
         </div>
         <?php endforeach; ?>

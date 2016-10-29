@@ -24,12 +24,7 @@ if ($ad_stored) {
     }
 
     // Supprime les photos
-    foreach ($ad->getPhotos() AS $photo) {
-        $filename = DOCUMENT_ROOT."/static/media/annonce/".$photo["local"];
-        if (is_file($filename)) {
-            unlink($filename);
-        }
-    }
+    $adPhoto->delete($ad);
 }
 
 
@@ -39,4 +34,7 @@ if (!$ad_stored) {
 
 $ad_stored->setFromArray($ad->toArray());
 $storage->save($ad_stored);
+
+$adPhoto->import($ad_stored);
+
 header("LOCATION: ./?mod=annonce&a=view&id=".$ad->getId()); exit;

@@ -11,4 +11,6 @@ if (empty($_POST["id"])) {
 $ad = $storage->fetchById($_POST["id"]);
 if ($ad) {
     $storage->delete($ad);
+    $adPhoto = new App\Storage\AdPhoto($userAuthed);
+    $adPhoto->delete($ad);
 }

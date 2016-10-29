@@ -9,6 +9,7 @@ if (!$ad) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["id"]) && $_POST["id"] == $_GET["id"]) {
         $storage->delete($ad);
+        $adPhoto->delete($ad);
     }
     header("LOCATION: ./?mod=annonce"); exit;
 }

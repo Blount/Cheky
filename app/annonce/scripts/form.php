@@ -29,6 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ad_stored->setFromArray($ad->toArray());
         $storage->save($ad_stored);
 
+        $adPhoto->import($ad_stored);
+
         header("LOCATION: ./?mod=annonce");
         exit;
     }

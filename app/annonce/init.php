@@ -5,3 +5,5 @@ if ($storageType == "db") {
 } else {
     $storage = new \App\Storage\File\BackupAd(DOCUMENT_ROOT."/var/configs/backup-ads-".$auth->getUsername().".csv");
 }
+
+$adPhoto = new App\Storage\AdPhoto($userAuthed);
