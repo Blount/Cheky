@@ -89,7 +89,11 @@ class Lbc extends AbstractParser
             // recherche de l'image
             foreach ($result->getElementsByTagName("span") AS $node) {
                 if ($src = $node->getAttribute("data-imgsrc")) {
-                    $ad->setThumbnailLink($this->formatLink($src));
+                    $src = $this->formatLink($src);
+                    if (false !== strpos($src, "/ad-thumb/")) {
+                        $src = str_replace("/ad-thumb/", "/ad-large/", $src);
+                    }
+                    $ad->setThumbnailLink($src);
                 }
             }
 
