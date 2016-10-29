@@ -35,7 +35,7 @@ $logger = Logger::getLogger("main");
 
 $id = sha1($_SERVER["REQUEST_URI"]);
 $cache_filename = DOCUMENT_ROOT."/var/feeds/".$id.".xml";
-if (is_file($cache_filename)) {
+if ("development" != APPLICATION_ENV && is_file($cache_filename)) {
      readfile($cache_filename);
      return;
 }
