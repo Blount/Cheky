@@ -193,23 +193,53 @@ class Bootstrap
                 $e->getCode()." ".
                 $e->getMessage()." (".$e->getFile().":".$e->getLine().")"
         );
+
         if ("development" == APPLICATION_ENV) {
             var_dump($e);
-        } else {
-            die("Un problème est survenu lors de l'exécution du programme.\n");
+            return;
         }
+
+        die("Un problème est survenu lors de l'exécution du programme.\n");
     }
 
     public function _errorHandler($errno, $errstr, $errfile, $errline)
     {
+        $display_errors = ini_get("display_errors");
+        if ($display_errors || "development" == APPLICATION_ENV) {
+            var_dump($display_errors,$errno, $errstr, $errfile, $errline);
+            return false;
+        }
+
+        switch ($errno) {
+            case E_NOTICE:
+                $errno_const = "E_NOTICE";
+                break;
+            case E_ERROR:
+                $errno_const = "E_ERROR";
+                break;
+            case E_USER_ERROR:
+                $errno_const = "E_USER_ERROR";
+                break;
+            case E_WARNING:
+                $errno_const = "E_WARNING";
+                break;
+            case E_USER_WARNING:
+                $errno_const = "E_USER_WARNING";
+                break;
+            default:
+                $errno_const = $errno;
+        }
+
         Logger::getLogger("main")->error(
-            "#".$errno." ".$errstr." (".$errfile.":".$errline.")"
+            $errno_const." ".$errstr." (".$errfile.":".$errline.")"
         );
-        if ("development" == APPLICATION_ENV) {
-            var_dump($errno, $errstr, $errfile, $errline);
-        } else {
+
+        // Pour les ERROR, on stoppe l'exécution du script
+        if ($errno == E_ERROR || $errno == E_USER_ERROR) {
             die("Un problème est survenu lors de l'exécution du programme.\n");
         }
+
+        return true;
     }
 }
 
