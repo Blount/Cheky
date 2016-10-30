@@ -62,7 +62,7 @@ class Bootstrap
     {
         Logger::configure(array(
             "rootLogger" => array(
-                "appenders" => array("default"),
+                "appenders" => array("default", "error"),
                 "level" => APPLICATION_ENV == "development"?"debug":"info"
             ),
             "appenders" => array(
@@ -76,9 +76,26 @@ class Bootstrap
                     ),
                     "params" => array(
                         "file" => DOCUMENT_ROOT."/var/log/info.log",
+                        "maxFileSize" => APPLICATION_ENV == "development"?"20MB":"3MB",
+                        "maxBackupIndex" => 5,
+                        "append" => true,
+                        "threshold" => "all",
+                    )
+                ),
+                "error" => array(
+                    "class" => "LoggerAppenderRollingFile",
+                    "layout" => array(
+                        "class" => "LoggerLayoutPattern",
+                        "params" => array(
+                            "conversionPattern" => "%date %-5level %msg%n"
+                        )
+                    ),
+                    "params" => array(
+                        "file" => DOCUMENT_ROOT."/var/log/error.log",
                         "maxFileSize" => "3MB",
                         "maxBackupIndex" => 5,
-                        "append" => true
+                        "append" => true,
+                        "threshold" => "error",
                     )
                 )
             )
