@@ -80,7 +80,7 @@ class Ad implements \App\Storage\Ad
         $fpNewFile = fopen($this->_filename.".new", "w");
         flock($fpNewFile, LOCK_EX);
 
-		// Entête du fichier CSV
+        // Entête du fichier CSV
         $headers = array_keys($ad->toArray());
         fputcsv($fpNewFile, $headers, ",", '"');
 
@@ -94,8 +94,8 @@ class Ad implements \App\Storage\Ad
             $data["photos"] = json_encode($data["photos"]);
             $data["properties"] = json_encode($data["properties"]);
             if (empty($data["date_created"])) {
-				$data["date_created"] = date("Y-m-d H:i:s");
-			}
+                $data["date_created"] = date("Y-m-d H:i:s");
+            }
             fputcsv($fpNewFile, $data, ",", '"');
         }
         if (!$updated) {
@@ -103,8 +103,8 @@ class Ad implements \App\Storage\Ad
             $data["photos"] = json_encode($data["photos"]);
             $data["properties"] = json_encode($data["properties"]);
             if (empty($data["date_created"])) {
-				$data["date_created"] = date("Y-m-d H:i:s");
-			}
+                $data["date_created"] = date("Y-m-d H:i:s");
+            }
             fputcsv($fpNewFile, $data, ",", '"');
         }
 
@@ -123,7 +123,7 @@ class Ad implements \App\Storage\Ad
         $fpNewFile = fopen($this->_filename.".new", "w");
         flock($fpNewFile, LOCK_EX);
 
-		// Entête du fichier CSV
+        // Entête du fichier CSV
         $headers = array_keys($ad->toArray());
         fputcsv($fpNewFile, $headers, ",", '"');
 
@@ -143,7 +143,7 @@ class Ad implements \App\Storage\Ad
         // Si aucune annonce trouvée, on supprime le fichier CSV
         $ads = $this->fetchAll();
         if (0 == count($ads) && is_file($this->_filename)) {
-			unlink($this->_filename);
+            unlink($this->_filename);
         }
 
         return $this;
