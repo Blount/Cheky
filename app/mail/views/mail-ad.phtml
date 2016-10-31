@@ -41,7 +41,7 @@
     <?php endif; ?>
     <?php if ($ad->getThumbnailLink()) : ?>
     <br /><img src="<?php echo str_replace('/thumbs/', '/images/', $ad->getThumbnailLink()); ?>" alt=""
-        style="max-width: 100%; overflow:hidden;" />
+        style="max-width: 100%; max-height: 600px; overflow:hidden;" />
     <?php else : ?>
     <br />Pas de photo disponible.
     <?php endif; ?>
