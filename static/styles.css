@@ -268,6 +268,7 @@ footer {
 }
 .topmenu li {
 	float: left;
+    border-right: 1px solid #666666;
 }
 .topmenu a:link,
 .topmenu a:hover,
@@ -290,6 +291,7 @@ footer {
 .topmenu li:hover,
 .topmenu li.active {
     background: #EF0000;
+    border-right: 1px solid #EF0000;
 }
 
 .content {
