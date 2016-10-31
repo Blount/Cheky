@@ -27,9 +27,14 @@ if ($order == "desc") {
     $ads = array_reverse($ads);
 }
 
+$baseurl = $config->get("general", "baseurl", "");
+$adPhoto = new App\Storage\AdPhoto($userAuthed);
 $return = array();
 foreach ($ads AS $ad) {
-    $return[$ad->getId()] = $ad->toArray();
+    $params = $ad->toArray();
+    foreach ($params["photos"] AS $i => $photo) {
+        $params["photos"][$i]["local"] = $baseurl.$adPhoto->getPublicDestination($photo["local"]);
+    }
+    $return[$ad->getId()] = $params;
 }
-
 return $return;
