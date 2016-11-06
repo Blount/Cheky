@@ -15,19 +15,16 @@ if (isset($_GET["sort"])) {
 }
 
 $ads = $storage->fetchAll();
-$sort = "";
-$order = isset($_SESSION["backupad"]["order"])?$_SESSION["backupad"]["order"]:"asc";
+$sort = isset($_SESSION["backupad"]["sort"])?$_SESSION["backupad"]["sort"]:"dateCreated";
+$order = isset($_SESSION["backupad"]["order"])?$_SESSION["backupad"]["order"]:"desc";
 
-if (isset($_SESSION["backupad"]["sort"])
-    && method_exists(new \App\Ad\Ad(), "get".ucfirst($_SESSION["backupad"]["sort"]))) {
-    $sort = $_SESSION["backupad"]["sort"];
+if ($sort && method_exists(new \App\Ad\Ad(), "get".ucfirst($sort))) {
     setlocale(LC_CTYPE, "fr_FR.UTF-8");
-    usort($ads, function ($ad1, $ad2) {
-        $key = $_SESSION["backupad"]["sort"];
-        $method = "get".ucfirst($key);
+    usort($ads, function ($ad1, $ad2) use ($sort) {
+        $method = "get".ucfirst($sort);
         $param1 = mb_strtolower($ad1->$method());
         $param2 = mb_strtolower($ad2->$method());
-        if ($key == "title" && function_exists("iconv")) {
+        if ($sort == "title" && function_exists("iconv")) {
             $param1 = iconv("UTF-8", "ASCII//TRANSLIT//IGNORE", $param1);
             $param2 = iconv("UTF-8", "ASCII//TRANSLIT//IGNORE", $param2);
         }
@@ -40,7 +37,7 @@ if (isset($_SESSION["backupad"]["sort"])
         return 0;
     });
 }
-if (isset($_SESSION["backupad"]["order"]) && $_SESSION["backupad"]["order"] == "desc") {
+if ($order == "desc") {
     $ads = array_reverse($ads);
 }
 
