@@ -14,7 +14,7 @@ class Ad implements \App\Storage\Ad
         $this->_checkFile();
     }
 
-    public function fetchAll()
+    public function fetchAll($order = null)
     {
         $ads = array();
         if (is_file($this->_filename)) {
@@ -39,6 +39,45 @@ class Ad implements \App\Storage\Ad
             }
             fclose($fopen);
         }
+
+        if (null !== $order) {
+
+            if (is_array($order)) {
+                $order = array_shift($order);
+            }
+            if (is_string($order) && preg_match("#(?<sort>.+)\s+(?<order>asc|desc)#i", $order, $m)) {
+                $sort = $m["sort"];
+                $order = strtolower($m["order"]);
+                $method = "get".str_replace(" ", "", ucwords(str_replace("_", " ", $sort)));
+                if (!method_exists(new \App\Ad\Ad(), $method)) {
+                    unset($sort, $order, $method);
+                }
+            }
+
+            if (isset($sort)) {
+                setlocale(LC_CTYPE, "fr_FR.UTF-8");
+                usort($ads, function ($ad1, $ad2) use ($sort, $method) {
+                    $param1 = mb_strtolower($ad1->$method());
+                    $param2 = mb_strtolower($ad2->$method());
+                    if ($sort == "title" && function_exists("iconv")) {
+                        $param1 = iconv("UTF-8", "ASCII//TRANSLIT//IGNORE", $param1);
+                        $param2 = iconv("UTF-8", "ASCII//TRANSLIT//IGNORE", $param2);
+                    }
+                    if ($param1 < $param2) {
+                        return -1;
+                    }
+                    if ($param1 > $param2) {
+                        return 1;
+                    }
+                    return 0;
+                });
+
+                if ($order == "desc") {
+                    $ads = array_reverse($ads);
+                }
+            }
+        }
+
         return $ads;
     }
 

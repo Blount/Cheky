@@ -24,11 +24,19 @@ class Ad implements \App\Storage\Ad
         $this->_user = $user;
     }
 
-    public function fetchAll()
+    public function fetchAll($order = null)
     {
         $ads = array();
-        $adsDb = $this->_connection->query("SELECT * FROM ".$this->_table
-            ." WHERE user_id = ".$this->_user->getId());
+        $query = "SELECT * FROM ".$this->_table
+            ." WHERE user_id = ".$this->_user->getId();
+        if ($order) {
+            if (is_string($order)) {
+                $query .= " ORDER By ".$order;
+            } elseif (is_array($order)) {
+                $query .= implode(", ", $order);
+            }
+        }
+        $adsDb = $this->_connection->query($query);
         while ($adDb = $adsDb->fetch_assoc()) {
             foreach (array("photos", "properties") AS $key) {
                 $adDb[$key] = json_decode($adDb[$key], true);
