@@ -77,13 +77,13 @@ class User implements \App\Storage\User
     public function save(\App\User\User $user)
     {
         if (!$api_key = $user->getApiKey()) {
-            $api_key = null;
+            $api_key = "NULL";
         } else {
             $api_key = "'".$this->_connection->real_escape_string($api_key)."'";
         }
         if (!$this->fetchByUsername($user->getUsername())) {
             $this->_connection->query("INSERT INTO `".$this->_table.
-                "` (`username`, `password`, `api_key` `options`) VALUES (
+                "` (`username`, `password`, `api_key`, `options`) VALUES (
                     '".$this->_connection->real_escape_string($user->getUsername())."',
                     '".$this->_connection->real_escape_string($user->getPassword())."',
                     ".$api_key.",
