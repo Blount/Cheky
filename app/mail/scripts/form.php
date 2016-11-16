@@ -4,9 +4,17 @@ if (isset($_GET["id"])) {
 }
 if (empty($alert)) {
     $alert = new App\Mail\Alert();
+    if ($emails = $userAuthed->getOption("addresses_mails")) {
+        $alert->email = $emails;
+    }
+}
+
+if (isset($_GET["preurl"])) {
+    $alert->url = $_GET["preurl"];
 }
 
 $categoryCollection = new \Lbc\CategoryCollection();
+$errors = array();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($_POST AS $name => $value) {
@@ -17,15 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     $alert->fromArray($_POST);
-    if (empty($alert->send_mail)
-        && empty($alert->send_sms_free_mobile)
-        && empty($alert->send_sms_ovh)
-        && empty($alert->send_pushbullet)
-        && empty($alert->send_notifymyandroid)
-        && empty($alert->send_pushover)
-    ) {
-        $errors["send_type"] = "Vous devez sélectionner au moins un moyen de communication.";
-    }
+
     if (empty($alert->email)) {
         $errors["email"] = "Ce champ est obligatoire.";
     }

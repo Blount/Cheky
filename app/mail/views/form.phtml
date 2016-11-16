@@ -29,63 +29,24 @@ $alertCategories = $alert->getCategories();
             <p class="error"><?php echo $errors["title"]; ?></p>
             <?php endif; ?>
         </dd>
-        <?php if ($userAuthed->hasSMSFreeMobile() || $userAuthed->hasSMSOvh() || $userAuthed->hasPushbullet()) : ?>
+        <?php if ($userAuthed->hasNotification()) : ?>
         <dt>
             <label>Comment souhaitez-vous recevoir les alertes</label>
         </dt>
         <dd class="notification-list">
-            <input type="hidden" name="send_mail" value="0" />
-            <input type="hidden" name="send_sms_free_mobile" value="0" />
-            <input type="hidden" name="send_sms_ovh" value="0" />
-            <input type="hidden" name="send_pushbullet" value="0" />
-            <input type="hidden" name="send_notifymyandroid" value="0" />
-            <input type="hidden" name="send_pushover" value="0" />
-            <label for="alert_mail">
-                <input id="alert_mail" type="checkbox" name="send_mail" value="1"<?php
-                    echo $alert->send_mail?' checked="checked"':''
-                ?> />
-                par email
+            <?php foreach ($data_notifications AS $name => $notification) : ?>
+                <?php if (!$notification["enabled"]) continue; ?>
+            <input type="hidden" name="<?php echo $notification["form_name"]; ?>" value="0" />
+            <label for="<?php echo $notification["form_name"]; ?>">
+                <input id="<?php echo $notification["form_name"]; ?>"
+                    type="checkbox"
+                    name="<?php echo $notification["form_name"]; ?>"
+                    value="1"
+                    <?php echo $alert->{$notification["form_name"]} ? ' checked="checked"' : ''; ?>
+                />
+                <?php echo $notification["form_label"]; ?>
             </label>
-            <?php if ($userAuthed->hasSMSFreeMobile()) : ?>
-            <label for="alert_sms_free">
-                <input id="alert_sms_free" type="checkbox" name="send_sms_free_mobile" value="1"<?php
-                    echo $alert->send_sms_free_mobile?' checked="checked"':''
-                ?> />
-                par SMS Free Mobile
-            </label>
-            <?php endif; ?>
-            <?php if ($userAuthed->hasSMSOvh()) : ?>
-            <label for="alert_sms_ovh">
-                <input id="alert_sms_ovh" type="checkbox" name="send_sms_ovh" value="1"<?php
-                    echo $alert->send_sms_ovh?' checked="checked"':''
-                ?> />
-                par SMS OVH
-            </label>
-            <?php endif; ?>
-            <?php if ($userAuthed->hasPushbullet()) : ?>
-            <label for="alert_pushbullet">
-                <input id="alert_pushbullet" type="checkbox" name="send_pushbullet" value="1"<?php
-                    echo $alert->send_pushbullet?' checked="checked"':''
-                ?> />
-                par Pushbullet
-            </label>
-            <?php endif; ?>
-            <?php if ($userAuthed->hasNotifyMyAndroid()) : ?>
-            <label for="alert_notifymyandroid">
-                <input id="alert_notifymyandroid" type="checkbox" name="send_notifymyandroid" value="1"<?php
-                    echo $alert->send_notifymyandroid?' checked="checked"':''
-                ?> />
-                par NotityMyAndroid
-            </label>
-            <?php endif; ?>
-            <?php if ($userAuthed->hasPushover()) : ?>
-            <label for="alert_pushover">
-                <input id="alert_pushover" type="checkbox" name="send_pushover" value="1"<?php
-                    echo $alert->send_pushover?' checked="checked"':''
-                ?> />
-                par Pushover
-            </label>
-            <?php endif; ?>
+            <?php endforeach; ?>
             <?php if (isset($errors["send_type"])) : ?>
             <p class="error"><?php echo $errors["send_type"]; ?></p>
             <?php endif; ?>

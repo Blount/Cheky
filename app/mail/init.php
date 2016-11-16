@@ -7,3 +7,5 @@ if ($action != "check") {
         $storage = new \App\Storage\File\Alert(DOCUMENT_ROOT."/var/configs/".$auth->getUsername().".csv");
     }
 }
+
+require DOCUMENT_ROOT."/app/data/notifications.php";

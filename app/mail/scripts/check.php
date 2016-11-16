@@ -138,24 +138,22 @@ class Main
 
             // configuration des notifications.
             $notifications = array();
-            $notifications_params = $user->getOption("notification");
-            if ($notifications_params && is_array($notifications_params)) {
-                foreach ($notifications_params AS $notification_name => $options) {
-                    if (!is_array($options)) {
-                        continue;
-                    }
-                    try {
-                        $notifications[$notification_name] = \Message\AdapterFactory::factory($notification_name, $options);
-                        $this->_logger->debug(
-                            "[Pid ".getmypid()."] USER : ".$user->getUsername().
-                            " -> Notification ".get_class($notifications[$notification_name])." activée"
-                        );
-                    } catch (\Exception $e) {
-                        $this->_logger->warn(
-                            "[Pid ".getmypid()."] USER : ".$user->getUsername().
-                            " -> Notification ".$notification_name." invalide"
-                        );
-                    }
+            $notifications_enabled = $user->getNotificationsEnabled();
+            foreach ($notifications_enabled AS $notification_name => $options) {
+                if (!is_array($options)) {
+                    continue;
+                }
+                try {
+                    $notifications[$notification_name] = \Message\AdapterFactory::factory($notification_name, $options);
+                    $this->_logger->debug(
+                        "[Pid ".getmypid()."] USER : ".$user->getUsername().
+                        " -> Notification ".get_class($notifications[$notification_name])." activée"
+                    );
+                } catch (\Exception $e) {
+                    $this->_logger->warn(
+                        "[Pid ".getmypid()."] USER : ".$user->getUsername().
+                        " -> Notification ".$notification_name." invalide"
+                    );
                 }
             }
 
@@ -167,6 +165,7 @@ class Main
             if (count($alerts) == 0) {
                 continue;
             }
+
             foreach ($alerts AS $i => $alert) {
                 $log_id = "[Pid ".getmypid()."] USER : ".$user->getUsername()." - ALERT ID : ".$alert->id." -> ";
 
@@ -205,7 +204,7 @@ class Main
                 try {
                     $parser = \AdService\ParserFactory::factory($alert->url);
                 } catch (\AdService\Exception $e) {
-                    $this->_logger->err($log_id." ".$e->getMessage());
+                    $this->_logger->warn($log_id." ".$e->getMessage());
                     continue;
                 }
 
@@ -310,15 +309,12 @@ class Main
                         $error = true;
                     }
                     if (!$error) {
-                        if ($alert->group_ads) {
-                            $newAdsCount = count($newAds);
-                            $subject = "Alerte ".$siteConfig->getOption("site_name")." : ".$alert->title;
-                            $message = '
+                        $message_header = '
                             <h1 style="font-size: 16px;">Alerte : '.htmlspecialchars($alert->title, null, "UTF-8").'</h1>
                             <p style="font-size: 14px; margin: 0;"><strong><a href="'.htmlspecialchars($alert->url, null, "UTF-8").'"
                                 style="text-decoration: none; color: #0B6CDA;">LIEN DE RECHERCHE</a>';
                             if ($baseurl) {
-                                $message .= '
+                                $message_header .= '
                                     - <a href="'.$baseurl.'?mod=mail&amp;a=form&amp;id='. $alert->id .
                                         '" style="text-decoration: none; color: #E77600;">MODIFIER</a>
                                     - <a href="'.$baseurl.'?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id='. $alert->id .
@@ -327,8 +323,13 @@ class Main
                                         '" style="text-decoration: none; color: #FF0000;">SUPPRIMER</a>
                                 ';
                             }
-                            $message .= '</strong></p>';
-                            $message .= '<hr />';
+                            $message_header .= '</strong></p>';
+                            $message_header .= '<hr />';
+
+                        if ($alert->group_ads) {
+                            $newAdsCount = count($newAds);
+                            $subject = "Alerte ".$siteConfig->getOption("site_name")." : ".$alert->title;
+                            $message = $message_header;
                             $message .= '<p style="font-size: 16px; margin: 10px 0;"><strong>'.
                                 $newAdsCount.' nouvelle'.($newAdsCount > 1?'s':'').
                                 ' annonce'.($newAdsCount > 1?'s':'').
@@ -344,27 +345,12 @@ class Main
                             } catch (phpmailerException $e) {
                                 $this->_logger->warn($log_id.$e->getMessage());
                             }
+
                         } else {
                             $newAds = array_reverse($newAds, true);
                             foreach ($newAds AS $id => $ad) {
                                 $subject = ($alert->title?$alert->title." : ":"").$ads[$id]->getTitle();
-                                $message = '
-                                <h1 style="font-size: 16px;">Alerte : '.htmlspecialchars($alert->title, null, "UTF-8").'</h1>
-                                <p style="font-size: 14px; margin: 0;"><strong><a href="'.htmlspecialchars($alert->url, null, "UTF-8").'"
-                                    style="text-decoration: none; color: #0B6CDA;">LIEN DE RECHERCHE</a>';
-                                if ($baseurl) {
-                                    $message .= '
-                                        - <a href="'.$baseurl.'?mod=mail&amp;a=form&amp;id='. $alert->id .
-                                            '" style="text-decoration: none; color: #E77600;">MODIFIER</a>
-                                        - <a href="'.$baseurl.'?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id='. $alert->id .
-                                            '" style="text-decoration: none; color: #999999;">ACTIVER / DÉSACTIVER</a>
-                                        - <a href="'.$baseurl.'?mod=mail&amp;a=form-delete&amp;id='. $alert->id .
-                                            '" style="text-decoration: none; color: #FF0000;">SUPPRIMER</a>
-                                    ';
-                                }
-                                $message .= '</strong></p>';
-                                $message .= '<hr /><br />';
-                                $message .= $ad;
+                                $message = $message_header.$ad;
 
                                 $this->_mailer->Subject = $subject;
                                 $this->_mailer->Body = $message;
@@ -377,13 +363,9 @@ class Main
                         }
                     }
                 }
-                if ($notifications && (
-                       $alert->send_sms_free_mobile
-                    || $alert->send_sms_ovh
-                    || $alert->send_pushbullet
-                    || $alert->send_notifymyandroid
-                    || $alert->send_pushover
-                )) {
+
+                $params = array();
+                if ($notifications) {
                     if ($countAds < 5) { // limite à 5 SMS
                         foreach ($newAds AS $id => $ad) {
                             $ad = $ads[$id]; // récupère l'objet.
@@ -411,30 +393,6 @@ class Main
                                     "description" => "Nouvelle annonce".($alert->title ? " pour : ".$alert->title : ""),
                                     "url" => $url,
                                 );
-                                foreach ($notifications AS $key => $notifier) {
-                                    switch ($key) {
-                                        case "freeMobile":
-                                            $key_test = "send_sms_free_mobile";
-                                            break;
-                                        case "ovh":
-                                            $key_test = "send_sms_ovh";
-                                            break;
-                                        default:
-                                            $key_test = "send_".$key;
-                                    }
-                                    if (isset($alert->$key_test) && $alert->$key_test) {
-                                        try {
-                                            $notifier->send($msg, $params);
-                                        } catch (Exception $e) {
-                                            $this->_logger->warn(
-                                                $log_id."Erreur sur envoi via ".
-                                                get_class($notifier).
-                                                ": (".$e->getCode().") ".
-                                                $e->getMessage()
-                                            );
-                                        }
-                                    }
-                                }
                             }
                         }
                     } else { // envoi un msg global
@@ -448,28 +406,31 @@ class Main
                                             ($alert->title ? " pour : ".$alert->title : ""),
                                 "url" => $url,
                             );
-                            foreach ($notifications AS $key => $notifier) {
-                                switch ($key) {
-                                    case "freeMobile":
-                                        $key_test = "send_sms_free_mobile";
-                                        break;
-                                    case "ovh":
-                                        $key_test = "send_sms_ovh";
-                                        break;
-                                    default:
-                                        $key_test = "send_".$key;
-                                }
-                                if (isset($alert->$key_test) && $alert->$key_test) {
-                                    try {
-                                        $notifier->send($msg, $params);
-                                    } catch (Exception $e) {
-                                        $this->_logger->warn(
-                                            $log_id."Erreur sur envoi via ".
-                                            get_class($notifier).
-                                            ": (".$e->getCode().") ".
-                                            $e->getMessage()
-                                        );
-                                    }
+                        }
+                    }
+
+                    if ($params) {
+                        foreach ($notifications AS $key => $notifier) {
+                            switch ($key) {
+                                case "freeMobile":
+                                    $key_test = "send_sms_free_mobile";
+                                    break;
+                                case "ovh":
+                                    $key_test = "send_sms_ovh";
+                                    break;
+                                default:
+                                    $key_test = "send_".$key;
+                            }
+                            if (isset($alert->$key_test) && $alert->$key_test) {
+                                try {
+                                    $notifier->send($msg, $params);
+                                } catch (Exception $e) {
+                                    $this->_logger->warn(
+                                        $log_id."Erreur sur envoi via ".
+                                        get_class($notifier).
+                                        ": (".$e->getCode().") ".
+                                        $e->getMessage()
+                                    );
                                 }
                             }
                         }
@@ -548,11 +509,7 @@ try {
     return;
 }
 
-try {
-    $main->check();
-} catch (\Exception $e) {
-    Logger::getLogger("main")->warn($e->getMessage());
-}
+$main->check();
 $main->shutdown();
 
 

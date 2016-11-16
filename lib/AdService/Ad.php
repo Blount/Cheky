@@ -9,15 +9,53 @@ class Ad
     protected $_link_mobile;
     protected $_title;
     protected $_description;
-    protected $_price;
+    protected $_price = 0;
     protected $_currency = "€";
     protected $_date;
     protected $_category;
     protected $_country;
     protected $_city;
+    protected $_zip_code;
     protected $_professional;
     protected $_thumbnail_link;
     protected $_urgent;
+    protected $_author;
+    protected $_photos = array();
+    protected $_properties = array();
+
+    public function setFromArray(array $options)
+    {
+        foreach ($options AS $name => $value) {
+            if (property_exists($this, "_".$name)) {
+                $this->{"_".$name} = $value;
+            }
+        }
+
+        return $this;
+    }
+
+    public function toArray()
+    {
+        return array(
+            "id" => $this->_id,
+            "link" => $this->_link,
+            "link_mobile" => $this->_link_mobile,
+            "title" => $this->_title,
+            "description" => $this->_description,
+            "price" => $this->_price,
+            "currency" => $this->_currency,
+            "date" => $this->_date,
+            "category" => $this->_category,
+            "country" => $this->_country,
+            "city" => $this->_city,
+            "zip_code" => $this->_zip_code,
+            "professional" => $this->_professional,
+            "photos" => $this->_photos,
+            "urgent" => $this->_urgent,
+            "author" => $this->_author,
+            "properties" => $this->_properties,
+        );
+    }
 
 
     /**
@@ -230,6 +268,25 @@ class Ad
 
 
     /**
+     * @param string $zip_code
+     * @return \AdService\Ad
+     */
+    public function setZipCode($zip_code)
+    {
+        $this->_zip_code = $zip_code;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getZipCode()
+    {
+        return $this->_zip_code;
+    }
+
+
+    /**
      * @param bool $professional
      * @return \AdService\Ad
      */
@@ -283,5 +340,85 @@ class Ad
     public function getUrgent()
     {
         return $this->_urgent;
+    }
+
+
+    /**
+     * @param string $author
+     * @return \AdService\Ad
+     */
+    public function setAuthor($author)
+    {
+        $this->_author = $author;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthor()
+    {
+        return $this->_author;
+    }
+
+
+    /**
+     * @param array $photos
+     * @return \AdService\Ad
+     */
+    public function setPhotos(array $photos)
+    {
+        $this->_photos = $photos;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPhotos()
+    {
+        return $this->_photos;
+    }
+
+    /**
+     * @param string $name
+     * @param string $value
+     * @return \AdService\Ad
+     */
+    public function addProperty($name, $value)
+    {
+        $this->_properties[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return \AdService\Ad
+     */
+    public function removeProperty($name)
+    {
+        unset($this->_properties[$name]);
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function getProperty($name)
+    {
+        if (isset($this->_properties[$name])) {
+            return $this->_properties[$name];
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProperties()
+    {
+        return $this->_properties;
     }
 }

@@ -24,13 +24,9 @@ class User implements \App\Storage\User
             $user = new \App\User\User();
             $user->setId($userDb->id)
                 ->setPassword($userDb->password)
-                ->setUsername($userDb->username);
-            if (!empty($userDb->options)) {
-                $options = json_decode($userDb->options, true);
-                if (is_array($options)) {
-                    $user->setOptions($options);
-                }
-            }
+                ->setUsername($userDb->username)
+                ->setApiKey($userDb->api_key);
+            $this->_loadUserOptions($user, $userDb->options);
             $users[] = $user;
         }
         return $users;
@@ -47,29 +43,56 @@ class User implements \App\Storage\User
             $user = new \App\User\User();
             $user->setId($userDb->id)
                 ->setPassword($userDb->password)
-                ->setUsername($userDb->username);
-            if (!empty($userDb->options)) {
-                $options = json_decode($userDb->options, true);
-                if (is_array($options)) {
-                    $user->setOptions($options);
-                }
-            }
+                ->setUsername($userDb->username)
+                ->setApiKey($userDb->api_key);
+            $this->_loadUserOptions($user, $userDb->options);
         }
         return $user;
     }
 
+    protected function _loadUserOptions(\App\User\User $user, $options)
+    {
+        if (empty($options)) {
+            return $this;
+        }
+
+        $options = json_decode($options, true);
+        if (!is_array($options)) {
+            return $this;
+        }
+
+        if (!empty($options["notification"]) && is_array($options["notification"])) {
+            foreach ($options["notification"] AS $key => $params) {
+                if ($params && !isset($params["active"])) {
+                    $options["notification"][$key]["active"] = true;
+                }
+            }
+        }
+
+        $user->setOptions($options);
+
+        return $this;
+    }
+
     public function save(\App\User\User $user)
     {
+        if (!$api_key = $user->getApiKey()) {
+            $api_key = "NULL";
+        } else {
+            $api_key = "'".$this->_connection->real_escape_string($api_key)."'";
+        }
         if (!$this->fetchByUsername($user->getUsername())) {
             $this->_connection->query("INSERT INTO `".$this->_table.
-                "` (`username`, `password`, `options`) VALUES (
+                "` (`username`, `password`, `api_key`, `options`) VALUES (
                     '".$this->_connection->real_escape_string($user->getUsername())."',
                     '".$this->_connection->real_escape_string($user->getPassword())."',
+                    ".$api_key.",
                     '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
                 )");
         } else {
             $this->_connection->query("UPDATE `".$this->_table."` SET
                 `password` = '".$this->_connection->real_escape_string($user->getPassword())."',
+                `api_key` = ".$api_key.",
                 `options` = '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
             WHERE id = ".$user->getId());
         }

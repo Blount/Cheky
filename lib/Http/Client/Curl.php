@@ -56,6 +56,12 @@ class HttpClientCurl extends HttpClientAbstract
         $body = curl_exec($this->_resource);
         $this->_respond_code = curl_getinfo($this->_resource, CURLINFO_HTTP_CODE);
 
+        $content_type = curl_getinfo($this->_resource, CURLINFO_CONTENT_TYPE);
+        if (preg_match("#.*charset=(.+)#ims", $content_type, $m)) {
+            $charset = trim($m[1], " '\"");
+            $body = iconv($charset, "utf-8", $body);
+        }
+
         if ($this->_respond_code == 301 || $this->_respond_code == 302) {
             $redirect = curl_getinfo($this->_resource, CURLINFO_REDIRECT_URL);
             if ($redirect) {

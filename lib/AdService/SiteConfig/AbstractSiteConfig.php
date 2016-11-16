@@ -36,6 +36,12 @@ abstract class AbstractSiteConfig
     protected $has_date = true;
 
     /**
+     * Indique si la sauvegarde d'annonce est possible.
+     * @var bool
+     */
+    protected $allow_backup = false;
+
+    /**
      * @param string $name
      * @return mixed
      */

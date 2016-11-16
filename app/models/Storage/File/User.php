@@ -115,7 +115,18 @@ class User implements \App\Storage\User
         $filename = $dir.DS."user_".$user->getUsername().".json";
         if (is_file($filename)) {
             $data = json_decode(trim(file_get_contents($filename)), true);
+            if (isset($data["api_key"])) {
+                $user->setApiKey($data["api_key"]);
+                unset($data["api_key"]);
+            }
             if ($data && is_array($data)) {
+                if (!empty($data["notification"]) && is_array($data["notification"])) {
+                    foreach ($data["notification"] AS $key => $params) {
+                        if ($params && !isset($params["active"])) {
+                            $data["notification"][$key]["active"] = true;
+                        }
+                    }
+                }
                 $user->setOptions($data);
             }
         }
@@ -129,7 +140,11 @@ class User implements \App\Storage\User
             mkdir($dir);
         }
         $filename = $dir.DS."user_".$user->getUsername().".json";
-        file_put_contents($filename, json_encode($user->getOptions()));
+        $data = $user->getOptions();
+        if ($api_key = $user->getApiKey()) {
+            $data["api_key"] = $api_key;
+        }
+        file_put_contents($filename, json_encode($data));
         return $this;
     }
 

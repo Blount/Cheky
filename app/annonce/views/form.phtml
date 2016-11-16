@@ -1,0 +1,28 @@
+<form action="" method="post">
+    <h2>Sauvegarder une annonce</h2>
+    <dl>
+        <dt>
+            <label for="url">URL de l'annonce</label>
+        </dt>
+        <dd>
+            <input type="text" id="link" name="link" value="<?php
+                echo htmlspecialchars($link);
+            ?>" size="75" />
+            <?php if (isset($errors["link"])) : ?>
+            <p class="error"><?php echo $errors["link"]; ?></p>
+            <?php endif; ?>
+        </dd>
+    </dl>
+    <p><input type="submit" value="Enregistrer" />
+        | <a href="?mod=annonce">annuler</a></p>
+</form>
+
+
+
+
+
+
+
+
+
+

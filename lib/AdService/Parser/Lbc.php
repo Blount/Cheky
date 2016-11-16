@@ -21,7 +21,7 @@ class Lbc extends AbstractParser
             return;
         }
         $this->scheme = $scheme;
-        $this->loadHTML($content);
+        $this->loadHTML('<?xml encoding="UTF-8">'.$content);
 
         $timeToday = strtotime(date("Y-m-d")." 23:59:59");
         $dateYesterday = $timeToday - 24*3600;
@@ -89,7 +89,11 @@ class Lbc extends AbstractParser
             // recherche de l'image
             foreach ($result->getElementsByTagName("span") AS $node) {
                 if ($src = $node->getAttribute("data-imgsrc")) {
-                    $ad->setThumbnailLink($this->formatLink($src));
+                    $src = $this->formatLink($src);
+                    if (false !== strpos($src, "/ad-thumb/")) {
+                        $src = str_replace("/ad-thumb/", "/ad-large/", $src);
+                    }
+                    $ad->setThumbnailLink($src);
                 }
             }
 
@@ -165,6 +169,167 @@ class Lbc extends AbstractParser
         }
 
         return $ads;
+    }
+
+    /**
+     * Analyse une fiche d'annonce.
+     * @return Ad
+     */
+    public function processAd($content, $scheme = "http")
+    {
+        $this->loadHTML('<?xml encoding="UTF-8">'.$content);
+        $this->scheme = $scheme;
+
+        // Recherche du conteneur principal
+        $sections = $this->getElementsByTagName("section");
+        $container = null;
+        foreach ($sections AS $section) {
+            if (false !== strpos((string) $section->getAttribute("class"), "adview")) {
+                $container = $section;
+                break;
+            }
+        }
+
+        // Ca ne semble pas une annonce valide
+        if (!$container) {
+            return null;
+        }
+
+        $ad = new Ad();
+        $ad->setProfessional(false)->setUrgent(false);
+
+        // Lien vers l'annonce
+        $links = $this->getElementsByTagName("link");
+        foreach ($links AS $link) {
+            if ("canonical" == $link->getAttribute("rel")) {
+                $ad->setLink($this->formatLink($link->getAttribute("href")))
+                    ->setLinkMobile(str_replace(
+                        array("http://www.", "https://www."),
+                        array("http://mobile.", "https://mobile."),
+                        $ad->getLink()
+                    ));
+            }
+        }
+
+        // pas d'ID, pas d'annonce
+        if (!preg_match('/([0-9]+)\.htm.*/', $ad->getLink(), $m)) {
+            return null;
+        }
+        $ad->setId($m[1]);
+
+        // Catégorie
+        $navs = $this->getElementsByTagName("nav");
+        foreach ($navs AS $nav) {
+            if (false !== strpos($nav->getAttribute("class"), "breadcrumbsNav")) {
+                $li = $nav->getElementsByTagName("li")->item(2);
+                if ($li) {
+                    $ad->setCategory(trim($li->nodeValue));
+                }
+            }
+        }
+
+        // Date de publication
+        if (preg_match("#publish_date\s*:\s*\"([0-9]{2})/([0-9]{2})/([0-9]{4})\"#", $content, $m)) {
+            $ad->setDate($m[3]."-".$m[2]."-".$m[1]);
+        }
+
+        // Récupération des images
+        $scripts = $container->getElementsByTagName("script");
+        foreach ($scripts AS $script) {
+            if (preg_match_all("#images\[[0-9]+\]\s*=\s*\"([^\"]+)\"\s*;#imsU", $script->nodeValue, $images)) {
+                $photos = array();
+                foreach ($images[1] AS $image) {
+                    $image = $this->formatLink($image);
+                    $photos[] = array(
+                        "remote" => $image,
+                        "local" => sha1($image).".jpg",
+                    );
+                }
+                $ad->setPhotos($photos);
+            }
+        }
+
+        // Urgent
+        $ad->setUrgent(false !== strpos($content, "urgent : \"1\""));
+
+        $elements = $container->getElementsByTagName("*");
+        foreach ($elements AS $element) {
+            $itemprop = $element->getAttribute("itemprop");
+            $tag = strtolower($element->tagName);
+
+            // Titre
+            if ($tag == "h1") {
+                $ad->setTitle(trim($element->nodeValue));
+                continue;
+            }
+
+            // Pohoto
+            if ($tag == "div"
+                && !$ad->getPhotos()
+                && $value = $element->getAttribute("data-popin-content")
+            ) {
+                $image = $this->formatLink($value);
+                $ad->setPhotos(array(array(
+                    "remote" => $image,
+                    "local" => sha1($image).".jpg",
+                )));
+                continue;
+            }
+
+            // Adresse
+            if ($itemprop == "address") {
+                if (preg_match("#(.*)\s+([0-9]{5})#", trim($element->nodeValue), $m)) {
+                    $ad->setCity($m[1])
+                        ->setZipCode($m[2]);
+                }
+                continue;
+            }
+
+            // Prix
+            if ($itemprop == "price") {
+                $ad->setPrice($element->getAttribute("content"));
+                continue;
+            }
+
+            // Contenu
+            if ($itemprop == "description") {
+                $description = "";
+                foreach ($element->childNodes AS $sub_element) {
+                    if (isset($sub_element->tagName) && "br" == $sub_element->tagName) {
+                        $description .= "\n";
+                        continue;
+                    }
+                    $description .= $sub_element->nodeValue;
+                }
+                $ad->setDescription($description);
+                continue;
+            }
+
+            // PRO
+            if ("ispro" == $element->getAttribute("class")) {
+                $ad->setProfessional(true);
+                continue;
+            }
+
+            // Auteur
+            if ($tag == "a"
+                && false !== strpos($element->getAttribute("data-info"), "email::pseudo_annonceur")) {
+                $ad->setAuthor(trim($element->nodeValue));
+                continue;
+            }
+
+            // Autre propriété
+            if ("property" == $element->getAttribute("class")) {
+                $name = trim($element->nodeValue);
+                if ("Prix" == $name || "Ville" == $name) {
+                    continue;
+                }
+                $value = trim($element->nextSibling->nextSibling->nodeValue);
+                $ad->addProperty($name, $value);
+            }
+        }
+
+        return $ad;
     }
 
     protected function formatLink($link)

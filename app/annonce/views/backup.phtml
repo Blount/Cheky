@@ -1,0 +1,20 @@
+<form action="" method="post">
+    <fieldset>
+        <legend>Annonce déjà sauvegardée</legend>
+
+        <p>
+            Vous avez déjà sauvegardé cette annonce.
+            Souhaitez vous écraser la sauvegarde ?
+        </p>
+
+        <ul>
+            <li>Titre : <?php echo htmlspecialchars($ad_stored->getTitle()); ?></li>
+            <li>Url : <?php echo htmlspecialchars($ad_stored->getLink()); ?></li>
+        </ul>
+        <p>
+            <input type="hidden" name="id" value="<?php echo $ad_stored->getId(); ?>" />
+            <input type="submit" value="Oui" style="font-weight: bold;" />
+            | <a href="?mod=annonce">Non</a>
+        </p>
+    </fieldset>
+</form>

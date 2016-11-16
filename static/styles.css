@@ -1,14 +1,14 @@
 
 html {
-	font-family: 'Open Sans', sans-serif;
-	font-size: 14px;
-	background: #FFFFFF;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    background: #FFFFFF;
     padding: 0;
 }
 
 body {
-	margin: 0;
-	background: transparent;
+    margin: 0;
+    background: transparent;
 }
 
 a:link,
@@ -16,15 +16,15 @@ a:visited,
 a:active,
 a:hover
 {
-	color: #AB0000;
-	text-decoration: none;
+    color: #AB0000;
+    text-decoration: none;
 }
 
 
 a.link-create-alert {
-	font-size: .9em;
-	text-transform: uppercase;
-	font-weight: bold;
+    font-size: .9em;
+    text-transform: uppercase;
+    font-weight: bold;
 }
 
 table {
@@ -59,16 +59,25 @@ table td.intervalle {
     padding-right: 10px;
 }
 table img {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 .error {
     color: #EF0000;
     font-weight: bold;
     margin: 0;
 }
+.warning {
+    color: #EA8600;
+    font-weight: bold;
+    margin: 0;
+}
+.success {
+    font-weight: bold;
+    color: #333399;
+}
 form {
-	width: 100%;
-	max-width: 800px;
+    width: 100%;
+    max-width: 800px;
 }
 form input,
 form textarea {
@@ -80,12 +89,12 @@ form fieldset {
     margin-bottom: 40px;
 }
 form legend {
-	font-size: 1.5em;
+    font-size: 1.5em;
 }
 form > h2 {
     padding: 5px 10px;
     font-size: 1.2em;
-    
+
     background: #FFFFFF;
     background: linear-gradient(bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
     background: linear-gradient(to bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
@@ -108,7 +117,7 @@ form dt {
 }
 form dd {
     margin: 0 0 20px 0;
-    
+
     border: 1px solid #E5E5E5;
     padding: 0;
     line-height: 30px;
@@ -119,41 +128,43 @@ form .form-more {
 }
 
 form dt label {
-	background: #F5F5F5;
+    background: #F5F5F5;
     background: linear-gradient(to bottom, #E5E5E5, #F0F0F0);
     color: #000000;
-	padding: 0 1%;
-	line-height: 250%;
-	display: block;
+    padding: 0 1%;
+    line-height: 250%;
+    display: block;
 }
 form select,
 form input[type=text],
 form input[type=password],
 form textarea {
-	border: none;
-	padding: 0;
-	margin: 0;
-	height: 26px;
-	vertical-align: middle;
-	width: 98%;
-	padding: 0 1%;
-	background: #424242;
-	color: #FFF;
+    box-sizing: border-box;
+    border: none;
+    padding: 0;
+    margin: 0;
+    height: 26px;
+    vertical-align: middle;
+    width: 100%;
+    padding: 0 5px;
+    background: #424242;
+    color: #FFF;
 }
 form textarea {
     height: 260px;
 }
 form input[type=checkbox] {
-	padding: 0;
-	margin: 0;
-	vertical-align: middle;
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
 }
 form dd label {
-	padding: 0;
-	margin: 0 40px 0 1%;
+    padding: 0;
+    margin: 0 40px 0 1%;
     cursor: pointer;
 }
-form input[type=submit] {
+form input[type=submit],
+a.button {
     padding: 0 10px;
     font-size: 1.2em;
     background: #FFFFFF;
@@ -166,18 +177,50 @@ form input[type=submit] {
     height: 36px;
     transition: all linear 200ms;
 }
-form input[type=submit]:hover {
+a.button {
+    display: inline-block;
+    line-height: 36px;
+    height: auto;
+}
+form input[type=submit]:hover,
+a.button:hover {
     box-shadow: 0 0 5px #AAA;
 }
 form .description {
-	margin: 0 0 0 1%;
-	color: #333333;
+    margin: 0 0 0 1%;
+    color: #333333;
+}
+
+.block-title {
+    padding: 5px 10px;
+    font-size: 1.2em;
+
+    background: #FFFFFF;
+    background: linear-gradient(bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
+    background: linear-gradient(to bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
+    color: #AB0000;
+    border-left: 1px solid #BBBBBB;
+    border: 1px solid #BBBBBB;
+    margin: 10px 0 0 0;
+}
+.block-content {
+    background: #FDFDFD;
+    border: 1px solid #BBBBBB;
+    padding: 10px;
+    margin: 0;
+}
+.block-content form {
+    max-width: inherit;
+}
+.block-content dl {
+    border: none;
+    padding: 0;
 }
 
 header {
-	background: #F0F0F0;
-	background: linear-gradient(bottom, #FFFFFF, #DDDDDD) no-repeat #E0E0E0;
-	background: linear-gradient(to bottom, #FFFFFF, #DDDDDD) no-repeat #E0E0E0;
+    background: #F0F0F0;
+    background: linear-gradient(bottom, #FFFFFF, #DDDDDD) no-repeat #E0E0E0;
+    background: linear-gradient(to bottom, #FFFFFF, #DDDDDD) no-repeat #E0E0E0;
     margin: 0;
     padding: 0;
     font-weight: bold;
@@ -187,15 +230,15 @@ header {
     z-index: 2;
 }
 header h1 {
-	margin: 0;
-	padding: 10px;
+    margin: 0;
+    padding: 10px;
 }
 header h1 a:link,
 header h1 a:active,
 header h1 a:hover,
 header h1 a:visited
 {
-	color: #333333;
+    color: #333333;
 }
 
 footer {
@@ -208,83 +251,90 @@ footer {
     font-size: .85em;
 }
 
+.message-success {
+    font-weight: bold;
+    color: #339933;
+}
+
 .topmenu {
     background: #424242;
-	margin: 0;
-	padding: 0 10px;
-	list-style: none;
-	overflow: hidden;
-	line-height: 30px;
-	font-size: 1em;
-	text-transform: uppercase;
+    margin: 0;
+    padding: 0 10px;
+    list-style: none;
+    overflow: hidden;
+    line-height: 30px;
+    font-size: 1em;
+    text-transform: uppercase;
 }
 .topmenu li {
-	float: left;
+    float: left;
+    border-right: 1px solid #666666;
 }
 .topmenu a:link,
 .topmenu a:hover,
 .topmenu a:visited,
 .topmenu a:active
 {
-	padding: 0 20px;
-	color: #FFFFFF;
-	display: block;
+    padding: 0 20px;
+    color: #FFFFFF;
+    display: block;
 }
 .topmenu a span
 {
-	font-size: .9em;
-	text-transform: none;
+    font-size: .9em;
+    text-transform: none;
 }
 .topmenu img
 {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 .topmenu li:hover,
 .topmenu li.active {
     background: #EF0000;
+    border-right: 1px solid #EF0000;
 }
 
 .content {
-	padding: 30px 10px;
+    padding: 30px 10px;
     background: #F0F0F0;
     overflow: hidden;
     position: relative;
     z-index: 1;
 }
 .content > h2 {
-	margin-top: 0;
-	font-size: 1.3em;
+    margin-top: 0;
+    font-size: 1.3em;
 }
 
 .formbox {
-	cursor: pointer;
+    cursor: pointer;
     font-size: .95em;
 }
 .formbox span {
-	font-size: .7em;
-	text-transform: none;
+    font-size: .7em;
+    text-transform: none;
 }
 
 form input[name=price_min],
 form input[name=price_max] {
-	width: 100px;
+    width: 100px;
 }
 
 form .categories {
-	overflow: auto;
+    overflow: auto;
 }
 form .categories h3 {
-	margin: 0 1%;
+    margin: 0 1%;
 }
 form .categories label {
-	margin: 0 1%;
-	display: block;
-	vertical-align: middle;
-	line-height: 160%;
-	white-space: nowrap;
+    margin: 0 1%;
+    display: block;
+    vertical-align: middle;
+    line-height: 160%;
+    white-space: nowrap;
 }
 form .categories input[type=checkbox] {
-	margin: 0 5px 0 0;
+    margin: 0 5px 0 0;
 }
 .categories-list {
     float: left;
@@ -318,24 +368,151 @@ form .categories input[type=checkbox] {
     color: #EF0000;
 }
 
+/* Page user */
+.user-settings-container {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row wrap;
+    align-items: flex-start;
+}
+.user-settings-container .block {
+    width: 48%;
+    margin: 0 1% auto 1%;
+}
+.user-settings-notification {
+    min-width: 800px;
+}
+
+.user-notifications-type,
+.user-notifications-cost {
+    text-align: left;
+}
+.user-notifications-active .fa {
+    font-size: 1em;
+    border: 1px solid #888888;
+    border-radius: 10px;
+    padding: 2px 10px;
+    background: #f0f0f0;
+    color: #AAAAAA;
+}
+.user-notifications-active .fa.active {
+    border-color: #127E00;
+    background: #169A00;
+    color: #FFFFFF;
+}
+.user-notifications-active {
+    width: 75px;
+}
+.user-notifications-action {
+    white-space: nowrap;
+    width: 180px;
+}
+.user-notifications-link {
+    float: right;
+    font-size: 1.2em;
+}
 
 /* Log */
 .lastlog {
-	background: #FAFAFA;
-	border: 1px solid #DDDDDD;
-	height: 500px;
-	list-style: none;
-	padding: 10px;
-	margin: 0;
-	line-height: 130%;
-	overflow: auto;
+    background: #FAFAFA;
+    border: 1px solid #DDDDDD;
+    height: 500px;
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    line-height: 130%;
+    overflow: auto;
 }
 .lastlog .lastlog-error {
-	color: #E00000;
+    color: #E00000;
 }
 
 
+/**
+ * Fiche d'annonce sauvegardée
+ */
+.annonce {
+    display: flex;
+}
+.annonce-photos {
+    margin-left: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+}
+.annonce-photo {
+    width: 400px;
+    height: 307px;
+    padding: 5px;
+    margin: 0 5px 5px 0;
+    flex-shrink: 0;
+    flex-direction: column;
+    border: 3px solid #666666;
+    box-sizing: border-box;
+    text-align: center;
+}
+.annonce-photo-img {
+    max-width: 384px;
+    max-height: 291px;
+    vertical-align: middle;
+}
+.annonce-data {
+    width: 600px;
+}
+.annonce-data ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    white-space: nowrap;
+}
+.annonce-label,
+.annonce-value {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 30%;
+    line-height: 2;
+    padding: 0 10px;
+    border-bottom: 1px solid #424242;
+}
+.annonce-data ul li:first-child .annonce-label,
+.annonce-data ul li:first-child .annonce-value {
+    border-top: 1px solid #424242;
+}
+.annonce-label {
+    background: #666666;
+    color: #FFFFFF;
+}
+.annonce-value {
+    width: 70%;
+    border-right: 1px solid #424242;
+}
+.annonce-description,
+.annonce-comment {
+    margin-top: 10px;
+}
+.annonce-description p,
+.annonce-comment > div {
+    box-sizing: border-box;
+    border: 1px solid #424242;
+    padding: 10px;
+    margin: 0;
+}
+.annonce-comment p {
+    margin: 0;
+}
+.annonce-comment .button {
+    margin-top: 10px;
+    font-size: 1em;
+    line-height: 2;
+}
 
 
-
-
+@media screen and (max-width: 960px) {
+    .user-settings-container {
+        flex-direction: column;
+    }
+    .user-settings-container .block {
+        width: 100%;
+        margin: 10px 0;
+    }
+}

@@ -5,7 +5,6 @@ if (!isset($_GET["url"])) {
 }
 
 $disableLayout = true;
-$logFile = DOCUMENT_ROOT."/var/logs/rss.log";
 
 use \FeedWriter\RSS2;
 
@@ -35,7 +34,7 @@ $logger = Logger::getLogger("main");
 
 $id = sha1($_SERVER["REQUEST_URI"]);
 $cache_filename = DOCUMENT_ROOT."/var/feeds/".$id.".xml";
-if (is_file($cache_filename)) {
+if ("development" != APPLICATION_ENV && is_file($cache_filename)) {
      readfile($cache_filename);
      return;
 }
@@ -49,6 +48,7 @@ $content = $client->request($_GET["url"]);
 
 $filter = new \AdService\Filter($params);
 $siteConfig = \AdService\SiteConfigFactory::factory($_GET["url"]);
+$baseurl = $config->get("general", "baseurl", "");
 
 $ads = $parser->process(
     $content,

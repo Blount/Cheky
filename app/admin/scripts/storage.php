@@ -41,6 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_POST["options"]["password"], $_POST["options"]["dbname"]);
             if ($dbConnection->connect_error) {
                 $errors["host"] = "Connexion impossible à la base de données.";
+            } else {
+                $dbConnection->set_charset("utf8");
             }
         }
     }

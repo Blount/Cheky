@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $auth->setUsername($username)
             ->setPassword(sha1($password));
         if ($auth->authenticate()) {
-            if ($module == "default" && $action == "login") {
+            if (isset($_GET["a"]) && $_GET["a"] == "login") {
                 $redirect = "./";
             } else {
                 $redirect = $_SERVER["REQUEST_URI"];

@@ -3,6 +3,10 @@ ob_start();
 ?>
 <?php if ($ad->getDate()) : ?>
 Publié le <strong><?php echo date("d/m/Y H:i", $ad->getDate()); ?></strong>
+<?php if (!empty($baseurl) && isset($siteConfig) && $siteConfig->getOption("allow_backup")) : ?>
+- <a href="<?php echo $baseurl; ?>?mod=annonce&amp;a=backup&amp;aurl=<?php echo $ad->getLink(); ?>"
+    target="_blank">SAUVEGARDER L'ANNONCE</a>
+<?php endif; ?>
 <br />
 <br />
 <?php endif; ?>
@@ -37,7 +41,7 @@ Publié le <strong><?php echo date("d/m/Y H:i", $ad->getDate()); ?></strong>
 
 <?php if ($ad->getThumbnailLink()) : ?>
 <br /><img src="<?php echo str_replace('/thumbs/', '/images/', $ad->getThumbnailLink()); ?>"
-    alt="" style="max-width: 600px; float: left; display: block;" />
+    alt="" style="max-width: 600px; max-height: 600px; float: left; display: block;" />
 <?php else : ?>
 <br />Pas de photo disponible.
 <?php endif; ?>

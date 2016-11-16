@@ -1,0 +1,17 @@
+<h2>
+    <?php echo htmlspecialchars($ad->getTitle()); ?>
+</h2>
+
+<form action="" method="post">
+    <p><label for="comment">Votre note :</label></p>
+    <p>
+        <textarea name="comment" cols="75" rows="5"><?php
+            echo htmlspecialchars($ad->getComment()); ?></textarea>
+        <br />
+        <p>
+            <input type="submit" value="Enregistrer" />
+            | <a href="?mod=annonce&amp;a=view&amp;id=<?php
+                echo $ad->getId(); ?>">annuler</a>
+        </p>
+    </p>
+</form>

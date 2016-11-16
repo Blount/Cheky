@@ -1,4 +1,22 @@
 
+## Version 3.3
+
+ * ajout: possibilité de sauvegarder les annonces Leboncoin.
+ * ajout: possiblité d'ajouter une note aux annonces sauvegardées.
+ * ajout: possiblité de pré-remplir les champs de création d'alerte et flux RSS.
+ * ajout: test de la disponibilité de mysqli et php-curl à l'installation.
+ * ajout: un début d'API est mis en place.
+ * ajout: notification vers Joaoapps / Join.
+ * ajout: notifications vers Slack.
+ * ajout: possibilité d'enregistrer une ou plusieurs adresses mails par défaut.
+ * amélioration: les erreurs sont mieux gérées.
+ * amélioration: la page des paramètres utilisateur est refondu.
+ * amélioration: optimisation de la gestion des systèmes d'alerte.
+ * correction: encodage des caractères en base de données invalide.
+ * correction: encodage des caractères du contenu Leboncoin invalide.
+ * correction: factorisation du code de la tâche cron.
+ * correction: la réinitialisation des alertes ne fonctionne pas sur une nouvelle installation.
+
 ## Version 3.2
 
  * correction: si CURLOPT_FOLLOWLOCATION désactivé, suivre manuellement les redirections.

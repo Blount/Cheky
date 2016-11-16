@@ -1,0 +1,103 @@
+<p>
+    <?php if (0 < $nbAds = count($ads)) : ?>
+    <strong><?php echo $nbAds ?> <?php
+        echo $nbAds > 1?"annonces sauvegardées":"annonce sauvegardée"; ?></strong> |
+    <?php endif; ?>
+    <a href="?mod=annonce&amp;a=form" class="link-create-ad">Sauvegarder une annonce</a>
+</p>
+
+<table style="width: 100%;">
+    <thead>
+        <tr>
+            <th style="width: 20px"></th>
+            <th style="width: 20px"></th>
+            <th>
+                <?php if ($sort == "title") : ?>
+                <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
+                <?php endif; ?>
+                <a href="?mod=annonce&amp;sort=title">Titre</a>
+            </th>
+            <th style="width: 200px">
+                <?php if ($sort == "author") : ?>
+                <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
+                <?php endif; ?>
+                <a href="?mod=annonce&amp;sort=author">Auteur</a>
+            </th>
+            <th style="width: 200px">
+                <?php if ($sort == "date_created") : ?>
+                <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
+                <?php endif; ?>
+                <a href="?mod=annonce&amp;sort=date_created">Date de sauvegarde</a>
+            </th>
+            <th style="width: 200px">
+                <?php if ($sort == "date") : ?>
+                <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
+                <?php endif; ?>
+                <a href="?mod=annonce&amp;sort=date">Date de publication</a>
+            </th>
+            <th style="width: 200px">
+                <?php if ($sort == "category") : ?>
+                <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
+                <?php endif; ?>
+                <a href="?mod=annonce&amp;sort=category">Catégorie</a>
+            </th>
+            <th style="width: 100px">
+                <?php if ($sort == "price") : ?>
+                <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
+                <?php endif; ?>
+                <a href="?mod=annonce&amp;sort=price">Prix</a>
+            </th>
+            <th style="width: 200px">
+                <?php if ($sort == "zip_code") : ?>
+                <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
+                <?php endif; ?>
+                <a href="?mod=annonce&amp;sort=zip_code">Code postal</a>
+            </th>
+            <th style="width: 200px">
+                <?php if ($sort == "city") : ?>
+                <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
+                <?php endif; ?>
+                <a href="?mod=annonce&amp;sort=city">Villes</a>
+            </th>
+            <th style="width: 20px">&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (0 == $nbAds) : ?>
+        <tr><td colspan="11">Aucune annonce sauvegardée</td></tr>
+        <?php else: ?>
+        <?php $i = 1; foreach ($ads AS $ad) : ?>
+            <?php
+            $date = implode("/", array_reverse(explode("-", $ad->getDate())));
+            ?>
+        <tr>
+            <td><?php echo $i++; ?></td>
+            <td>
+                <?php if ($photos = $ad->getPhotos()) : ?>
+                <img src="<?php echo $adPhoto->getPublicDestination($photos[0]["local"]); ?>" alt=""
+                    style="max-width: 100px; max-height: 100px;" />
+                <?php endif; ?>
+            </td>
+            <td class="title"><a href="?mod=annonce&amp;a=view&amp;id=<?php echo $ad->getId(); ?>"><?php
+                echo $ad->getTitle()?htmlspecialchars($ad->getTitle()):"-"; ?></a></td>
+            <td><?php echo htmlspecialchars($ad->getAuthor()); ?></td>
+            <td><?php echo date("d/m/Y à H:i", strtotime($ad->getDateCreated())); ?></td>
+            <td><?php echo htmlspecialchars($date); ?></td>
+            <td><?php echo htmlspecialchars($ad->getCategory()); ?></td>
+            <td style="text-align: right;">
+                <?php if ($price = $ad->getPrice()) : ?>
+                <?php echo number_format($price, 0, ",", " ")." ";
+                    echo htmlspecialchars($ad->getCurrency()); ?>
+                <?php else: ?>
+                -
+                <?php endif; ?>
+            </td>
+            <td><?php echo htmlspecialchars($ad->getZipCode()); ?></td>
+            <td><?php echo htmlspecialchars($ad->getCity()); ?></td>
+            <td><a href="?mod=annonce&amp;a=form-delete&amp;id=<?php echo $ad->getId(); ?>"
+                title="Supprimer l'annonce"><span class="fa fa-times"></span></a></td>
+        </tr>
+        <?php endforeach; ?>
+        <?php endif; ?>
+    </tbody>
+</table>
