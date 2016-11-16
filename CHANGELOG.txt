@@ -8,7 +8,7 @@
  * ajout: un début d'API est mis en place.
  * ajout: notification vers Joaoapps / Join.
  * ajout: notifications vers Slack.
- * ajout: possibilité d'enregistrer une ou plusieurs adresse mails par défaut.
+ * ajout: possibilité d'enregistrer une ou plusieurs adresses mails par défaut.
  * amélioration: les erreurs sont mieux gérées.
  * amélioration: la page des paramètres utilisateur est refondu.
  * amélioration: optimisation de la gestion des systèmes d'alerte.
