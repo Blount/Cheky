@@ -85,6 +85,28 @@ class User
     }
 
     /**
+     * Rénégère une clé
+     * @param string $what
+     * @throws Exception
+     * @return string
+     */
+    public function regenerateApiKey($what)
+    {
+        $method = "set".ucfirst($what)."Key";
+        if (!method_exists($this, $method)) {
+            throw new Exception("Invalid parameter");
+        }
+        $key = sha1(
+            str_repeat(
+                uniqid(__FILE__, true),
+                rand(10, 100)
+            )
+        );
+        $this->$method($key);
+        return $key;
+    }
+
+    /**
     * @param string $password
     * @return User
     */

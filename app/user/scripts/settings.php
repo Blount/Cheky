@@ -1,14 +1,7 @@
 <?php
 
 if (!$userAuthed->getApiKey()) {
-    $userAuthed->setApiKey(
-        sha1(
-            str_repeat(
-                uniqid($_SERVER["HTTP_HOST"], true),
-                rand(10, 100)
-            )
-        )
-    );
+    $userAuthed->regenerateKey("api");
     $userStorage->save($userAuthed);
 }
 
@@ -31,15 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $form_values = array_intersect_key($_POST, $form_values);
 
     if (!empty($_POST["regenerate-apikey"])) {
-        $userAuthed->setApiKey(
-            sha1(
-                str_repeat(
-                    uniqid($_SERVER["HTTP_HOST"], true),
-                    rand(10, 100)
-                )
-            )
-        );
+        $userAuthed->regenerateKey("api");
     }
+
     $userAuthed->mergeOptions($form_values);
     $userStorage->save($userAuthed);
     $_SESSION["userSettingsSaved"] = true;
