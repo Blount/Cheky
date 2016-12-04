@@ -110,6 +110,33 @@
         </div>
     </div>
 
+    <div class="block user-settings-apikey">
+        <h2 class="block-title">Clé RSS</h2>
+        <div class="block-content">
+            <p>
+                Cette clé est utilisée lors de la génération des flux RSS
+                afin de vous identifier.
+            </p>
+            <form action="" method="post" autocomplete="off"
+                onsubmit="return window.confirm('Êtes-vous sur de vouloir réinitialiser la clé ?');">
+                <dl>
+                    <dd>
+                        <input type="text" id="rss_key" value="<?php
+                            echo htmlspecialchars($form_values["rss_key"]);
+                        ?>" readonly="readonly" />
+                    </dd>
+                </dl>
+
+                <p>
+                    Si nécessaire, vous pouvez réinitialiser votre clé.
+                    Il faudra mettre à jour cette clé au niveau de vos flux RSS.
+                </p>
+                <p><input type="submit" name="regenerate-rsskey"
+                    value="Régénérer" /></p>
+            </form>
+        </div>
+    </div>
+
     <div class="block user-settings-general">
         <h2 class="block-title">Options diverses</h2>
         <div class="block-content">

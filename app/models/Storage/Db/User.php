@@ -25,7 +25,8 @@ class User implements \App\Storage\User
             $user->setId($userDb->id)
                 ->setPassword($userDb->password)
                 ->setUsername($userDb->username)
-                ->setApiKey($userDb->api_key);
+                ->setApiKey($userDb->api_key)
+                ->setRssKey($userDb->rss_key);
             $this->_loadUserOptions($user, $userDb->options);
             $users[] = $user;
         }
@@ -44,7 +45,8 @@ class User implements \App\Storage\User
             $user->setId($userDb->id)
                 ->setPassword($userDb->password)
                 ->setUsername($userDb->username)
-                ->setApiKey($userDb->api_key);
+                ->setApiKey($userDb->api_key)
+                ->setRssKey($userDb->rss_key);
             $this->_loadUserOptions($user, $userDb->options);
         }
         return $user;
@@ -81,18 +83,30 @@ class User implements \App\Storage\User
         } else {
             $api_key = "'".$this->_connection->real_escape_string($api_key)."'";
         }
+        if (!$rss_key = $user->getRssKey()) {
+            $rss_key = "NULL";
+        } else {
+            $rss_key = "'".$this->_connection->real_escape_string($rss_key)."'";
+        }
         if (!$this->fetchByUsername($user->getUsername())) {
-            $this->_connection->query("INSERT INTO `".$this->_table.
-                "` (`username`, `password`, `api_key`, `options`) VALUES (
+            $this->_connection->query("INSERT INTO `".$this->_table."` (
+                    `username`,
+                    `password`,
+                    `api_key`,
+                    `rss_key`,
+                    `options`
+                ) VALUES (
                     '".$this->_connection->real_escape_string($user->getUsername())."',
                     '".$this->_connection->real_escape_string($user->getPassword())."',
                     ".$api_key.",
+                    ".$rss_key.",
                     '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
                 )");
         } else {
             $this->_connection->query("UPDATE `".$this->_table."` SET
                 `password` = '".$this->_connection->real_escape_string($user->getPassword())."',
                 `api_key` = ".$api_key.",
+                `rss_key` = ".$rss_key.",
                 `options` = '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
             WHERE id = ".$user->getId());
         }

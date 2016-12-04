@@ -32,14 +32,24 @@ if ($module != "install") {
 
     // identification nécessaire
     if ($module == "rss" && $action == "refresh") {
-        $auth = new Auth\Session($userStorage);
-        if (!$userAuthed = $auth->authenticate()) {
-            $auth = new Auth\Basic($userStorage);
+        $rss_key = isset($_GET["key"]) ? $_GET["key"] : null;
+        $username = isset($_GET["u"]) ? $_GET["u"] : null;
+        if ($rss_key && $username) {
+            $auth = new Auth\RssKey($userStorage);
             if (!$userAuthed = $auth->authenticate()) {
-                header('WWW-Authenticate: Basic realm="Identification"');
-                header('HTTP/1.0 401 Unauthorized');
-                echo "Non autorisé.";
+                header("HTTP/1.0 401 Unauthorized");
                 exit;
+            }
+        } else {
+            $auth = new Auth\Session($userStorage);
+            if (!$userAuthed = $auth->authenticate()) {
+                $auth = new Auth\Basic($userStorage);
+                if (!$userAuthed = $auth->authenticate()) {
+                    header('WWW-Authenticate: Basic realm="Identification"');
+                    header('HTTP/1.0 401 Unauthorized');
+                    echo "Non autorisé.";
+                    exit;
+                }
             }
         }
     } else {

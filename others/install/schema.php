@@ -8,6 +8,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_User` (
     `username` VARCHAR(100) COLLATE utf8_general_ci NOT NULL UNIQUE,
     `password` VARCHAR(40) NOT NULL,
     `api_key` CHAR(40) DEFAULT NULL UNIQUE,
+    `rss_key` CHAR(40) DEFAULT NULL UNIQUE,
     `options` TEXT DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin");

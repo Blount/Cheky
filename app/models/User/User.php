@@ -8,22 +8,14 @@ class User
     protected $_username;
     protected $_password;
     protected $_api_key;
+    protected $_rss_key;
     protected $_options = array();
     protected $_optionsLoaded = false;
 
     public function __construct(array $options = array())
     {
-        if (isset($options["id"])) {
-            $this->setId($options["id"]);
-        }
-        if (isset($options["username"])) {
-            $this->setUsername($options["username"]);
-        }
-        if (isset($options["password"])) {
-            $this->setPassword($options["password"]);
-        }
-        if (isset($options["api_key"])) {
-            $this->setApiKey($options["api_key"]);
+        foreach ($options AS $key => $value) {
+            $this->{"_".$key} = $value;
         }
     }
 
@@ -85,12 +77,22 @@ class User
     }
 
     /**
+    * @param string $key
+    * @return User
+    */
+    public function setRssKey($key)
+    {
+        $this->_rss_key = $key;
+        return $this;
+    }
+
+    /**
      * Rénégère une clé
      * @param string $what
      * @throws Exception
      * @return string
      */
-    public function regenerateApiKey($what)
+    public function regenerateKey($what)
     {
         $method = "set".ucfirst($what)."Key";
         if (!method_exists($this, $method)) {
@@ -104,6 +106,14 @@ class User
         );
         $this->$method($key);
         return $key;
+    }
+
+    /**
+    * @return string
+    */
+    public function getRssKey()
+    {
+        return $this->_rss_key;
     }
 
     /**

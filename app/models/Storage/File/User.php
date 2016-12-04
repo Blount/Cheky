@@ -119,6 +119,10 @@ class User implements \App\Storage\User
                 $user->setApiKey($data["api_key"]);
                 unset($data["api_key"]);
             }
+            if (isset($data["rss_key"])) {
+                $user->setRssKey($data["rss_key"]);
+                unset($data["rss_key"]);
+            }
             if ($data && is_array($data)) {
                 if (!empty($data["notification"]) && is_array($data["notification"])) {
                     foreach ($data["notification"] AS $key => $params) {
@@ -143,6 +147,9 @@ class User implements \App\Storage\User
         $data = $user->getOptions();
         if ($api_key = $user->getApiKey()) {
             $data["api_key"] = $api_key;
+        }
+        if ($rss_key = $user->getRssKey()) {
+            $data["rss_key"] = $rss_key;
         }
         file_put_contents($filename, json_encode($data));
         return $this;
