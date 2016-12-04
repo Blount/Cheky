@@ -18,7 +18,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_Alert` (
     `email` VARCHAR(100) COLLATE utf8_general_ci NOT NULL,
     `date_created` DATETIME NOT NULL,
     `title` VARCHAR(255) COLLATE utf8_general_ci NOT NULL,
-    `url` VARCHAR(255) COLLATE utf8_bin NOT NULL,
+    `url` TEXT COLLATE utf8_bin NOT NULL,
     `interval` SMALLINT UNSIGNED NOT NULL,
     `time_last_ad` INTEGER UNSIGNED NOT NULL,
     `time_updated` INTEGER UNSIGNED NOT NULL,
