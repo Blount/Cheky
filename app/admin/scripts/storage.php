@@ -58,6 +58,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ));
         } else {
             $config->set("storage", "type", "files");
+
+            if (!is_dir(DOCUMENT_ROOT."/var/configs")) {
+                mkdir(DOCUMENT_ROOT."/var/configs");
+            }
         }
         $config->save();
 
