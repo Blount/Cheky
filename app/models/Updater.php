@@ -23,7 +23,7 @@ class Updater
 
     public function __construct()
     {
-        $this->_tmp_dir = DOCUMENT_ROOT."/var/tmp";
+        $this->_tmp_dir = DOCUMENT_ROOT."/var/tmp/".time();
         $this->_destination = DOCUMENT_ROOT;
     }
 
@@ -130,8 +130,8 @@ class Updater
         $zip->close();
 
         // mise à jour des fichiers.
-        $this->_copyFiles($this->_tmp_dir."/LBCAlerte-".$version, $this->_destination);
-        rmdir($this->_tmp_dir."/LBCAlerte-".$version);
+        $this->_copyFiles($this->_tmp_dir."/Cheky-".$version, $this->_destination);
+        rmdir($this->_tmp_dir."/Cheky-".$version);
         unlink($tmpZip);
     }
 

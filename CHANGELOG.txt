@@ -21,8 +21,8 @@
 
  * correction: si CURLOPT_FOLLOWLOCATION désactivé, suivre manuellement les redirections.
  * correction: utiliser portail.free.fr pour le test de connexion distant.
- * correction: utiliser le protocol HTTPs pour Leboncoin et alerte.ilatumi.org.
- * correction: supprimer le nom du fichier dans l'URL de base de LBCAlerte.
+ * correction: utiliser le protocol HTTPs pour Leboncoin et cheky.net.
+ * correction: supprimer le nom du fichier dans l'URL de base de Cheky.
  * correction: crash possible si URL invalide.
  * correction: amélioration des infos de log pour la tâche cron.
 

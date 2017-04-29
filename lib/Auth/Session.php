@@ -8,14 +8,14 @@ class Session extends AuthAbstract
 {
     public function __construct(\App\Storage\User $storage)
     {
-        session_name("lbcalerte");
+        session_name("cheky");
         session_start();
-        if (isset($_SESSION["lbcauth"])) {
-            if (isset($_SESSION["lbcauth"]["username"])) {
-                $this->_username = $_SESSION["lbcauth"]["username"];
+        if (isset($_SESSION["chekyauth"])) {
+            if (isset($_SESSION["chekyauth"]["username"])) {
+                $this->_username = $_SESSION["chekyauth"]["username"];
             }
-            if (isset($_SESSION["lbcauth"]["password"])) {
-                $this->_password = $_SESSION["lbcauth"]["password"];
+            if (isset($_SESSION["chekyauth"]["password"])) {
+                $this->_password = $_SESSION["chekyauth"]["password"];
             }
         }
         parent::__construct($storage);
@@ -28,13 +28,13 @@ class Session extends AuthAbstract
 
     public function clear()
     {
-        unset($_SESSION["lbcauth"]);
+        unset($_SESSION["chekyauth"]);
     }
 
     public function authenticate()
     {
         if ($user = parent::authenticate()) {
-            $_SESSION["lbcauth"] = array(
+            $_SESSION["chekyauth"] = array(
                 "username" => $user->getUsername(),
                 "password" => $user->getPassword()
             );
