@@ -269,7 +269,7 @@ class Main
                 foreach ($ads AS $ad) {
                     $time = $ad->getDate();
                     $id = $ad->getId();
-                    $newAds[$id] = require DOCUMENT_ROOT."/app/mail/views/mail-ad.phtml";
+                    $newAds[$id] = require DOCUMENT_ROOT."/app/notifier/views/mail-ad.phtml";
                     if (!in_array($id, $alert->last_id)) {
                         array_unshift($alert->last_id, $id);
                     }
