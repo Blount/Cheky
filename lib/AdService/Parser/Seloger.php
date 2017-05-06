@@ -91,26 +91,23 @@ class Seloger extends AbstractParser
                 }
             }
 
-            // titre + lien + lieu
-            $link = $adNode->getElementsByTagName("h2")->item(0)
-                ->getElementsByTagName("a")->item(0);
-            if ($link) {
-                $city = $link->getElementsByTagName("span")->item(0);
-                if ($city) {
-                    // lieu
-                    $ad->setCity(trim($city->nodeValue));
-                }
-                $ad->setTitle(trim($link->nodeValue));
-                $ad->setLink($link->getAttribute("href"));
-            }
+            $nodes = $adNode->getElementsByTagName("div");
+            foreach ($nodes AS $node) {
+                $className = trim($node->getAttribute("class"));
 
-            $links = $adNode->getElementsByTagName("a");
-            if ($links->length) {
-                foreach ($links AS $link) {
-                    $classCSS = $link->getAttribute("class");
-                    if (false !== strpos($classCSS, "amount")) {
-                        $ad->setPrice((int) preg_replace("#[^0-9]*#", "", $link->nodeValue));
-                    }
+                // Titre + lien
+                if (false !== strpos($className, "title")) {
+                    $link = $node->getElementsByTagName("a")->item(0);
+                    $ad->setTitle(trim($node->nodeValue));
+                    $ad->setLink($link->getAttribute("href"));
+
+                // Prix
+                } elseif (false !== strpos($className, "price")) {
+                    $ad->setPrice((int) preg_replace("#[^0-9]*#", "", $node->nodeValue));
+
+                // Lieu
+                } elseif (false !== strpos($className, "locality")) {
+                    $ad->setCity(trim($node->nodeValue));
                 }
             }
 
