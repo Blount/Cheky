@@ -370,9 +370,6 @@ class Main
                         foreach ($newAds AS $id => $ad) {
                             $ad = $ads[$id]; // récupère l'objet.
                             $url = $ad->getLink();
-                            if (false !== strpos($url, "leboncoin")) {
-                                $url = "https://mobile.leboncoin.fr/vi/".$ad->getId().".htm";
-                            }
                             curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$url);
                             if ($url = curl_exec($curlTinyurl)) {
                                 $msg  = "Nouvelle annonce ".($alert->title?$alert->title." : ":"").$ad->getTitle();

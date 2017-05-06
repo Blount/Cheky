@@ -55,7 +55,6 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_BackupAd` (
     `date_created` DATETIME NOT NULL,
     `title` VARCHAR(255) NOT NULL,
     `link` VARCHAR(255) NOT NULL,
-    `link_mobile` VARCHAR(255) NOT NULL,
     `price` INTEGER UNSIGNED NOT NULL DEFAULT 0,
     `currency` VARCHAR(10) NOT NULL DEFAULT '€',
     `date` DATE NOT NULL,
