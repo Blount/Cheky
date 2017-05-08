@@ -1,0 +1,40 @@
+<?php ob_start(); ?>
+
+<h1 style="font-size: 16px;">
+    Votre recherche :
+    <?php echo htmlspecialchars($alert->title, null, "UTF-8"); ?>
+</h1>
+<p style="font-size: 14px; margin: 0;">
+    <strong>
+    <a href="<?php echo htmlspecialchars($alert->url, null, "UTF-8"); ?>"
+        style="text-decoration: none; color: #0B6CDA;">LIEN DE RECHERCHE</a>
+<?php if (!empty($baseurl)) : ?>
+    - <a href="<?php echo $baseurl; ?>?mod=mail&amp;a=form&amp;id=<?php
+        echo $alert->id; ?>" style="text-decoration: none; color: #E77600;">MODIFIER</a>
+    - <a href="<?php echo $baseurl; ?>?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id=<?php
+        echo $alert->id; ?>" style="text-decoration: none; color: #999999;">ACTIVER / DÉSACTIVER</a>
+    - <a href="<?php echo $baseurl; ?>?mod=mail&amp;a=form-delete&amp;id=<?php
+        echo $alert->id; ?>" style="text-decoration: none; color: #FF0000;">SUPPRIMER</a>
+<?php endif; ?>
+    </strong>
+</p>
+<hr />
+
+<p style="font-size: 16px; margin: 10px 0;">
+    <strong><?php echo $ads_count; ?>
+        nouvelle<?php echo $ads_count > 1 ? "s" : ""; ?>
+        annonce<?php echo $ads_count > 1 ? "s" : ""; ?>
+        - <?php echo date("d/m/Y à H:i", $current_time); ?>
+    </strong>
+</p>
+
+<hr />
+<br />
+
+<?php foreach ($ads AS $ad) : ?>
+<?php echo require DOCUMENT_ROOT."/app/notifier/views/mail-ad.phtml"; ?>
+<br /><hr /><br />
+<?php endforeach; ?>
+
+<?php
+return ob_get_clean();

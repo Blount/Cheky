@@ -143,11 +143,21 @@ class Main
                 if (!is_array($options)) {
                     continue;
                 }
+                switch ($notification_name) {
+                    case "freeMobile":
+                        $key = "send_sms_free_mobile";
+                        break;
+                    case "ovh":
+                        $key = "send_sms_ovh";
+                        break;
+                    default:
+                        $key = "send_".$notification_name;
+                }
                 try {
-                    $notifications[$notification_name] = \Message\AdapterFactory::factory($notification_name, $options);
+                    $notifications[$key] = \Message\AdapterFactory::factory($notification_name, $options);
                     $this->_logger->debug(
                         "[Pid ".getmypid()."] USER : ".$user->getUsername().
-                        " -> Notification ".get_class($notifications[$notification_name])." activée"
+                        " -> Notification ".get_class($notifications[$key])." activée"
                     );
                 } catch (\Exception $e) {
                     $this->_logger->warn(
@@ -158,16 +168,33 @@ class Main
             }
 
             $alerts = $storage->fetchAll();
-            $this->_logger->info(
-                "[Pid ".getmypid()."] USER : ".$user->getUsername()." -> ".
-                count($alerts)." alerte".(count($alerts) > 1 ? "s" : "").
-                " trouvée".(count($alerts) > 1 ? "s" : ""));
-            if (count($alerts) == 0) {
+            $alerts_count = count($alerts);
+
+            $this->_logger->info(sprintf(
+                "[Pid %s] USER : %s -> %d alerte%4\$s trouvée%4\$s",
+                getmypid(),
+                $user->getUsername(),
+                $alerts_count,
+                $alerts_count > 1 ? "s" : ""
+            ));
+
+            if (0 == $alerts_count) {
                 continue;
             }
 
             foreach ($alerts AS $i => $alert) {
-                $log_id = "[Pid ".getmypid()."] USER : ".$user->getUsername()." - ALERT ID : ".$alert->id." -> ";
+
+                // Alerte suspendue
+                if ($alert->suspend) {
+                    continue;
+                }
+
+                $log_id = sprintf(
+                    "[Pid %s] USER : %s - ALERT ID : %s -> ",
+                    getmypid(),
+                    $user->getUsername(),
+                    $alert->id
+                );
 
                 try {
                     $config = SiteConfigFactory::factory($alert->url);
@@ -178,31 +205,39 @@ class Main
 
                 $unique_ads = $user->getOption("unique_ads");
 
-                /**
-                 * Si le site ne fourni pas de date par annonce,
-                 * on est obligé de baser la dernière annonce reçue sur l'ID.
-                 */
+                // Si le site ne fourni pas de date par annonce,
+                // on est obligé de baser la dernière annonce reçue sur l'ID.
                 if (!$config->getOption("has_date")) {
                     $unique_ads = true;
                 }
 
-                $currentTime = time();
+                // Initialise l'heure de la dernière analyse
                 if (!isset($alert->time_updated)) {
                     $alert->time_updated = 0;
                 }
+
+                // Réinitialise l'alerte si un renvoi de toutes les
+                // annonces est demandé
                 if ($reset) {
                     $alert->time_updated = 0;
                     $alert->last_id = array();
                     $alert->max_id = 0;
                     $alert->time_last_ad = 0;
                 }
-                if (((int)$alert->time_updated + (int)$alert->interval*60) > $currentTime
-                    || $alert->suspend) {
+
+                $current_time = time();
+
+                // Contrôle si l'alerte doit être analysée
+                $next_time = (int) $alert->time_updated + $alert->interval * 60;
+                if ($next_time > $current_time) {
                     continue;
                 }
+
                 $this->_logger->info($log_id."URL : ".$alert->url);
+
                 try {
                     $parser = \AdService\ParserFactory::factory($alert->url);
+
                 } catch (\AdService\Exception $e) {
                     $this->_logger->warn($log_id." ".$e->getMessage());
                     continue;
@@ -218,15 +253,24 @@ class Main
                         date("d/m/Y H:i", (int) $alert->time_last_ad) :
                         "inconnue"
                 ));
-                $alert->time_updated = $currentTime;
+
+                // Mise à jour de la date de dernière analyse
+                $alert->time_updated = $current_time;
+
+
+                // Récupération du résultat de recherche de l'alerte
                 if (!$content = $this->_httpClient->request($alert->url)) {
                     $this->_logger->error($log_id."Curl Error : ".$this->_httpClient->getError());
                     continue;
                 }
+
+                // Configure un éventuel filtre sur les localités
                 $cities = array();
                 if ($alert->cities) {
                     $cities = array_map("trim", explode("\n", mb_strtolower($alert->cities)));
                 }
+
+                // Initialise le filtre d'annonce
                 $filter = new \AdService\Filter(array(
                     "price_min" => $alert->price_min,
                     "price_max" => $alert->price_max,
@@ -236,16 +280,18 @@ class Main
                     "min_id" => $unique_ads ? $alert->max_id : 0,
                     "exclude_ids" => $alert->last_id,
                 ));
+
+                // Parse le contenu pour récupérer les annonces
+                // et applique le filtre
                 $ads = $parser->process(
                     $content,
                     $filter,
                     parse_url($alert->url, PHP_URL_SCHEME)
                 );
-                $countAds = count($ads);
 
-                /**
-                 * Migrer vers le nouveau système de détection d'annonce.
-                 */
+                $ads_count = count($ads);
+
+                // Migre vers le nouveau système de détection d'annonce.
                 if (is_numeric($alert->last_id)) {
                     $filter->setExcludeIds(array());
                     $alert->last_id = array();
@@ -260,22 +306,39 @@ class Main
                     unset($tmp_ads, $tmp_ad);
                 }
 
-                if ($countAds == 0) {
+                // Si pas de nouvelle annonce à envoyer, on arrête là
+                if ($ads_count == 0) {
                     $storage->save($alert);
                     continue;
                 }
+
+                $this->_logger->info(sprintf(
+                    "%s%d annonce%3\$s trouvée%3\$s",
+                    $log_id,
+                    $ads_count,
+                    $ads_count > 1 ? "s" : ""
+                ));
+
+                // Paramètres du site d'annonce
                 $siteConfig = \AdService\SiteConfigFactory::factory($alert->url);
-                $newAds = array();
+
                 foreach ($ads AS $ad) {
                     $time = $ad->getDate();
                     $id = $ad->getId();
-                    $newAds[$id] = require DOCUMENT_ROOT."/app/notifier/views/mail-ad.phtml";
+
+                    // ID de l'annonce inconnu, on l'ajoute à la liste
                     if (!in_array($id, $alert->last_id)) {
                         array_unshift($alert->last_id, $id);
                     }
+
+                    // On vérifie si la date de l'annonce est plus récente
+                    // que la dernière date connue
                     if ($time && $alert->time_last_ad < $time) {
                         $alert->time_last_ad = $time;
                     }
+
+                    // Si contrôle de nouvelle annonce basé sur l'ID,
+                    // on vérifie si l'ID est plus récent
                     if ($unique_ads && $id > $alert->max_id) {
                         $alert->max_id = $id;
                     }
@@ -286,18 +349,9 @@ class Main
                     $alert->last_id = array_slice($alert->last_id, 0, 250);
                 }
 
-                if (!$newAds) {
-                    $storage->save($alert);
-                    continue;
-                }
-                $countAds = count($newAds);
-                $this->_logger->info(
-                    $log_id.$countAds.
-                    " annonce".($countAds > 1 ? "s" : "").
-                    " trouvée".($countAds > 1?"s":"")
-                );
                 $this->_mailer->clearAddresses();
                 $error = false;
+
                 if ($alert->send_mail) {
                     try {
                         $emails = explode(",", $alert->email);
@@ -309,37 +363,13 @@ class Main
                         $error = true;
                     }
                     if (!$error) {
-                        $message_header = '
-                            <h1 style="font-size: 16px;">Alerte : '.htmlspecialchars($alert->title, null, "UTF-8").'</h1>
-                            <p style="font-size: 14px; margin: 0;"><strong><a href="'.htmlspecialchars($alert->url, null, "UTF-8").'"
-                                style="text-decoration: none; color: #0B6CDA;">LIEN DE RECHERCHE</a>';
-                            if ($baseurl) {
-                                $message_header .= '
-                                    - <a href="'.$baseurl.'?mod=mail&amp;a=form&amp;id='. $alert->id .
-                                        '" style="text-decoration: none; color: #E77600;">MODIFIER</a>
-                                    - <a href="'.$baseurl.'?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id='. $alert->id .
-                                        '" style="text-decoration: none; color: #999999;">ACTIVER / DÉSACTIVER</a>
-                                    - <a href="'.$baseurl.'?mod=mail&amp;a=form-delete&amp;id='. $alert->id .
-                                        '" style="text-decoration: none; color: #FF0000;">SUPPRIMER</a>
-                                ';
-                            }
-                            $message_header .= '</strong></p>';
-                            $message_header .= '<hr />';
-
                         if ($alert->group_ads) {
-                            $newAdsCount = count($newAds);
-                            $subject = "Alerte ".$siteConfig->getOption("site_name")." : ".$alert->title;
-                            $message = $message_header;
-                            $message .= '<p style="font-size: 16px; margin: 10px 0;"><strong>'.
-                                $newAdsCount.' nouvelle'.($newAdsCount > 1?'s':'').
-                                ' annonce'.($newAdsCount > 1?'s':'').
-                                ' - '.date("d/m/Y à H:i", $currentTime).'</strong></p>';
-                            $message .= '<hr /><br />';
-                            $message .= implode("<br /><hr /><br />", $newAds);
-                            $message .= '<hr /><br />';
-
-                            $this->_mailer->Subject = $subject;
-                            $this->_mailer->Body = $message;
+                            $this->_mailer->Subject = sprintf(
+                                "Alerte %s : %s",
+                                $siteConfig->getOption("site_name"),
+                                $alert->title
+                            );
+                            $this->_mailer->Body = require DOCUMENT_ROOT."/app/notifier/views/mail-ads.phtml";
                             try {
                                 $this->_mailer->send();
                             } catch (phpmailerException $e) {
@@ -347,92 +377,108 @@ class Main
                             }
 
                         } else {
-                            $newAds = array_reverse($newAds, true);
-                            foreach ($newAds AS $id => $ad) {
-                                $subject = ($alert->title?$alert->title." : ":"").$ads[$id]->getTitle();
-                                $message = $message_header.$ad;
-
-                                $this->_mailer->Subject = $subject;
-                                $this->_mailer->Body = $message;
+                            $ads = array_reverse($ads, true);
+                            foreach ($ads AS $ad) {
+                                $this->_mailer->Subject = ($alert->title?$alert->title." : ":"").$ad->getTitle();
+                                $this->_mailer->Body = require DOCUMENT_ROOT."/app/notifier/views/mail-ad-single.phtml";
                                 try {
                                     $this->_mailer->send();
                                 } catch (phpmailerException $e) {
                                     $this->_logger->warn($log_id.$e->getMessage());
                                 }
                             }
+                            $ads = array_reverse($ads, true);
                         }
                     }
                 }
 
-                $params = array();
                 if ($notifications) {
-                    if ($countAds < 5) { // limite à 5 SMS
-                        foreach ($newAds AS $id => $ad) {
+                    $messages = array();
+
+                    // limite à 5 SMS par analyse de l'alerte (limite la
+                    // consommation de crédit)
+                    if ($ads_count <= 5) {
+                        foreach ($ads AS $id => $ad) {
                             $ad = $ads[$id]; // récupère l'objet.
                             $url = $ad->getLink();
                             curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$url);
                             if ($url = curl_exec($curlTinyurl)) {
-                                $msg  = "Nouvelle annonce ".($alert->title?$alert->title." : ":"").$ad->getTitle();
                                 $others = array();
+
                                 if ($ad->getPrice()) {
                                     $others[] = number_format($ad->getPrice(), 0, ',', ' ').$ad->getCurrency();
                                 }
+
                                 if ($ad->getCity()) {
                                     $others[] = $ad->getCity();
+
                                 } elseif ($ad->getCountry()) {
                                     $others[] = $ad->getCountry();
                                 }
-                                if ($others) {
-                                    $msg .= " (".implode(", ", $others).")";
-                                }
-                                $params = array(
+
+                                $others = implode(", ", $others);
+
+                                $messages[] = array(
                                     "title" => "Alerte ".$siteConfig->getOption("site_name"),
-                                    "description" => "Nouvelle annonce".($alert->title ? " pour : ".$alert->title : ""),
+                                    "description" => sprintf(
+                                        "Nouvelle annonce%s",
+                                        $alert->title ? " pour : ".$alert->title : ""
+                                    ),
                                     "url" => $url,
+                                    "text" => sprintf(
+                                        "Annonce %s%s%s",
+                                        $alert->title ? $alert->title." : " : "",
+                                        $ad->getTitle(),
+                                        $others ? " (".$others.")" : ""
+                                    ),
                                 );
                             }
                         }
-                    } else { // envoi un msg global
+
+                    // Si plus de 5 nouvelles annonces, on envoie un
+                    // message global
+                    } else {
                         curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$alert->url);
                         if ($url = curl_exec($curlTinyurl)) {
-                            $msg  = "Il y a ".$countAds." nouvelles annonces pour votre alerte '".($alert->title?$alert->title:"sans nom")."'";
-                            $params = array(
+                            $messages[] = array(
                                 "title" => "Alerte ".$siteConfig->getOption("site_name"),
-                                "description" => "Nouvelle".($countAds > 1 ? "s" : "").
-                                            " annonce".($countAds > 1 ? "s" : "").
-                                            ($alert->title ? " pour : ".$alert->title : ""),
                                 "url" => $url,
+                                "description" => sprintf(
+                                    "Nouvelles annonces%s",
+                                    $alert->title ? " pour : ".$alert->title : ""
+                                ),
+                                "text" => sprintf(
+                                    "Il y a %d nouvelles annonces pour votre alerte '%s'",
+                                    $ads_count,
+                                    $alert->title ? $alert->title : "sans nom"
+                                ),
                             );
                         }
                     }
 
-                    if ($params) {
+                    // Envoi des messages via les systèmes de notification choisis
+                    foreach ($messages AS $message) {
                         foreach ($notifications AS $key => $notifier) {
-                            switch ($key) {
-                                case "freeMobile":
-                                    $key_test = "send_sms_free_mobile";
-                                    break;
-                                case "ovh":
-                                    $key_test = "send_sms_ovh";
-                                    break;
-                                default:
-                                    $key_test = "send_".$key;
+                            if (empty($alert->$key)) {
+                                continue;
                             }
-                            if (isset($alert->$key_test) && $alert->$key_test) {
-                                try {
-                                    $notifier->send($msg, $params);
-                                } catch (Exception $e) {
-                                    $this->_logger->warn(
-                                        $log_id."Erreur sur envoi via ".
-                                        get_class($notifier).
-                                        ": (".$e->getCode().") ".
-                                        $e->getMessage()
-                                    );
-                                }
+
+                            try {
+                                $text = $message["text"];
+                                unset($message["text"]);
+                                $notifier->send($text, $message);
+                            } catch (Exception $e) {
+                                $this->_logger->warn(
+                                    $log_id."Erreur sur envoi via ".
+                                    get_class($notifier).
+                                    ": (".$e->getCode().") ".
+                                    $e->getMessage()
+                                );
                             }
                         }
                     }
                 }
+
                 $storage->save($alert);
             }
         }

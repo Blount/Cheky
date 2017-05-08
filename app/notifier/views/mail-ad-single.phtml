@@ -1,0 +1,29 @@
+<?php ob_start(); ?>
+
+<h1 style="font-size: 16px;">
+    Votre recherche :
+    <?php echo htmlspecialchars($alert->title, null, "UTF-8"); ?>
+</h1>
+<p style="font-size: 14px; margin: 0;">
+    <strong>
+    <a href="<?php echo htmlspecialchars($alert->url, null, "UTF-8"); ?>"
+        style="text-decoration: none; color: #0B6CDA;">LIEN DE RECHERCHE</a>
+<?php if (!empty($baseurl)) : ?>
+    - <a href="<?php echo $baseurl; ?>?mod=mail&amp;a=form&amp;id=<?php
+        echo $alert->id; ?>" style="text-decoration: none; color: #E77600;">MODIFIER</a>
+    - <a href="<?php echo $baseurl; ?>?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id=<?php
+        echo $alert->id; ?>" style="text-decoration: none; color: #999999;">ACTIVER / DÉSACTIVER</a>
+    - <a href="<?php echo $baseurl; ?>?mod=mail&amp;a=form-delete&amp;id=<?php
+        echo $alert->id; ?>" style="text-decoration: none; color: #FF0000;">SUPPRIMER</a>
+<?php endif; ?>
+    </strong>
+</p>
+
+<hr />
+<br />
+
+<?php echo require DOCUMENT_ROOT."/app/notifier/views/mail-ad.phtml"; ?>
+<br />
+
+<?php
+return ob_get_clean();
