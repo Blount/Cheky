@@ -129,10 +129,17 @@ class Updater
         $zip->extractTo($this->_tmp_dir);
         $zip->close();
 
-        // mise à jour des fichiers.
-        $this->_copyFiles($this->_tmp_dir."/Cheky-".$version, $this->_destination);
-        rmdir($this->_tmp_dir."/Cheky-".$version);
         unlink($tmpZip);
+
+        // mise à jour des fichiers.
+        $directories = array_diff(scandir($this->_tmp_dir), array(".", ".."));
+        if (0 == count($directories)) {
+            throw new \Exception("L'archive semble erronée.");
+        }
+        $directory = $this->_tmp_dir."/".array_shift($directories);
+        $this->_copyFiles($directory, $this->_destination);
+        rmdir($directory);
+        rmdir($this->_tmp_dir);
     }
 
     public function update($fromVersion, $toVersion)
