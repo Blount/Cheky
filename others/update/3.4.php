@@ -11,7 +11,7 @@ class Update_34 extends Update
                 ADD `rss_key` CHAR(40) DEFAULT NULL UNIQUE AFTER `api_key`");
 
             $this->_dbConnection->query("ALTER TABLE `LBC_Alert`
-                CHANGE `url` `url` TEXT NOT NULL CHARACTER SET utf8 COLLATE utf8_bin");
+                CHANGE `url` `url` TEXT CHARACTER SET utf8 COLLATE utf8_bin NOT NULL");
 
             $this->_dbConnection->query("ALTER TABLE `LBC_BackupAd` DROP `link_mobile`");
         }
