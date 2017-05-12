@@ -370,6 +370,7 @@ class Main
                                 $alert->title
                             );
                             $this->_mailer->Body = require DOCUMENT_ROOT."/app/notifier/views/mail-ads.phtml";
+                            $this->_mailer->AltBody = require DOCUMENT_ROOT."/app/notifier/views/mail-ads-text.phtml";
                             try {
                                 $this->_mailer->send();
                             } catch (phpmailerException $e) {
@@ -381,6 +382,7 @@ class Main
                             foreach ($ads AS $ad) {
                                 $this->_mailer->Subject = ($alert->title?$alert->title." : ":"").$ad->getTitle();
                                 $this->_mailer->Body = require DOCUMENT_ROOT."/app/notifier/views/mail-ad-single.phtml";
+                                $this->_mailer->AltBody = require DOCUMENT_ROOT."/app/notifier/views/mail-ad-single-text.phtml";
                                 try {
                                     $this->_mailer->send();
                                 } catch (phpmailerException $e) {

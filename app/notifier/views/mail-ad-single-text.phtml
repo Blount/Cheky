@@ -1,0 +1,12 @@
+<?php ob_start(); ?>
+Bonjour,
+
+Nouvelle annonce correspondant à votre recherche :
+
+<?php echo require DOCUMENT_ROOT."/app/notifier/views/mail-ad-text.phtml"; ?>
+
+
+Gérer mes alertes :
+<?php echo $baseurl; ?>
+<?php
+return ob_get_clean();

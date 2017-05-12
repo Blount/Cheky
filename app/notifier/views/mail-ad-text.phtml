@@ -1,0 +1,26 @@
+<?php
+ob_start();
+
+if ($ad->getDate()) {
+    echo "Le ".date("d/m/Y à H:i", $ad->getDate())."\n";
+}
+
+if ($ad->getCategory()) {
+    echo $ad->getCategory()." / ";
+}
+echo $ad->getTitle()."\n";
+
+if ($ad->getCountry()) {
+    echo $ad->getCountry()." / ";
+}
+if ($ad->getCity()) {
+    echo $ad->getCity()."\n";
+}
+
+if ($ad->getPrice()) {
+    echo number_format($ad->getPrice(), 0, ',', ' ')." ".$ad->getCurrency()."\n";
+}
+
+echo $ad->getLink()."\n";
+
+return ob_get_clean();
