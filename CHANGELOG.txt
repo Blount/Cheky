@@ -1,4 +1,18 @@
 
+## Version 3.4
+
+ * ajout: LBCAlerte devient Cheky.
+ * ajout: authentification par clé pour l'accès au flux RSS.
+ * ajout: le mail des alertes contient maintenant une version texte.
+ * amélioration: modification de structure de code dans l'analyse de nouvelle annonce.
+ * correction: désactivation de la notification Free Mobile impossible.
+ * correction: URLs tronquées en SQL si plus de 255 caractères.
+ * correction: si moins de 6 nouvelles annonces trouvées, seule la dernière est reçue par notification (SMS, Pushbullet, etc.).
+ * correction: crash sur erreur Pushbullet.
+ * correction: crash sur alerte SeLoger.com.
+ * correction: crash possible sur sauvegarde de nouvelle alerte.
+ * suppression: lien mobile pour Leboncoin.
+
 ## Version 3.3
 
  * ajout: possibilité de sauvegarder les annonces Leboncoin.
