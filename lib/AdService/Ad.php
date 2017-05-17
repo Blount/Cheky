@@ -6,7 +6,6 @@ class Ad
 {
     protected $_id;
     protected $_link;
-    protected $_link_mobile;
     protected $_title;
     protected $_description;
     protected $_price = 0;
@@ -39,7 +38,6 @@ class Ad
         return array(
             "id" => $this->_id,
             "link" => $this->_link,
-            "link_mobile" => $this->_link_mobile,
             "title" => $this->_title,
             "description" => $this->_description,
             "price" => $this->_price,
@@ -93,25 +91,6 @@ class Ad
     public function getLink()
     {
         return $this->_link;
-    }
-
-
-    /**
-     * @param string $link
-     * @return \AdService\Ad
-     */
-    public function setLinkMobile($link)
-    {
-        $this->_link_mobile = $link;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLinkMobile()
-    {
-        return $this->_link_mobile;
     }
 
 

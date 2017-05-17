@@ -79,12 +79,7 @@ class Lbc extends AbstractParser
 
             $ad->setLink($this->formatLink($result->getAttribute("href")))
                 ->setId($m[1])
-                ->setTitle($result->getAttribute("title"))
-                ->setLinkMobile(str_replace(
-                    array("http://www.", "https://www."),
-                    array("http://mobile.", "https://mobile."),
-                    $ad->getLink()
-                ));
+                ->setTitle($result->getAttribute("title"));
 
             // recherche de l'image
             foreach ($result->getElementsByTagName("span") AS $node) {
@@ -202,12 +197,7 @@ class Lbc extends AbstractParser
         $links = $this->getElementsByTagName("link");
         foreach ($links AS $link) {
             if ("canonical" == $link->getAttribute("rel")) {
-                $ad->setLink($this->formatLink($link->getAttribute("href")))
-                    ->setLinkMobile(str_replace(
-                        array("http://www.", "https://www."),
-                        array("http://mobile.", "https://mobile."),
-                        $ad->getLink()
-                    ));
+                $ad->setLink($this->formatLink($link->getAttribute("href")));
             }
         }
 

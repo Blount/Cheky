@@ -1,4 +1,4 @@
-LBCAlerte
+Cheky
 ======
 
 Alerte mail et RSS pour Leboncoin.fr
@@ -14,4 +14,4 @@ Alerte mail et RSS pour Leboncoin.fr
 ## Documentation
 
 Pour l'installation et la configuration, une documentation est disponible sur le site officiel :
-https://alerte.ilatumi.org
+https://www.cheky.net

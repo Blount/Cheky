@@ -6,11 +6,8 @@ if (empty($_GET["s"])) {
 }
 
 switch ($_GET["s"]) {
-    case "sms-free-mobile":
+    case "freemobile":
         $key = "freeMobile";
-        break;
-    case "sms-ovh":
-        $key = "ovh";
         break;
     default:
         $key = $_GET["s"];

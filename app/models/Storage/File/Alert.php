@@ -120,7 +120,11 @@ class Alert implements \App\Storage\Alert
         }
         if (!$updated && !$alert->id) {
             $alert->id = sha1(uniqid());
-            fputcsv($fpNewFile, $alert->toArray(), ",", '"');
+            $data = $alert->toArray();
+            if (is_array($data["last_id"])) {
+                $data["last_id"] = json_encode($data["last_id"]);
+            }
+            fputcsv($fpNewFile, $data, ",", '"');
         }
 
         fclose($fpNewFile);

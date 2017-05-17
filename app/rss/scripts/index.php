@@ -1,4 +1,10 @@
 <?php
+
+if (!$userAuthed->getRssKey()) {
+    $userAuthed->regenerateKey("rss");
+    $userStorage->save($userAuthed);
+}
+
 $values = array(
     "url" => "", "price_min" => "", "price_max" => "", "price_strict" => false,
     "cities" => "", "categories" => array()
@@ -29,7 +35,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors["price"] .= "Valeur de \"prix max\" non valide.";
     }
     if (empty($errors)) {
-        $query = array("mod" => "rss", "a" => "refresh", "url" => $values["url"]);
+        $query = array(
+            "mod" => "rss",
+            "a" => "refresh",
+            "u" => $userAuthed->getUsername(),
+            "key" => $userAuthed->getRssKey(),
+            "url" => $values["url"],
+        );
         if (!empty($values["price_min"])) {
             $query["price_min"] = (int)$values["price_min"];
         }

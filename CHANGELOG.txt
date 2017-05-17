@@ -1,4 +1,18 @@
 
+## Version 3.4
+
+ * ajout: LBCAlerte devient Cheky.
+ * ajout: authentification par clé pour l'accès au flux RSS.
+ * ajout: le mail des alertes contient maintenant une version texte.
+ * amélioration: modification de structure de code dans l'analyse de nouvelle annonce.
+ * correction: désactivation de la notification Free Mobile impossible.
+ * correction: URLs tronquées en SQL si plus de 255 caractères.
+ * correction: si moins de 6 nouvelles annonces trouvées, seule la dernière est reçue par notification (SMS, Pushbullet, etc.).
+ * correction: crash sur erreur Pushbullet.
+ * correction: crash sur alerte SeLoger.com.
+ * correction: crash possible sur sauvegarde de nouvelle alerte.
+ * suppression: lien mobile pour Leboncoin.
+
 ## Version 3.3
 
  * ajout: possibilité de sauvegarder les annonces Leboncoin.
@@ -21,8 +35,8 @@
 
  * correction: si CURLOPT_FOLLOWLOCATION désactivé, suivre manuellement les redirections.
  * correction: utiliser portail.free.fr pour le test de connexion distant.
- * correction: utiliser le protocol HTTPs pour Leboncoin et alerte.ilatumi.org.
- * correction: supprimer le nom du fichier dans l'URL de base de LBCAlerte.
+ * correction: utiliser le protocol HTTPs pour Leboncoin et cheky.net.
+ * correction: supprimer le nom du fichier dans l'URL de base de Cheky.
  * correction: crash possible si URL invalide.
  * correction: amélioration des infos de log pour la tâche cron.
 

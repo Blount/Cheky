@@ -43,7 +43,7 @@ class Pushbullet extends AdapterAbstract
         $response = curl_exec($curl);
 
         if ($response === false) {
-            throw new \Exceptions("cURL Error: " . curl_error($curl));
+            throw new \Exception("cURL Error: " . curl_error($curl));
         }
 
         $json = json_decode($response, true);

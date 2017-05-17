@@ -23,7 +23,7 @@ class Updater
 
     public function __construct()
     {
-        $this->_tmp_dir = DOCUMENT_ROOT."/var/tmp";
+        $this->_tmp_dir = DOCUMENT_ROOT."/var/tmp/".time();
         $this->_destination = DOCUMENT_ROOT;
     }
 
@@ -129,10 +129,17 @@ class Updater
         $zip->extractTo($this->_tmp_dir);
         $zip->close();
 
-        // mise à jour des fichiers.
-        $this->_copyFiles($this->_tmp_dir."/LBCAlerte-".$version, $this->_destination);
-        rmdir($this->_tmp_dir."/LBCAlerte-".$version);
         unlink($tmpZip);
+
+        // mise à jour des fichiers.
+        $directories = array_diff(scandir($this->_tmp_dir), array(".", ".."));
+        if (0 == count($directories)) {
+            throw new \Exception("L'archive semble erronée.");
+        }
+        $directory = $this->_tmp_dir."/".array_shift($directories);
+        $this->_copyFiles($directory, $this->_destination);
+        rmdir($directory);
+        rmdir($this->_tmp_dir);
     }
 
     public function update($fromVersion, $toVersion)

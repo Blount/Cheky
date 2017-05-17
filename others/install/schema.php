@@ -8,6 +8,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_User` (
     `username` VARCHAR(100) COLLATE utf8_general_ci NOT NULL UNIQUE,
     `password` VARCHAR(40) NOT NULL,
     `api_key` CHAR(40) DEFAULT NULL UNIQUE,
+    `rss_key` CHAR(40) DEFAULT NULL UNIQUE,
     `options` TEXT DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin");
@@ -18,7 +19,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_Alert` (
     `email` VARCHAR(100) COLLATE utf8_general_ci NOT NULL,
     `date_created` DATETIME NOT NULL,
     `title` VARCHAR(255) COLLATE utf8_general_ci NOT NULL,
-    `url` VARCHAR(255) COLLATE utf8_bin NOT NULL,
+    `url` TEXT COLLATE utf8_bin NOT NULL,
     `interval` SMALLINT UNSIGNED NOT NULL,
     `time_last_ad` INTEGER UNSIGNED NOT NULL,
     `time_updated` INTEGER UNSIGNED NOT NULL,
@@ -54,7 +55,6 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_BackupAd` (
     `date_created` DATETIME NOT NULL,
     `title` VARCHAR(255) NOT NULL,
     `link` VARCHAR(255) NOT NULL,
-    `link_mobile` VARCHAR(255) NOT NULL,
     `price` INTEGER UNSIGNED NOT NULL DEFAULT 0,
     `currency` VARCHAR(10) NOT NULL DEFAULT '€',
     `date` DATE NOT NULL,
