@@ -2,6 +2,13 @@
 
 header('Content-Type: text/html; charset=utf-8');
 
+// PHP >= 5.4.0 nécessaire
+if (-1 == version_compare(PHP_VERSION, "5.4")) {
+    echo "Version PHP détectée : ".PHP_VERSION."<br />";
+    echo "Version PHP minimal requise : 5.4<br />";
+    exit(1);
+}
+
 require __DIR__."/bootstrap.php";
 
 $module = "default";
