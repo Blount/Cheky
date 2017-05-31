@@ -30,9 +30,6 @@ if (!$currentVersion) {
     if ($module != "install") {
         $module = "install";
     }
-} elseif (isset($_GET["url"])) { // rendre compatible avec l'ancien système de flux RSS
-    $module = "rss";
-    $action = "refresh";
 }
 
 if ($module != "install") {
