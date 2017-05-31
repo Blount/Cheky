@@ -20,10 +20,27 @@ if (isset($_GET["a"])) {
     $action = $_GET["a"];
 }
 
+// Numéro de version actuel
 try {
     $currentVersion = $config->get("general", "version");
 } catch (Config_Lite_Exception $e) {
-    die("Le fichier de configuration 'var/config.ini' corrompu.");
+    echo "Le fichier de configuration 'var/config.ini' corrompu (numéro de version manquant).";
+    exit(1);
+}
+
+// Type de stockage
+try {
+    $storageType = $config->get("storage", "type");
+} catch (Config_Lite_Exception $e) {
+    echo "Le fichier de configuration 'var/config.ini' corrompu (type de stockage indéfinit).";
+    exit(1);
+}
+
+if ($storageType == "db") {
+    $userStorage = new \App\Storage\Db\User($dbConnection);
+
+} elseif ($storageType == "files") {
+    $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
 }
 
 if (!$currentVersion) {
@@ -33,12 +50,6 @@ if (!$currentVersion) {
 }
 
 if ($module != "install") {
-    $storageType = $config->get("storage", "type", "files");
-    if ($storageType == "db") {
-        $userStorage = new \App\Storage\Db\User($dbConnection);
-    } else {
-        $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
-    }
 
     // identification nécessaire
     if ($module == "rss" && $action == "refresh") {
