@@ -20,7 +20,13 @@ if (isset($_GET["a"])) {
     $action = $_GET["a"];
 }
 
-if (!$currentVersion = $config->get("general", "version")) {
+try {
+    $currentVersion = $config->get("general", "version");
+} catch (Config_Lite_Exception $e) {
+    die("Le fichier de configuration 'var/config.ini' corrompu.");
+}
+
+if (!$currentVersion) {
     if ($module != "install") {
         $module = "install";
     }
