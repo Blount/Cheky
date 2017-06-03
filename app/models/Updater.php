@@ -4,27 +4,32 @@ namespace App;
 
 class Updater
 {
-    protected $_tmp_dir;
+    protected $tmp_dir;
 
-    protected $_destination;
+    protected $destination;
 
-    /**
-     * Adresse pour la récupération de la dernière version
-     * @var string
-     */
-    protected $_url_version = "https://raw.githubusercontent.com/Blount/LBCAlerte/master/version.php";
+    protected $current_version;
+
+    protected $data;
 
     /**
-     * Adresse pour récupérer l'archive ZIP.
-     * %VERSION% est remplacer parle numéro de version à télécharger.
+     * Adresse de chargement du fichier JSON.
      * @var string
      */
-    protected $_url_archive = "https://github.com/Blount/LBCAlerte/archive/%VERSION%.zip";
+    protected $url = "http://releases.cheky.net/releases.php";
 
-    public function __construct()
+    /**
+     * Chemin du fichier cache.
+     * @var string
+     */
+    protected $cache_filename;
+
+    public function __construct($current_version)
     {
-        $this->_tmp_dir = DOCUMENT_ROOT."/var/tmp/".time();
-        $this->_destination = DOCUMENT_ROOT;
+        $this->current_version = $current_version;
+        $this->tmp_dir = DOCUMENT_ROOT."/var/tmp/".time();
+        $this->cache_filename = DOCUMENT_ROOT."/var/tmp/updater.json";
+        $this->destination = DOCUMENT_ROOT;
     }
 
     /**
@@ -33,7 +38,7 @@ class Updater
     */
     public function setTmpDir($tmp_dir)
     {
-        $this->_tmp_dir = $tmp_dir;
+        $this->tmp_dir = $tmp_dir;
         return $this;
     }
 
@@ -42,7 +47,7 @@ class Updater
     */
     public function getTmpDir()
     {
-        return $this->_tmp_dir;
+        return $this->tmp_dir;
     }
 
     /**
@@ -51,7 +56,7 @@ class Updater
     */
     public function setDestination($destination)
     {
-        $this->_destination = $destination;
+        $this->destination = $destination;
         return $this;
     }
 
@@ -60,92 +65,159 @@ class Updater
     */
     public function getDestination()
     {
-        return $this->_destination;
+        return $this->destination;
     }
 
     /**
-    * @param string $url_version
+    * @param string $url
     * @return Updater
     */
-    public function setUrlVersion($url_version)
+    public function setUrl($url)
     {
-        $this->_url_version = $url_version;
+        $this->url = $url;
         return $this;
     }
 
     /**
     * @return string
     */
-    public function getUrlVersion()
+    public function getUrl()
     {
-        return $this->_url_version;
+        return $this->url;
     }
 
-    /**
-    * @param string $url_archive
-    * @return Updater
-    */
-    public function setUrlArchive($url_archive)
+    public function getTimeLastCheck()
     {
-        $this->_url_archive = $url_archive;
-        return $this;
-    }
-
-    /**
-    * @return string
-    */
-    public function getUrlArchive()
-    {
-        return $this->_url_archive;
-    }
-
-    public function getLastVersion()
-    {
-        $lastVersion = file_get_contents($this->getUrlVersion());
-        if (preg_match('#return\s+"(.*)"\s*;#imsU', $lastVersion, $m)) {
-            return $m[1];
+        if (!is_file($this->cache_filename)) {
+            return 0;
         }
-        throw new \Exception("Impossible de récupérer la dernière version.");
+
+        return filectime($this->cache_filename);
+    }
+
+    public function loadData($force = false)
+    {
+        if (!$force && !empty($this->data)) {
+            return $this->data;
+        }
+
+        if (!$force && is_file($this->cache_filename)) {
+            $cache_time = $this->getTimeLastCheck();
+
+            // Le cache est valide 1 heure
+            if (($cache_time + 3600) > time()) {
+                $data_str = file_get_contents($this->cache_filename);
+            }
+        }
+
+        if (!isset($data_str)) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            if (!ini_get("safe_mode") && !ini_get("open_basedir")) {
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+            }
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_USERAGENT, "Cheky/".$this->current_version." PHP/".PHP_VERSION);
+
+            curl_setopt($ch, CURLOPT_POSTFIELDS, "version=".$this->current_version);
+            curl_setopt($ch, CURLOPT_URL, $this->url);
+            $data_str = curl_exec($ch);
+
+            if ($data_str === false) {
+                throw new \Exception("Impossible de récupérer les informations de mise à jour : ".curl_error($ch));
+            }
+
+            // Mise en cache
+            file_put_contents($this->cache_filename, $data_str);
+        }
+
+        $data = json_decode($data_str, true);
+
+        // Vérification des données
+        if (!is_array($data) || empty($data["latest"])) {
+            if (is_file($this->cache_filename)) {
+                unlink($this->cache_filename);
+            }
+            throw new \Exception("Données de mise à jour invalide.");
+        }
+
+        $this->data = $data;
+
+        return $data;
+    }
+
+    public function getLatestVersion()
+    {
+        $this->loadData();
+
+        return $this->data["latest"];
     }
 
     public function installFiles($version)
     {
-        $tmpZip = $this->_tmp_dir."/latest.zip";
-        if (!is_dir($this->_tmp_dir)) {
-            mkdir($this->_tmp_dir);
+        $this->loadData();
+
+        if (!isset($this->data["versions"][$version])) {
+            throw new \Exception("Version non trouvée.");
         }
-        if (!is_writable($this->_tmp_dir)) {
-            throw new \Exception("Impossible d'écrire dans '".$this->_tmp_dir."'");
+
+        // Crée le répertoire temporaire si inéxistant
+        if (!is_dir($this->tmp_dir)) {
+            mkdir($this->tmp_dir);
         }
-        $archive = str_replace("%VERSION%", $version, $this->_url_archive);
-        if (!is_file($tmpZip) && !copy($archive, $tmpZip)) {
+
+        // Le répertoire temporaire doit être accéssible en écriture
+        if (!is_writable($this->tmp_dir)) {
+            throw new \Exception("Impossible d'écrire dans '".$this->tmp_dir."'");
+        }
+
+        $version = $this->data["versions"][$version];
+        $filename_zip = $this->tmp_dir."/latest.zip";
+
+        // Téléchargement l'archive
+        if (!copy($version["url"], $filename_zip)) {
             throw new \Exception("Impossible de récupérer l'archive.");
         }
-        $zip = new \ZipArchive();
-        if (!$zip->open($tmpZip)) {
-            throw new \Exception("L'archive semble erronée.");
+
+        // Vérification de l'intégrité du fichier
+        $hash = sha1_file($filename_zip);
+        if ($hash != $version["hash"]) {
+            throw new \Exception("Le fichier téléchargé semble corrompu (".$filename_zip.").\n".
+                "Vous pouvez tenter de recommencer la mise à jour.\n".
+                "Si le problème persiste, n'hésitez pas à venir sur le forum en parler.");
         }
-        // extraire l'archive
-        $zip->extractTo($this->_tmp_dir);
+
+        $zip = new \ZipArchive();
+        if (!$zip->open($filename_zip)) {
+            throw new \Exception("L'archive semble corrompue.");
+        }
+
+        // Extraction de l'archive
+        $zip->extractTo($this->tmp_dir);
         $zip->close();
 
-        unlink($tmpZip);
+        unlink($filename_zip);
 
-        // mise à jour des fichiers.
-        $directories = array_diff(scandir($this->_tmp_dir), array(".", ".."));
+        // Mise à jour des fichiers locaux
+        $directories = array_diff(
+            scandir($this->tmp_dir),
+            array(".", "..")
+        );
         if (0 == count($directories)) {
             throw new \Exception("L'archive semble erronée.");
         }
-        $directory = $this->_tmp_dir."/".array_shift($directories);
-        $this->_copyFiles($directory, $this->_destination);
+        $directory = $this->tmp_dir."/".array_shift($directories);
+        $this->copyFiles($directory, $this->destination);
         rmdir($directory);
-        rmdir($this->_tmp_dir);
+        rmdir($this->tmp_dir);
     }
 
     public function update($fromVersion, $toVersion)
     {
         // exécute les mises à jour
-        $directory = $this->_destination."/others/update";
+        $directory = $this->destination."/others/update";
         if (is_dir($directory)) {
             $filenames = scandir($directory);
             $filenames_php = array();
@@ -172,7 +244,7 @@ class Updater
         }
     }
 
-    protected function _copyFiles($dir, $to)
+    protected function copyFiles($dir, $to)
     {
         foreach (scandir($dir) AS $file) {
             if ($file == "." || $file == "..") {
@@ -185,7 +257,7 @@ class Updater
                 if (!is_dir($destFile)) {
                     mkdir($destFile);
                 }
-                $this->_copyFiles($dir."/".$file, $destFile);
+                $this->copyFiles($dir."/".$file, $destFile);
                 rmdir($dir."/".$file);
             }
         }

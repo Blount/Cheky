@@ -29,9 +29,9 @@
 <h2>Une mise à jour est disponible</h2>
 <p>
     Vous utilisez actuellement la version <strong><?php echo APPLICATION_VERSION; ?></strong>.
-    La version <strong><?php echo $lastVersion; ?></strong> est disponible.
+    La version <strong><?php echo $latestVersion; ?></strong> est disponible.
 </p>
-<?php if ($allow_update) : ?>
+<?php if ($allowUpdate) : ?>
 <form action="" method="post">
     <p>
         <input type="hidden" name="upgrade" value="1" />
@@ -40,14 +40,16 @@
 </form>
 <?php endif; ?>
 
-<?php else : ?>
+<?php elseif (isset($timeChecked)) : ?>
 <p><strong>Vous utilisez déjà la dernière version.</strong></p>
 <form action="" method="post">
+    <?php if (!empty($timeChecked)) : ?>
     <p>
-        Dernière vérification effectuée le <?php echo date("d/m/Y à H:i", $_SESSION["lbcLastVersionTime"]); ?>
+        Dernière vérification effectuée le <?php echo date("d/m/Y à H:i", $timeChecked); ?>
     </p>
+    <?php endif; ?>
     <p>
-        <input type="hidden" name="checkVersion" value="1" />
+        <input type="hidden" name="force_check" value="1" />
         <input type="submit" value="Vérifier à nouveau" />
     </p>
 </form>
