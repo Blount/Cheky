@@ -201,6 +201,7 @@ class Config_Lite implements ArrayAccess, IteratorAggregate, Countable, Serializ
             return $value;
         }
         if ($this->quoteStrings) {
+            $value = str_replace($this->delim, '\\'.$this->delim, $value);
             $value = $this->delim . $value . $this->delim;
         }
         return $value;
