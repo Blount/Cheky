@@ -1,6 +1,7 @@
 <?php
 
-header('Content-Type: text/html; charset=utf-8');
+header("Content-Type: text/html; charset=utf-8");
+header("Referrer-Policy: same-origin");
 
 // PHP >= 5.4.0 nécessaire
 if (-1 == version_compare(PHP_VERSION, "5.4")) {
