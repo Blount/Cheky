@@ -68,10 +68,10 @@ $timeChecked = $updater->getTimeLastCheck();
 // La mise à jour des fichiers est faite, on termine la mise à jour
 // si nécessaire (base de donénes, etc.)
 if ($upgradeStarted && !empty($_POST["upgrade"])) {
-    $updater->update($currentVersion, $latestVersion);
+    $updater->update($currentVersion, APPLICATION_VERSION);
 
     // mise à jour du numéro de version dans la config.
-    $config->set("general", "version", $latestVersion);
+    $config->set("general", "version", APPLICATION_VERSION);
     $config->save();
     header("LOCATION: ?mod=admin&a=upgrade");
     exit;
