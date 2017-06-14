@@ -1,4 +1,15 @@
 
+## Version 3.5
+
+ * ajout: message si PHP < 5.4 détecté.
+ * ajout: masque le referer lors de l'ouverture d'un lien externe (fixes #55).
+ * modification: le système de mise à jour devient indépendant de Github.
+ * modification: mise à niveau de PHPMailer vers 5.2.23 (fixes #52).
+ * correction: prix inccorecte dans certain cas pour les annonces SeLoger.
+ * correction: erreur si le numéro de version est absent du fichier config.
+ * correction: erreur à la suppression d'une alerte.
+ * suppression: compatibilité avec un ancien système d'accès au flux RSS.
+
 ## Version 3.4
 
  * ajout: LBCAlerte devient Cheky.
@@ -155,3 +166,5 @@
  * ajout: possibilité de recevoir les nouvelles annonces dans des mails séparés.
  * ajout: nouveau système de contrôle des alertes.
  * ajout: inclure l'URL de recherche dans le mail.
+
+ 
