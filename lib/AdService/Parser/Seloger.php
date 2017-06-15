@@ -91,12 +91,18 @@ class Seloger extends AbstractParser
             $nodes = $adNode->getElementsByTagName("div");
             foreach ($nodes AS $node) {
                 $className = trim($node->getAttribute("class"));
+                $parentNode = $node->parentNode;
+
+                if (false === strpos($parentNode->getAttribute("class"), "listing_infos")) {
+                    continue;
+                }
 
                 // Titre + lien
                 if (false !== strpos($className, "title")) {
-                    $link = $node->getElementsByTagName("a")->item(0);
                     $ad->setTitle(trim($node->nodeValue));
-                    $ad->setLink($link->getAttribute("href"));
+                    if ($link = $node->getElementsByTagName("a")->item(0)) {
+                        $ad->setLink($link->getAttribute("href"));
+                    }
 
                 // Prix
                 } elseif (false !== strpos($className, "price")) {
