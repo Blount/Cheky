@@ -1,79 +1,100 @@
 <?php
 
-header('Content-Type: text/html; charset=utf-8');
+header("Content-Type: text/html; charset=utf-8");
+header("Referrer-Policy: same-origin");
+
+// PHP >= 5.4.0 nécessaire
+if (-1 == version_compare(PHP_VERSION, "5.4")) {
+    echo "Version PHP détectée : ".PHP_VERSION."<br />";
+    echo "Version PHP minimal requise : 5.4<br />";
+    exit(1);
+}
 
 require __DIR__."/bootstrap.php";
 
-$module = "default";
-if (isset($_GET["mod"])) {
-    $module = $_GET["mod"];
-}
-$action = "index";
-if (isset($_GET["a"])) {
-    $action = $_GET["a"];
-}
-
-if (!$currentVersion = $config->get("general", "version")) {
-    if ($module != "install") {
-        $module = "install";
-    }
-} elseif (isset($_GET["url"])) { // rendre compatible avec l'ancien système de flux RSS
-    $module = "rss";
-    $action = "refresh";
+// Numéro de version actuel
+try {
+    $currentVersion = $config->get("general", "version");
+} catch (Config_Lite_Exception $e) {
+    echo "Le fichier de configuration 'var/config.ini' corrompu (numéro de version manquant).";
+    exit(1);
 }
 
-if ($module != "install") {
-    $storageType = $config->get("storage", "type", "files");
-    if ($storageType == "db") {
-        $userStorage = new \App\Storage\Db\User($dbConnection);
-    } else {
-        $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
-    }
+// Type de stockage
+try {
+    $storageType = $config->get("storage", "type");
+} catch (Config_Lite_Exception $e) {
+    echo "Le fichier de configuration 'var/config.ini' corrompu (type de stockage indéfinit).";
+    exit(1);
+}
 
-    // identification nécessaire
-    if ($module == "rss" && $action == "refresh") {
-        $rss_key = isset($_GET["key"]) ? $_GET["key"] : null;
-        $username = isset($_GET["u"]) ? $_GET["u"] : null;
-        if ($rss_key && $username) {
-            $auth = new Auth\RssKey($userStorage);
-            if (!$userAuthed = $auth->authenticate()) {
-                header("HTTP/1.0 401 Unauthorized");
-                exit;
-            }
-        } else {
-            $auth = new Auth\Session($userStorage);
-            if (!$userAuthed = $auth->authenticate()) {
-                $auth = new Auth\Basic($userStorage);
-                if (!$userAuthed = $auth->authenticate()) {
-                    header('WWW-Authenticate: Basic realm="Identification"');
-                    header('HTTP/1.0 401 Unauthorized');
-                    echo "Non autorisé.";
-                    exit;
-                }
-            }
+if ($storageType == "db") {
+    $userStorage = new \App\Storage\Db\User($dbConnection);
+
+} elseif ($storageType == "files") {
+    $userStorage = new \App\Storage\File\User(DOCUMENT_ROOT."/var/users.db");
+}
+
+$module = isset($_GET["mod"]) ? $_GET["mod"] : "default";
+$action = isset($_GET["a"]) ? $_GET["a"] : "index";
+
+// Si le numéro de version est vide, on passe à l'installation.
+if (!$currentVersion) {
+    $module = "install";
+
+// Contrôle d'identification pour les flux RSS
+} elseif ($module == "rss" && $action == "refresh") {
+    // Identification par clé
+    $rss_key = isset($_GET["key"]) ? $_GET["key"] : null;
+    $username = isset($_GET["u"]) ? $_GET["u"] : null;
+    if ($rss_key && $username) {
+        $auth = new Auth\RssKey($userStorage);
+        if (!$userAuthed = $auth->authenticate()) {
+            header("HTTP/1.0 401 Unauthorized");
+            exit;
         }
+
+    /**
+     * Identification par utilisateur/mot de passe via entête HTTP
+     * @deprecated
+     */
     } else {
         $auth = new Auth\Session($userStorage);
         if (!$userAuthed = $auth->authenticate()) {
-            $module = "default";
-            $action = "login";
+            $auth = new Auth\Basic($userStorage);
+            if (!$userAuthed = $auth->authenticate()) {
+                header('WWW-Authenticate: Basic realm="Identification"');
+                header('HTTP/1.0 401 Unauthorized');
+                echo "Non autorisé.";
+                exit;
+            }
         }
     }
 
-    $upgradeStarted = version_compare($currentVersion, APPLICATION_VERSION, "<");
-    if ($upgradeStarted) {
-        if ($userAuthed && $userAuthed->isAdmin()) {
-            if ($module != "admin" || $action != "upgrade") {
-                header("LOCATION: ./?mod=admin&a=upgrade");
-                exit;
-            }
-        } elseif ($action != "login") {
-            require DOCUMENT_ROOT."/app/default/views/upgrade.phtml";
-            return;
-        }
+} else {
+    $auth = new Auth\Session($userStorage);
+    if (!$userAuthed = $auth->authenticate()) {
+        $module = "default";
+        $action = "login";
     }
 }
 
+// Vérifie si une mise à jour est en cours
+$upgradeStarted = version_compare($currentVersion, APPLICATION_VERSION, "<");
+if ($currentVersion && $upgradeStarted) {
+    // Si utilisateur admin, redirige ver la page de mise à jour
+    if ($userAuthed && $userAuthed->isAdmin()) {
+        if ($module != "admin" || $action != "upgrade") {
+            header("LOCATION: ./?mod=admin&a=upgrade");
+            exit;
+        }
+
+    // Si utilisateur normal, message indiquant une mise à jour en cours
+    } elseif ($action != "login") {
+        require DOCUMENT_ROOT."/app/default/views/upgrade.phtml";
+        return;
+    }
+}
 
 $init = DOCUMENT_ROOT."/app/".$module."/init.php";
 $script = DOCUMENT_ROOT."/app/".$module."/scripts/".$action.".php";

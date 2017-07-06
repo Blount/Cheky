@@ -12,10 +12,7 @@ class Seloger extends AbstractParser
             return;
         }
 
-        // pourquoi est-ce nécessaire ?! Je n'ai pas encore trouvé la raison.
-        $content = utf8_decode($content);
-
-        $this->loadHTML($content);
+        $this->loadHTML('<?xml encoding="UTF-8">'.$content);
 
         $timeToday = strtotime(date("Y-m-d")." 23:59:59");
         $dateYesterday = $timeToday - 24*3600;
@@ -94,16 +91,25 @@ class Seloger extends AbstractParser
             $nodes = $adNode->getElementsByTagName("div");
             foreach ($nodes AS $node) {
                 $className = trim($node->getAttribute("class"));
+                $parentNode = $node->parentNode;
+
+                if (false === strpos($parentNode->getAttribute("class"), "listing_infos")) {
+                    continue;
+                }
 
                 // Titre + lien
                 if (false !== strpos($className, "title")) {
-                    $link = $node->getElementsByTagName("a")->item(0);
                     $ad->setTitle(trim($node->nodeValue));
-                    $ad->setLink($link->getAttribute("href"));
+                    if ($link = $node->getElementsByTagName("a")->item(0)) {
+                        $ad->setLink($link->getAttribute("href"));
+                    }
 
                 // Prix
                 } elseif (false !== strpos($className, "price")) {
-                    $ad->setPrice((int) preg_replace("#[^0-9]*#", "", $node->nodeValue));
+                    $value = htmlentities((string) $node->nodeValue, null, "UTF-8");
+                    if (preg_match("#([0-9]+(".preg_quote("&nbsp;", "#").")?[0-9]*)+#", $value, $m)) {
+                        $ad->setPrice((int) preg_replace("#[^0-9]*#", "", $m[1]));
+                    }
 
                 // Lieu
                 } elseif (false !== strpos($className, "locality")) {

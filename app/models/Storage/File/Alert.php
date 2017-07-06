@@ -146,7 +146,11 @@ class Alert implements \App\Storage\Alert
 
         unset($alerts[$alert->id]);
         foreach ($alerts AS $a) {
-            fputcsv($fpNewFile, $a->toArray(), ",", '"');
+            $data = $a->toArray();
+            if (is_array($data["last_id"])) {
+                $data["last_id"] = json_encode($data["last_id"]);
+            }
+            fputcsv($fpNewFile, $data, ",", '"');
         }
 
         fclose($fpNewFile);

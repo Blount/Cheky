@@ -532,7 +532,7 @@ class Main
 require __DIR__."/../../../bootstrap.php";
 
 // lib
-require_once "PHPMailer/class.phpmailer.php";
+require_once "PHPMailer/PHPMailerAutoload.php";
 
 // modèle
 $storageType = $config->get("storage", "type", "files");

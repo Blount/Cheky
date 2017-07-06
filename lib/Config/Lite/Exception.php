@@ -25,7 +25,7 @@
  * @author    Patrick C. Engel <pce@php.net>
  * @copyright 2010-2011 <pce@php.net>
  * @license   http://www.gnu.org/copyleft/lesser.html  LGPL License 2.1
- * @version   Release: 0.1.5
+ * @version   Release: @package_version@
  * @link      https://github.com/pce/config_lite
  */
 

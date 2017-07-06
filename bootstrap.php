@@ -127,7 +127,8 @@ class Bootstrap
             return;
         }
 
-        if (isset($_SERVER["HTTP_HOST"])) {
+        $baseurl_locked = $this->_config->get("general", "baseurl_locked", 0);
+        if (!$baseurl_locked && isset($_SERVER["HTTP_HOST"])) {
             $current_base_url = $this->_config->get("general", "baseurl", "");
             $base_url = "http";
             if (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off") {
