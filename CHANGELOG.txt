@@ -3,6 +3,7 @@
 
  * ajout: message si PHP < 5.4 détecté.
  * ajout: masque le referer lors de l'ouverture d'un lien externe (fixes #55).
+ * ajout: possibilité de forcer l'URL de base de l'application (fixes #48)
  * modification: le système de mise à jour devient indépendant de Github.
  * modification: mise à niveau de PHPMailer vers 5.2.23 (fixes #52).
  * correction: prix inccorecte dans certain cas pour les annonces SeLoger.
