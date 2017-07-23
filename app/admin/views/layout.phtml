@@ -24,6 +24,13 @@
         </header>
         <?php endif; ?>
         <div class="content">
+            <?php if (isset($security_issue) && $security_issue) : ?>
+            <p class="security-issue">
+                <span>Avertissement sécurité</span>
+                Votre fichier de configuration est en accès public !! Vous
+                devez bloquer l'accès au répertoire "var" de Cheky.
+            </p>
+            <?php endif; ?>
             <?php echo $content; ?>
         </div>
         <?php if ($userAuthed) : ?>

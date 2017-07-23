@@ -506,6 +506,19 @@ form .categories input[type=checkbox] {
     line-height: 2;
 }
 
+.security-issue {
+    background-color: #EF0000;
+    color: #FFFFFF;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.security-issue span {
+    display: block;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    text-decoration: underline;
+}
 
 @media screen and (max-width: 960px) {
     .user-settings-container {
