@@ -39,28 +39,20 @@ class NotifyMyAndroid extends AdapterAbstract
             throw new \Exception("cURL Error: " . curl_error($curl));
         }
 
-        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        if ($code == 200) {
-            // find error through content
+        // find error through content
+        $xml = simplexml_load_string($response);
+        $code = 200;
 
-        }
-        if ($code != 200) {
-            switch ($code) {
-                case 400:
-                    $msg = "The data supplied is in the wrong format, invalid length or null.";
-                    break;
-                case 401:
-                    $msg = "None of the API keys provided were valid.";
-                    break;
-                case 402:
-                    $msg = "Maximum number of API calls per hour exceeded.";
-                    break;
-                case 500:
-                    $msg = "Internal server error. Please contact our support if the problem persists.";
-                    break;
-                default:
-                    $msg = "Unknow error.";
+        if (isset($xml->error)) {
+            $code = 0;
+            if (isset($xml->error["code"])) {
+                $code = (int) $xml->error["code"];
             }
+
+            if (!$msg = (string) $xml->error) {
+                $msg = "Unknow error.";
+            }
+
             throw new \Exception($msg, $code);
         }
 
