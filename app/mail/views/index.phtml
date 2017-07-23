@@ -78,15 +78,27 @@
             <td>
                 <a href="?mod=mail&amp;a=toggle_status&amp;s=<?php
                     echo $notification["form_name"]; ?>&amp;id=<?php
-                    echo $alert->id; ?>"><img src="static/images/<?php
-                    echo !$alert->{$notification["form_name"]} ? "disable" : "enable";
-                ?>.png" alt="" /></a>
+                    echo $alert->id; ?>">
+                    <?php if ($alert->{$notification["form_name"]}) : ?>
+                    <span class="fa fa-toggle-on"
+                        title="Cliquez pour désactiver"></span>
+                    <?php else: ?>
+                    <span class="fa fa-toggle-off"
+                        title="Cliquez pour activer"></span>
+                    <?php endif; ?>
+                </a>
             </td>
             <?php endforeach; ?>
             <td>
-                <a href="?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id=<?php echo $alert->id;
-                    ?>"><img src="static/images/<?php
-                    echo $alert->suspend?"disable":"enable"; ?>.png" alt="" /></a>
+                <a href="?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id=<?php echo $alert->id; ?>">
+                    <?php if (!$alert->suspend) : ?>
+                    <span class="fa fa-toggle-on"
+                        title="Cliquez pour désactiver"></span>
+                    <?php else: ?>
+                    <span class="fa fa-toggle-off"
+                        title="Cliquez pour activer"></span>
+                    <?php endif; ?>
+                </a>
             </td>
             <td>
                 <a href="?mod=mail&amp;a=form&amp;id=<?php echo $alert->id; ?>">modifier</a> |
