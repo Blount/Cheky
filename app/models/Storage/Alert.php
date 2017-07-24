@@ -11,4 +11,6 @@ interface Alert
     public function save(\App\Mail\Alert $alert);
 
     public function delete(\App\Mail\Alert $alert);
+
+    public function fetchGroups();
 }

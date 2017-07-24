@@ -362,6 +362,20 @@ form .categories input[type=checkbox] {
     clear: left;
 }
 
+form .select-group {
+    display: flex;
+}
+form .select-group input {
+    flex-grow: 1;
+    width: 50%;
+    justify-content: space-between;
+}
+form .select-group select {
+    margin-left: 10px;
+    flex-grow: 0;
+    width: 50%;
+}
+
 .notification-list label {
     display: inline-block;
     white-space: nowrap;

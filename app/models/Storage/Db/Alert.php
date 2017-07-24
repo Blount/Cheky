@@ -121,6 +121,25 @@ class Alert implements \App\Storage\Alert
         return $this;
     }
 
+    public function fetchGroups()
+    {
+        $groups_db = $this->_connection->query("
+            SELECT `group`
+            FROM `".$this->_table."`
+            WHERE `user_id` = ".$this->_user->getId()."
+                AND `group` != ''
+                AND `group` IS NOT NULL
+            GROUP By `group`
+        ");
+
+        $groups = array();
+        while ($group = $groups_db->fetch_assoc()) {
+            $groups[] = $group["group"];
+        }
+
+        return $groups;
+    }
+
     /**
      * @param \mysqli $dbConnection
      * @return \App\Storage\Db\User
