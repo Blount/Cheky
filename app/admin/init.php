@@ -7,7 +7,7 @@ if ($auth->getUsername() != "admin") {
 
 $security_issue = false;
 
-$test_url = $config->get("general", "baseurl")."/var/config.ini";
+$test_url = rtrim($config->get("general", "baseurl"), "/")."/var/config.ini";
 $content = $client->request($test_url);
 
 if (200 == $client->getRespondCode()
