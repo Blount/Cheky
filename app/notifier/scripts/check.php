@@ -403,38 +403,35 @@ class Main
                         foreach ($ads AS $id => $ad) {
                             $ad = $ads[$id]; // récupère l'objet.
                             $url = $ad->getLink();
-                            curl_setopt($curlTinyurl, CURLOPT_URL, "http://tinyurl.com/api-create.php?url=".$url);
-                            if ($url = curl_exec($curlTinyurl)) {
-                                $others = array();
+                            $others = array();
 
-                                if ($ad->getPrice()) {
-                                    $others[] = number_format($ad->getPrice(), 0, ',', ' ').$ad->getCurrency();
-                                }
-
-                                if ($ad->getCity()) {
-                                    $others[] = $ad->getCity();
-
-                                } elseif ($ad->getCountry()) {
-                                    $others[] = $ad->getCountry();
-                                }
-
-                                $others = implode(", ", $others);
-
-                                $messages[] = array(
-                                    "title" => "Alerte ".$siteConfig->getOption("site_name"),
-                                    "description" => sprintf(
-                                        "Nouvelle annonce%s",
-                                        $alert->title ? " pour : ".$alert->title : ""
-                                    ),
-                                    "url" => $url,
-                                    "text" => sprintf(
-                                        "Annonce %s%s%s",
-                                        $alert->title ? $alert->title." : " : "",
-                                        $ad->getTitle(),
-                                        $others ? " (".$others.")" : ""
-                                    ),
-                                );
+                            if ($ad->getPrice()) {
+                                $others[] = number_format($ad->getPrice(), 0, ',', ' ').$ad->getCurrency();
                             }
+
+                            if ($ad->getCity()) {
+                                $others[] = $ad->getCity();
+
+                            } elseif ($ad->getCountry()) {
+                                $others[] = $ad->getCountry();
+                            }
+
+                            $others = implode(", ", $others);
+
+                            $messages[] = array(
+                                "title" => "Alerte ".$siteConfig->getOption("site_name"),
+                                "description" => sprintf(
+                                    "Nouvelle annonce%s",
+                                    $alert->title ? " pour : ".$alert->title : ""
+                                ),
+                                "url" => $url,
+                                "text" => sprintf(
+                                    "Annonce %s%s%s",
+                                    $alert->title ? $alert->title." : " : "",
+                                    $ad->getTitle(),
+                                    $others ? " (".$others.")" : ""
+                                ),
+                            );
                         }
 
                     // Si plus de 5 nouvelles annonces, on envoie un
