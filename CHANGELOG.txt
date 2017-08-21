@@ -1,4 +1,14 @@
 
+## Version 3.6
+
+ * ajout: contrôle de sécurité sur le fichier de configuration (fixes #65).
+ * ajout: aide à la saisie pour les groupes d'alerte.
+ * correction: crash sur le test d'envoi de mail par SMTP (fixes #40).
+ * correction: trie les alertes par titre par défaut (fixes #67).
+ * correction: apparence des boutons activer/désactiver améliorée (fixes #49).
+ * correction: alertes vers NotifyMyAndroid ne fonctionnent plus (fixes #36).
+ * correction: suppression de la génération d'URL courte pour les annonces.
+
 ## Version 3.5
 
  * ajout: message si PHP < 5.4 détecté.
