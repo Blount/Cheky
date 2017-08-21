@@ -43,7 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $sender = \Message\AdapterFactory::factory("notifymyandroid", $form_values);
             try {
                 $sender->send("La notification NotifyMyAndroid est fonctionnelle", array(
-                    "title" => "Test alerte"
+                    "title" => "Test alerte",
+                    "description" => "Test de configuration",
                 ));
             } catch (Exception $e) {
                 $errorsTest = "Erreur lors de l'envoi de la notification : (".$e->getCode().") ".$e->getMessage();

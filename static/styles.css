@@ -61,6 +61,10 @@ table td.intervalle {
 table img {
     vertical-align: middle;
 }
+table .fa {
+    font-size: 24px;
+    vertical-align: middle;
+}
 .error {
     color: #EF0000;
     font-weight: bold;
@@ -74,6 +78,12 @@ table img {
 .success {
     font-weight: bold;
     color: #333399;
+}
+.fa-toggle-on {
+    color: #169A00;
+}
+.fa-toggle-off {
+    color: #AB0000;
 }
 form {
     width: 100%;
@@ -352,6 +362,20 @@ form .categories input[type=checkbox] {
     clear: left;
 }
 
+form .select-group {
+    display: flex;
+}
+form .select-group input {
+    flex-grow: 1;
+    width: 50%;
+    justify-content: space-between;
+}
+form .select-group select {
+    margin-left: 10px;
+    flex-grow: 0;
+    width: 50%;
+}
+
 .notification-list label {
     display: inline-block;
     white-space: nowrap;
@@ -506,6 +530,19 @@ form .categories input[type=checkbox] {
     line-height: 2;
 }
 
+.security-issue {
+    background-color: #EF0000;
+    color: #FFFFFF;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.security-issue span {
+    display: block;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    text-decoration: underline;
+}
 
 @media screen and (max-width: 960px) {
     .user-settings-container {

@@ -2,7 +2,7 @@
 $alertCategories = $alert->getCategories();
 ?>
 <h2>Création d'une nouvelle alerte</h2>
-<form action="" method="post">
+<form action="" method="post" class="form-alert">
     <h2>Options obligatoires</h2>
     <dl>
         <dt>
@@ -94,7 +94,19 @@ $alertCategories = $alert->getCategories();
         </dd>
         <dt><label for="group">Nom du groupe</label></dt>
         <dd>
-            <input type="text" id="group" name="group" value="<?php echo htmlspecialchars($alert->group); ?>" />
+            <p class="select-group">
+                <input type="text" id="group" name="group" value="<?php echo htmlspecialchars($alert->group); ?>" />
+                <?php if (0 < count($groups)) : ?>
+                <select onchange="document.getElementById('group').value = this.value; this.value = '';">
+                    <option value="">sélectionner un groupe existant</option>
+                    <?php foreach ($groups AS $group) : ?>
+                    <option value="<?php echo htmlspecialchars($group); ?>">
+                        <?php echo htmlspecialchars($group); ?>
+                    </option>
+                    <?php endforeach; ?>
+                </select>
+                <?php endif; ?>
+            </p>
             <p class="form-more">Les alertes seront affichées par groupe sur la page de vos alertes.</p>
         </dd>
     </dl>

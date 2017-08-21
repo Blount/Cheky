@@ -80,3 +80,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("LOCATION: ./?mod=mail"); exit;
     }
 }
+
+$groups = $storage->fetchGroups();

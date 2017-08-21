@@ -160,6 +160,19 @@ class Alert implements \App\Storage\Alert
         return $this;
     }
 
+    public function fetchGroups()
+    {
+        $groups = array();
+        $alerts = $this->fetchAll();
+        foreach ($alerts AS $alert) {
+            if ($alert->group) {
+                $groups[] = $alert->group;
+            }
+        }
+        sort($groups);
+        return $groups;
+    }
+
     protected function _checkFile()
     {
         if (empty($this->_filename)) {

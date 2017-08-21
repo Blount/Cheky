@@ -12,7 +12,7 @@ define("APPLICATION_VERSION", require DOCUMENT_ROOT."/version.php");
 
 // Constante utilisée pour forcer le navigateur à télécharger
 // les fichiers statiques (js, css, html, etc)
-define("STATIC_REV", 10);
+define("STATIC_REV", 11);
 
 set_include_path(
     __DIR__."/lib".PATH_SEPARATOR.get_include_path()

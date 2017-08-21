@@ -18,7 +18,7 @@ if ($config->hasSection("mailer")) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $options = array_merge($options, array_map("trim", $_POST));
     if (isset($_POST["testSMTP"])) {
-        require_once "PHPMailer/class.phpmailer.php";
+        require_once "PHPMailer/PHPMailerAutoload.php";
         $mailer = new PHPMailer($exceptions=true);
         $mailer->setLanguage("fr", DOCUMENT_ROOT."/lib/PHPMailer/language/");
         $mailer->CharSet = "utf-8";
