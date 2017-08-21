@@ -19,7 +19,7 @@ if (!isset($_SESSION["mail"]["sort"])) {
 }
 
 if (!isset($_SESSION["mail"]["order"])) {
-    $_SESSION["mail"]["sort"] = "asc";
+    $_SESSION["mail"]["order"] = "asc";
 }
 
 $alerts = $storage->fetchAll();
