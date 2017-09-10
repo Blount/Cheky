@@ -65,7 +65,7 @@ $data_notifications = array(
     ),
     "slack" => array(
         "label" => "Slack",
-        "cost" => "Ofre gratuite et premium",
+        "cost" => "Offre gratuite et premium",
         "link" => "https://slack.com",
         "list_label" => "Slack",
         "form_label" => "par Slack",
