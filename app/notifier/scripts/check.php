@@ -457,15 +457,17 @@ class Main
 
                     // Envoi des messages via les systèmes de notification choisis
                     foreach ($messages AS $message) {
+                        $text = $message["text"];
+                        $options = $message;
+                        unset($options["text"]);
+
                         foreach ($notifications AS $key => $notifier) {
                             if (empty($alert->$key)) {
                                 continue;
                             }
 
                             try {
-                                $text = $message["text"];
-                                unset($message["text"]);
-                                $notifier->send($text, $message);
+                                $notifier->send($text, $options);
                             } catch (Exception $e) {
                                 $this->_logger->warn(
                                     $log_id."Erreur sur envoi via ".
