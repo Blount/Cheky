@@ -55,6 +55,8 @@ class Main
         $this->_mailer = new PHPMailer($exceptions=true);
         $this->_mailer->setLanguage("fr", DOCUMENT_ROOT."/lib/PHPMailer/language/");
         $this->_mailer->CharSet = "utf-8";
+        $this->_mailer->XMailer = "Cheky";
+
         if ($config->hasSection("mailer")) {
             if ($smtp = $config->get("mailer", "smtp", array())) {
                 $this->_mailer->SMTPKeepAlive = true;
@@ -350,6 +352,13 @@ class Main
                 }
 
                 $this->_mailer->clearAddresses();
+                $this->_mailer->clearCustomHeaders();
+                $this->_mailer->addCustomHeader("X-Auto-Response-Suppress", "All");
+                $this->_mailer->addCustomHeader("List-Unsubscribe", $baseurl."?mod=mail&a=toggle_status&s=suspend&id=".$alert->id);
+                $this->_mailer->addCustomHeader("X-Cheky-Version", APPLICATION_VERSION);
+                if (!empty($alert->group)) {
+                    $this->_mailer->addCustomHeader("X-Cheky-Group", $alert->group);
+                }
                 $error = false;
 
                 if ($alert->send_mail) {

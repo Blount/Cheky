@@ -22,6 +22,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mailer = new PHPMailer($exceptions=true);
         $mailer->setLanguage("fr", DOCUMENT_ROOT."/lib/PHPMailer/language/");
         $mailer->CharSet = "utf-8";
+        $mailer->XMailer = "Cheky";
+        $mailer->addCustomHeader("X-Auto-Response-Suppress", "All");
+        $mailer->addCustomHeader("X-Cheky-Version", APPLICATION_VERSION);
         if (!empty($options["host"])) {
             $mailer->Host = $options["host"];
             $mailer->isSMTP();
