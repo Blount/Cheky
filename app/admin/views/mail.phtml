@@ -63,6 +63,13 @@
                 <option value="tls"<?php echo $options["secure"] == "tls"?' selected="selected"':''; ?>>TLS</option>
                 <option value="ssl"<?php echo $options["secure"] == "ssl"?' selected="selected"':''; ?>>SSL</option>
             </select>
+            <label for="allow_self_signed">
+                <input type="hidden" name="allow_self_signed" value="0" />
+                <input type="checkbox" id="allow_self_signed" name="allow_self_signed"<?php
+                    echo $options["allow_self_signed"] ?' checked="checked"':''; ?>
+                    value="1" />
+                cochez cette case si le serveur SMTP utilise un certificat autosigné.
+            </label>
         </dd>
         <dt style="clear: both;">
             <label for="testMail">Pour tester l'envoi des mails, entrez une adresse et cliquez sur "Tester"</label>

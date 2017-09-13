@@ -78,7 +78,17 @@ class Main
                 if (!empty($smtp["secure"])) {
                     $this->_mailer->SMTPSecure = $smtp["secure"];
                 }
+                if (!empty($smtp["allow_self_signed"])) {
+                    $this->_mailer->SMTPOptions = array(
+                        "ssl" => array(
+                            "verify_peer" => false,
+                            "verify_peer_name" => false,
+                            "allow_self_signed" => true,
+                        )
+                    );
+                }
             }
+
             if ($from = $config->get("mailer", "from", null)) {
                 $this->_mailer->Sender = $from;
                 $this->_mailer->From = $from;

@@ -5,7 +5,8 @@ $options = array(
     "username" => "", "password" => "",
     "secure" => "",
     "from" => "",
-    "testMail" => ""
+    "testMail" => "",
+    "allow_self_signed" => false,
 );
 if ($config->hasSection("mailer")) {
     if ($smtp = $config->get("mailer", "smtp", array())) {
@@ -25,6 +26,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mailer->XMailer = "Cheky";
         $mailer->addCustomHeader("X-Auto-Response-Suppress", "All");
         $mailer->addCustomHeader("X-Cheky-Version", APPLICATION_VERSION);
+
+        if (!empty($options["allow_self_signed"])) {
+            $mailer->SMTPOptions = array(
+                "ssl" => array(
+                    "verify_peer" => false,
+                    "verify_peer_name" => false,
+                    "allow_self_signed" => true,
+                )
+            );
+        }
+
         if (!empty($options["host"])) {
             $mailer->Host = $options["host"];
             $mailer->isSMTP();
@@ -67,9 +79,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } else {
         $config->set("mailer", "smtp", array(
-            "host" => $options["host"], "port" => $options["port"],
-            "username" => $options["username"], "password" => $options["password"],
-            "secure" => $options["secure"]
+            "host" => $options["host"],
+            "port" => $options["port"],
+            "username" => $options["username"],
+            "password" => $options["password"],
+            "secure" => $options["secure"],
+            "allow_self_signed" => !empty($options["allow_self_signed"]),
         ));
         $config->set("mailer", "from", $options["from"]);
         $config->save();
