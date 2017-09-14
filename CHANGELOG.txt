@@ -1,4 +1,10 @@
 
+## Version 3.7
+
+ * ajout: configuration des entêtes pour les mails (fixes #80).
+ * ajout: possibilité d'utiliser un certificat autosigné pour le serveur SMTP (fixes #74).
+ * correction: problème lors de l'utilisation de plusieurs systèmes d'alerte.
+
 ## Version 3.6
 
  * ajout: contrôle de sécurité sur le fichier de configuration (fixes #65).

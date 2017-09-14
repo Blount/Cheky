@@ -55,6 +55,8 @@ class Main
         $this->_mailer = new PHPMailer($exceptions=true);
         $this->_mailer->setLanguage("fr", DOCUMENT_ROOT."/lib/PHPMailer/language/");
         $this->_mailer->CharSet = "utf-8";
+        $this->_mailer->XMailer = "Cheky";
+
         if ($config->hasSection("mailer")) {
             if ($smtp = $config->get("mailer", "smtp", array())) {
                 $this->_mailer->SMTPKeepAlive = true;
@@ -76,7 +78,17 @@ class Main
                 if (!empty($smtp["secure"])) {
                     $this->_mailer->SMTPSecure = $smtp["secure"];
                 }
+                if (!empty($smtp["allow_self_signed"])) {
+                    $this->_mailer->SMTPOptions = array(
+                        "ssl" => array(
+                            "verify_peer" => false,
+                            "verify_peer_name" => false,
+                            "allow_self_signed" => true,
+                        )
+                    );
+                }
             }
+
             if ($from = $config->get("mailer", "from", null)) {
                 $this->_mailer->Sender = $from;
                 $this->_mailer->From = $from;
@@ -350,6 +362,13 @@ class Main
                 }
 
                 $this->_mailer->clearAddresses();
+                $this->_mailer->clearCustomHeaders();
+                $this->_mailer->addCustomHeader("X-Auto-Response-Suppress", "All");
+                $this->_mailer->addCustomHeader("List-Unsubscribe", $baseurl."?mod=mail&a=toggle_status&s=suspend&id=".$alert->id);
+                $this->_mailer->addCustomHeader("X-Cheky-Version", APPLICATION_VERSION);
+                if (!empty($alert->group)) {
+                    $this->_mailer->addCustomHeader("X-Cheky-Group", $alert->group);
+                }
                 $error = false;
 
                 if ($alert->send_mail) {
@@ -457,15 +476,17 @@ class Main
 
                     // Envoi des messages via les systèmes de notification choisis
                     foreach ($messages AS $message) {
+                        $text = $message["text"];
+                        $options = $message;
+                        unset($options["text"]);
+
                         foreach ($notifications AS $key => $notifier) {
                             if (empty($alert->$key)) {
                                 continue;
                             }
 
                             try {
-                                $text = $message["text"];
-                                unset($message["text"]);
-                                $notifier->send($text, $message);
+                                $notifier->send($text, $options);
                             } catch (Exception $e) {
                                 $this->_logger->warn(
                                     $log_id."Erreur sur envoi via ".
