@@ -1,7 +1,18 @@
 <?php
 
 if (isset($_GET["sort"])) {
-    if (in_array($_GET["sort"], array("title", "price", "city", "category", "author", "date", "zip_code", "date_created"))) {
+    $sort_keys = array(
+        "title",
+        "price",
+        "city",
+        "category",
+        "author",
+        "date",
+        "zip_code",
+        "date_created",
+        "online",
+    );
+    if (in_array($_GET["sort"], $sort_keys)) {
         if (!isset($_SESSION["backupad"]["sort"]) || $_SESSION["backupad"]["sort"] != $_GET["sort"]) {
             $_SESSION["backupad"]["sort"] = $_GET["sort"];
             $_SESSION["backupad"]["order"] = "asc";
@@ -25,4 +36,6 @@ if (isset($_SESSION["backupad"]["order"])) {
 
 $ads = $storage->fetchAll($sort." ".$order);
 
-
+foreach ($ads AS $ad) {
+    $check_ad_online($ad);
+}

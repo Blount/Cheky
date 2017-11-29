@@ -36,6 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         $ad_stored->setFromArray($ad->toArray());
+        $ad_stored->setOnline(true)
+                  ->setOnlineDateChecked(date("Y-m-d H:i:s"));
         $storage->save($ad_stored);
 
         $adPhoto->import($ad_stored);

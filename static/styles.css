@@ -85,6 +85,12 @@ table .fa {
 .fa-toggle-off {
     color: #AB0000;
 }
+.fa-circle {
+    color: #169A00;
+}
+.fa-circle-o {
+    color: #666666;
+}
 form {
     width: 100%;
     max-width: 800px;
@@ -528,6 +534,22 @@ form .select-group select {
     margin-top: 10px;
     font-size: 1em;
     line-height: 2;
+}
+
+.status {
+    display: inline-block;
+    line-height: 2;
+    vertical-align: middle;
+    padding: 0 10px;
+    border-radius: 3px;
+    color: #FFFFFF;
+    font-size: .8em;
+}
+.status-online {
+    background: #169A00;
+}
+.status-offline {
+    background: #EF0000;
 }
 
 .security-issue {

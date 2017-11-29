@@ -8,6 +8,11 @@ $date = implode("/", array_reverse(explode("-", $ad->getDate())));
 </p>
 
 <h2>
+    <?php if ($ad->isOnline()) : ?>
+    <span class="status status-online">En ligne</span>
+    <?php else: ?>
+    <span class="status status-offline">Hors ligne</span>
+    <?php endif; ?>
     <?php echo htmlspecialchars($ad->getTitle()); ?>
     <a href="<?php echo $ad->getLink(); ?>"
         target="_blank"

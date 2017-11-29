@@ -33,6 +33,9 @@ class Ad implements \App\Storage\Ad
                     if (!empty($options["properties"])) {
                         $options["properties"] = json_decode($options["properties"], true);
                     }
+                    if (!isset($options["online"])) {
+                        $options["online"] = 1;
+                    }
                     $ad->setFromArray($options);
                     $ads[$ad->getId()] = $ad;
                 }
@@ -99,6 +102,9 @@ class Ad implements \App\Storage\Ad
                         }
                         if (!empty($options["properties"])) {
                             $options["properties"] = json_decode($options["properties"], true);
+                        }
+                        if (!isset($options["online"])) {
+                            $options["online"] = 1;
                         }
                         $ad->setFromArray($options);
                         break;

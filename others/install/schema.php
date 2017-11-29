@@ -53,6 +53,8 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_BackupAd` (
     `aid` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     `id` INTEGER UNSIGNED NOT NULL,
     `date_created` DATETIME NOT NULL,
+    `online` BOOLEAN NOT NULL DEFAULT 1,
+    `online_date_checked` DATETIME DEFAULT NULL,
     `title` VARCHAR(255) NOT NULL,
     `link` VARCHAR(255) NOT NULL,
     `price` INTEGER UNSIGNED NOT NULL DEFAULT 0,
