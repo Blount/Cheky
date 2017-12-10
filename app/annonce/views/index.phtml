@@ -92,10 +92,10 @@
                                       "inconnu"; ?>
                 <?php if ($ad->isOnline()) : ?>
                 <a href="<?php echo $ad->getLink(); ?>" target="_blank"><span class="fa fa-circle"
-                    title="L'annonce est en ligne (dernière vérififcation : <?php echo $date_checked; ?>)"></span></a>
+                    title="L'annonce est en ligne (dernière vérification : <?php echo $date_checked; ?>)"></span></a>
                 <?php else: ?>
                 <span class="fa fa-circle-o"
-                    title="L'annonce n'est plus en ligne (dernière vérififcation : <?php echo $date_checked; ?>)"></span>
+                    title="L'annonce n'est plus en ligne (dernière vérification : <?php echo $date_checked; ?>)"></span>
                 <?php endif; ?>
             </td>
             <td><?php echo htmlspecialchars($ad->getAuthor()); ?></td>
