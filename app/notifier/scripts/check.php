@@ -499,6 +499,8 @@ class Main
                     }
                 }
 
+                $alert->ads_count += $ads_count;
+
                 $storage->save($alert);
             }
         }

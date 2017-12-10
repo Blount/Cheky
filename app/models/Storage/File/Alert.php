@@ -32,6 +32,7 @@ class Alert implements \App\Storage\Alert
         "send_pushover",
         "send_joaoappsjoin",
         "send_slack",
+        "ads_count",
     );
 
     public function __construct($filename)

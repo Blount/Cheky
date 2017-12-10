@@ -38,11 +38,11 @@ table thead tr {
     background: #FFFFFF;
     background: linear-gradient(bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
     background: linear-gradient(to bottom, #FFFFFF, #E0E0E0) no-repeat #E0E0E0;
-    line-height: 30px;
+    line-height: 1.5;
 }
 table td, table th {
     border: 1px solid #999999;
-    padding: 2px 5px;
+    padding: 5px;
 }
 table td {
     line-height: 200%;

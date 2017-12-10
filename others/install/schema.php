@@ -41,6 +41,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_Alert` (
     `send_slack` TINYINT(1) NOT NULL,
     `last_id` TEXT DEFAULT NULL,
     `max_id` INTEGER UNSIGNED NOT NULL DEFAULT '0',
+    `ads_count` INTEGER UNSIGNED NOT NULL DEFAULT '0',
     `user_id` MEDIUMINT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `LBCKey_Alert_User`
