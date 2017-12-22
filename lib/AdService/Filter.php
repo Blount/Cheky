@@ -8,6 +8,8 @@ class Filter
 
     protected $exclude_ids = array();
 
+    protected $exclude_urls = array();
+
     protected $price_min = -1;
 
     protected $price_max = -1;
@@ -25,6 +27,10 @@ class Filter
 
     public function isValid(Ad $ad)
     {
+        if (in_array($ad->getLink(), $this->exclude_urls)) {
+            return false;
+        }
+
         if (!$ad->getPrice() && $this->price_strict) {
             return false;
         }
@@ -94,6 +100,24 @@ class Filter
     public function getExcludeIds()
     {
         return $this->exclude_ids;
+    }
+
+    /**
+     * @param array $exclude_urls
+     * @return Filter
+     */
+    public function setExcludeUrls($exclude_urls)
+    {
+        $this->exclude_urls = $exclude_urls;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExcludeUrls()
+    {
+        return $this->exclude_urls;
     }
 
     /**

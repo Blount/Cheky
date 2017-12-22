@@ -26,8 +26,9 @@ class User implements \App\Storage\User
                 ->setPassword($userDb->password)
                 ->setUsername($userDb->username)
                 ->setApiKey($userDb->api_key)
-                ->setRssKey($userDb->rss_key);
-            $this->_loadUserOptions($user, $userDb->options);
+                ->setRssKey($userDb->rss_key)
+                ->setAdsIgnore($userDb->ads_ignore);
+            $this->_initUser($user, $userDb->options);
             $users[] = $user;
         }
         return $users;
@@ -46,13 +47,14 @@ class User implements \App\Storage\User
                 ->setPassword($userDb->password)
                 ->setUsername($userDb->username)
                 ->setApiKey($userDb->api_key)
-                ->setRssKey($userDb->rss_key);
-            $this->_loadUserOptions($user, $userDb->options);
+                ->setRssKey($userDb->rss_key)
+                ->setAdsIgnore($userDb->ads_ignore);
+            $this->_initUser($user, $userDb->options);
         }
         return $user;
     }
 
-    protected function _loadUserOptions(\App\User\User $user, $options)
+    protected function _initUser(\App\User\User $user, $options)
     {
         if (empty($options)) {
             return $this;
@@ -72,6 +74,15 @@ class User implements \App\Storage\User
         }
 
         $user->setOptions($options);
+
+        $ads_ignore = $user->getAdsIgnore();
+        if (!is_array($ads_ignore)) {
+            $ads_ignore = json_decode($ads_ignore, true);
+            if (!is_array($ads_ignore)) {
+                $ads_ignore = array();
+            }
+            $user->setAdsIgnore($ads_ignore);
+        }
 
         return $this;
     }
@@ -94,20 +105,23 @@ class User implements \App\Storage\User
                     `password`,
                     `api_key`,
                     `rss_key`,
-                    `options`
+                    `options`,
+                    `ads_ignore`
                 ) VALUES (
                     '".$this->_connection->real_escape_string($user->getUsername())."',
                     '".$this->_connection->real_escape_string($user->getPassword())."',
                     ".$api_key.",
                     ".$rss_key.",
                     '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
+                    '".$this->_connection->real_escape_string(json_encode($user->getAdsIgnore()))."'
                 )");
         } else {
             $this->_connection->query("UPDATE `".$this->_table."` SET
                 `password` = '".$this->_connection->real_escape_string($user->getPassword())."',
                 `api_key` = ".$api_key.",
                 `rss_key` = ".$rss_key.",
-                `options` = '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
+                `options` = '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."',
+                `ads_ignore` = '".$this->_connection->real_escape_string(json_encode($user->getAdsIgnore()))."'
             WHERE id = ".$user->getId());
         }
         return $this;

@@ -1,0 +1,12 @@
+<h2>Ignorer une annonce</h2>
+
+<?php if ($error) : ?>
+<p class="error"><?php echo $error; ?></p>
+
+<?php else: ?>
+<p>
+    Vous ignorez maintenant l'annonce suivante :
+    <a href="<?php echo htmlspecialchars($aurl); ?>" target="_blank"><?php echo htmlspecialchars($aurl); ?></a>
+</p>
+<?php endif; ?>
+

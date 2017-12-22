@@ -10,6 +10,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_User` (
     `api_key` CHAR(40) DEFAULT NULL UNIQUE,
     `rss_key` CHAR(40) DEFAULT NULL UNIQUE,
     `options` TEXT DEFAULT NULL,
+    `ads_ignore` TEXT DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin");
 

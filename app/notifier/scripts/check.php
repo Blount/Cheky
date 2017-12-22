@@ -291,6 +291,7 @@ class Main
                     "categories" => $alert->getCategories(),
                     "min_id" => $unique_ads ? $alert->max_id : 0,
                     "exclude_ids" => $alert->last_id,
+                    "exclude_urls" => $user->getAdsIgnore(),
                 ));
 
                 // Parse le contenu pour récupérer les annonces
