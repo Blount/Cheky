@@ -187,7 +187,7 @@ class Lbc extends AbstractParser
 
         // Ca ne semble pas une annonce valide
         if (!$container) {
-            return null;
+            return $this->processAdV2($content, $scheme);
         }
 
         $ad = new Ad();
@@ -317,6 +317,86 @@ class Lbc extends AbstractParser
                 $value = trim($element->nextSibling->nextSibling->nodeValue);
                 $ad->addProperty($name, $value);
             }
+        }
+
+        return $ad;
+    }
+
+    protected function processAdV2($content, $scheme = "http")
+    {
+        $ad = new Ad();
+        $ad->setProfessional(false)->setUrgent(false);
+
+        if (!preg_match("#window\.FLUX_STATE\s*=\s*(\{.*\})#", $content, $m)) {
+            return null;
+        }
+
+        $data = json_decode($m[1], true);
+        if (!is_array($data)) {
+            return null;
+        }
+
+        if (isset($data["adview"]["first_publication_date"])) {
+            $ad->setDate($data["adview"]["first_publication_date"]);
+        }
+
+        if (isset($data["adview"]["list_id"])) {
+            $ad->setId($data["adview"]["list_id"]);
+        }
+
+        if (isset($data["adview"]["url"])) {
+            $ad->setLink($data["adview"]["url"]);
+        }
+
+        if (isset($data["adview"]["category_name"])) {
+            $ad->setCategory($data["adview"]["category_name"]);
+        }
+
+        if (isset($data["adview"]["subject"])) {
+            $ad->setTitle($data["adview"]["subject"]);
+        }
+
+        if (isset($data["adview"]["body"])) {
+            $ad->setDescription($data["adview"]["body"]);
+        }
+
+        if (isset($data["adview"]["location"]["city"])) {
+            $ad->setCity($data["adview"]["location"]["city"]);
+        }
+
+        if (isset($data["adview"]["location"]["zipcode"])) {
+            $ad->setZipCode($data["adview"]["location"]["zipcode"]);
+        }
+
+        if (isset($data["adview"]["images"]["urls_large"])) {
+            $images = $data["adview"]["images"]["urls_large"];
+
+        } elseif (isset($data["adview"]["images"]["urls"])) {
+            $images = $data["adview"]["images"]["urls"];
+        }
+
+        if (!empty($images)) {
+            $photos = array();
+            foreach ($images AS $image) {
+                $image = $this->formatLink($image);
+                $photos[] = array(
+                    "remote" => $image,
+                    "local" => sha1($image).".jpg",
+                );
+            }
+            $ad->setPhotos($photos);
+        }
+
+        if (!empty($data["adview"]["options"]["urgent"])) {
+            $ad->setUrgent(true);
+        }
+
+        if (isset($data["adview"]["owner"]["name"])) {
+            $ad->setAuthor($data["adview"]["owner"]["name"]);
+        }
+
+        if (isset($data["adview"]["price"][0])) {
+            $ad->setPrice($data["adview"]["price"][0]);
         }
 
         return $ad;
