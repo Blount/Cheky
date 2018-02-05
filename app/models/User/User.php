@@ -10,6 +10,7 @@ class User
     protected $_api_key;
     protected $_rss_key;
     protected $_options = array();
+    protected $_ads_ignore = array();
     protected $_optionsLoaded = false;
 
     public function __construct(array $options = array())
@@ -132,6 +133,24 @@ class User
     public function getPassword()
     {
         return $this->_password;
+    }
+
+    /**
+     * @param array $ads_ignore
+     * @return User
+     */
+    public function setAdsIgnore($ads_ignore)
+    {
+        $this->_ads_ignore = $ads_ignore;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAdsIgnore()
+    {
+        return $this->_ads_ignore;
     }
 
     /**

@@ -16,3 +16,5 @@ try {
 } catch (Exception $e) {
 
 }
+
+$check_ad_online($ad);

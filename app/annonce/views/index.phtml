@@ -17,6 +17,12 @@
                 <?php endif; ?>
                 <a href="?mod=annonce&amp;sort=title">Titre</a>
             </th>
+            <th style="width: 75px">
+                <?php if ($sort == "online") : ?>
+                <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
+                <?php endif; ?>
+                <a href="?mod=annonce&amp;sort=online">En ligne</a>
+            </th>
             <th style="width: 200px">
                 <?php if ($sort == "author") : ?>
                 <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
@@ -80,6 +86,18 @@
             </td>
             <td class="title"><a href="?mod=annonce&amp;a=view&amp;id=<?php echo $ad->getId(); ?>"><?php
                 echo $ad->getTitle()?htmlspecialchars($ad->getTitle()):"-"; ?></a></td>
+            <td>
+                <?php $date_checked = $ad->getOnlineDateChecked() ?
+                                      date("d/m/Y à H:i", strtotime($ad->getOnlineDateChecked())) :
+                                      "inconnu"; ?>
+                <?php if ($ad->isOnline()) : ?>
+                <a href="<?php echo $ad->getLink(); ?>" target="_blank"><span class="fa fa-circle"
+                    title="L'annonce est en ligne (dernière vérification : <?php echo $date_checked; ?>)"></span></a>
+                <?php else: ?>
+                <span class="fa fa-circle-o"
+                    title="L'annonce n'est plus en ligne (dernière vérification : <?php echo $date_checked; ?>)"></span>
+                <?php endif; ?>
+            </td>
             <td><?php echo htmlspecialchars($ad->getAuthor()); ?></td>
             <td><?php echo date("d/m/Y à H:i", strtotime($ad->getDateCreated())); ?></td>
             <td><?php echo htmlspecialchars($date); ?></td>

@@ -123,6 +123,10 @@ class User implements \App\Storage\User
                 $user->setRssKey($data["rss_key"]);
                 unset($data["rss_key"]);
             }
+            if (isset($data["ads_ignore"])) {
+                $user->setAdsIgnore($data["ads_ignore"]);
+                unset($data["ads_ignore"]);
+            }
             if ($data && is_array($data)) {
                 if (!empty($data["notification"]) && is_array($data["notification"])) {
                     foreach ($data["notification"] AS $key => $params) {
@@ -134,6 +138,7 @@ class User implements \App\Storage\User
                 $user->setOptions($data);
             }
         }
+
         return $this;
     }
 
@@ -150,6 +155,9 @@ class User implements \App\Storage\User
         }
         if ($rss_key = $user->getRssKey()) {
             $data["rss_key"] = $rss_key;
+        }
+        if ($ads_ignore = $user->getAdsIgnore()) {
+            $data["ads_ignore"] = $ads_ignore;
         }
         file_put_contents($filename, json_encode($data));
         return $this;

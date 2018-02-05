@@ -3,8 +3,10 @@
     <?php if ($ad->getDate()) : ?>
     <strong>Publié le <?php echo date("d/m/Y à H:i", $ad->getDate()); ?></strong>
     <?php if (!empty($baseurl) && isset($config) && $config->getOption("allow_backup")) : ?>
-    - <a href="<?php echo $baseurl; ?>?mod=annonce&amp;a=backup&amp;aurl=<?php echo $ad->getLink(); ?>"
+    - <a href="<?php echo $baseurl; ?>?mod=annonce&amp;a=backup&amp;aurl=<?php echo rawurlencode($ad->getLink()); ?>"
         target="_blank">SAUVEGARDER L'ANNONCE</a>
+    - <a href="<?php echo $baseurl; ?>?mod=mail&amp;a=ignore&amp;aurl=<?php echo rawurlencode($ad->getLink()); ?>"
+        target="_blank">NE PLUS RECEVOIR</a>
     <?php endif; ?>
     <br />
     <?php endif; ?>

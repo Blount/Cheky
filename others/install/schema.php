@@ -10,6 +10,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_User` (
     `api_key` CHAR(40) DEFAULT NULL UNIQUE,
     `rss_key` CHAR(40) DEFAULT NULL UNIQUE,
     `options` TEXT DEFAULT NULL,
+    `ads_ignore` TEXT DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB CHARSET=utf8 COLLATE=utf8_bin");
 
@@ -41,6 +42,7 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_Alert` (
     `send_slack` TINYINT(1) NOT NULL,
     `last_id` TEXT DEFAULT NULL,
     `max_id` INTEGER UNSIGNED NOT NULL DEFAULT '0',
+    `ads_count` INTEGER UNSIGNED NOT NULL DEFAULT '0',
     `user_id` MEDIUMINT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `LBCKey_Alert_User`
@@ -53,6 +55,8 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_BackupAd` (
     `aid` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     `id` INTEGER UNSIGNED NOT NULL,
     `date_created` DATETIME NOT NULL,
+    `online` BOOLEAN NOT NULL DEFAULT 1,
+    `online_date_checked` DATETIME DEFAULT NULL,
     `title` VARCHAR(255) NOT NULL,
     `link` VARCHAR(255) NOT NULL,
     `price` INTEGER UNSIGNED NOT NULL DEFAULT 0,

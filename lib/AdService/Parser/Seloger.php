@@ -42,7 +42,7 @@ class Seloger extends AbstractParser
             }
         }
 
-        $adNodes = $section_results->getElementsByTagName("article");
+        $adNodes = $section_results->getElementsByTagName("div");
         foreach ($adNodes AS $adNode) {
             if (!$id = (int) $adNode->getAttribute("data-listing-id")) {
                 continue;
@@ -72,19 +72,13 @@ class Seloger extends AbstractParser
             // aucun indicateur pour savoir si c'est un pro ou non.
             $ad->setProfessional(false);
 
-            // image
-            $imgs = $adNode->getElementsByTagName("img");
-            if ($imgs->length) {
-                foreach ($imgs AS $img) {
-                    if (false !== strpos($img->getAttribute("class"), "listing_photo")) {
-                        $ad->setThumbnailLink(
-                            str_replace(
-                                array("c175", "c250"),
-                                "b600",
-                                $img->getAttribute("src"))
-                        );
-                        break;
-                    }
+            // Titre + lien
+            $links = $adNode->getElementsByTagName("a");
+            foreach ($links AS $link) {
+                if (false !== strpos($link->getAttribute("class"), "c-pa-link")) {
+                    $ad->setTitle(trim($link->getAttribute("title")));
+                    $ad->setLink($link->getAttribute("href"));
+                    break;
                 }
             }
 
@@ -93,26 +87,32 @@ class Seloger extends AbstractParser
                 $className = trim($node->getAttribute("class"));
                 $parentNode = $node->parentNode;
 
-                if (false === strpos($parentNode->getAttribute("class"), "listing_infos")) {
+                // Image
+                if (false !== strpos($className, "c-pa-imgs")) {
+                    $div_for_imgs = $node->getElementsByTagName("div");
+                    foreach ($div_for_imgs AS $div_img) {
+                        if ($data_image = trim($div_img->getAttribute("data-lazy"))) {
+                            $data_image = json_decode($data_image, true);
+                            if (is_array($data_image) && !empty($data_image["url"])) {
+                                $ad->setThumbnailLink($data_image["url"]);
+                            }
+                        }
+                    }
+                }
+
+                if (false === strpos($parentNode->getAttribute("class"), "c-pa-info")) {
                     continue;
                 }
 
                 // Titre + lien
-                if (false !== strpos($className, "title")) {
-                    $ad->setTitle(trim($node->nodeValue));
-                    if ($link = $node->getElementsByTagName("a")->item(0)) {
-                        $ad->setLink($link->getAttribute("href"));
-                    }
-
-                // Prix
-                } elseif (false !== strpos($className, "price")) {
+                if (false !== strpos($className, "c-pa-price")) {
                     $value = htmlentities((string) $node->nodeValue, null, "UTF-8");
                     if (preg_match("#([0-9]+(".preg_quote("&nbsp;", "#").")?[0-9]*)+#", $value, $m)) {
                         $ad->setPrice((int) preg_replace("#[^0-9]*#", "", $m[1]));
                     }
 
                 // Lieu
-                } elseif (false !== strpos($className, "locality")) {
+                } elseif (false !== strpos($className, "c-pa-city")) {
                     $ad->setCity(trim($node->nodeValue));
                 }
             }

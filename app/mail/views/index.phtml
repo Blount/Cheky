@@ -36,6 +36,7 @@
             <th style="width: 140px"><?php echo $notification["list_label"]; ?></th>
             <?php endforeach; ?>
 
+            <th style="width: 70px">Annonces envoyées</th>
             <th style="width: 70px">Actif</th>
             <th style="width: 170px">&nbsp;</th>
         </tr>
@@ -89,6 +90,7 @@
                 </a>
             </td>
             <?php endforeach; ?>
+            <td><?php echo number_format($alert->ads_count, 0, ",", " "); ?></td>
             <td>
                 <a href="?mod=mail&amp;a=toggle_status&amp;s=suspend&amp;id=<?php echo $alert->id; ?>">
                     <?php if (!$alert->suspend) : ?>

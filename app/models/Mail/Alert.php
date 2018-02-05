@@ -29,6 +29,7 @@ class Alert
     public $send_pushover = 0;
     public $send_joaoappsjoin = 0;
     public $send_slack = 0;
+    public $ads_count = 0;
 
     public function fromArray(array $values)
     {
@@ -37,6 +38,9 @@ class Alert
         }
         if (!is_numeric($this->group_ads)) {
             $this->group_ads = 1;
+        }
+        if (!is_numeric($this->ads_count)) {
+            $this->ads_count = 0;
         }
 
         /**
@@ -87,6 +91,7 @@ class Alert
             "send_pushover" => $this->send_pushover,
             "send_joaoappsjoin" => $this->send_joaoappsjoin,
             "send_slack" => $this->send_slack,
+            "ads_count" => $this->ads_count,
         );
     }
 }

@@ -1,4 +1,12 @@
 
+## Version 3.8
+
+ * ajout: compteur d'annonces envoyées dans les alertes.
+ * ajout: indicateur d'annonce en ligne ou hors ligne.
+ * ajout: possibilité d'ignorer des annonces.
+ * correction: analyseur SeLoger.
+ * correction: analyseur Leboncoin.
+
 ## Version 3.7
 
  * ajout: configuration des entêtes pour les mails (fixes #80).
