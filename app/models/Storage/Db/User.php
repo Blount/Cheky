@@ -22,13 +22,7 @@ class User implements \App\Storage\User
         $usersDb = $this->_connection->query("SELECT * FROM ".$this->_table);
         while ($userDb = $usersDb->fetch_object()) {
             $user = new \App\User\User();
-            $user->setId($userDb->id)
-                ->setPassword($userDb->password)
-                ->setUsername($userDb->username)
-                ->setApiKey($userDb->api_key)
-                ->setRssKey($userDb->rss_key)
-                ->setAdsIgnore($userDb->ads_ignore);
-            $this->_initUser($user, $userDb->options);
+            $this->loadData($userDb, $user);
             $users[] = $user;
         }
         return $users;
@@ -43,15 +37,29 @@ class User implements \App\Storage\User
             ->fetch_object();
         if ($userDb) {
             $user = new \App\User\User();
-            $user->setId($userDb->id)
-                ->setPassword($userDb->password)
-                ->setUsername($userDb->username)
-                ->setApiKey($userDb->api_key)
-                ->setRssKey($userDb->rss_key)
-                ->setAdsIgnore($userDb->ads_ignore);
-            $this->_initUser($user, $userDb->options);
+            $this->loadData($userDb, $user);
         }
         return $user;
+    }
+
+    protected function loadData($userDb, $user)
+    {
+        $data = array(
+            "id" => "setId",
+            "password" => "setPassword",
+            "username" => "setUsername",
+            "api_key" => "setApiKey",
+            "rss_key" => "setRssKey",
+            "ads_ignore" => "setAdsIgnore",
+        );
+
+        foreach ($data AS $key => $method) {
+            if (isset($userDb->$key)) {
+                $user->$method($userDb->$key);
+            }
+        }
+
+        $this->_initUser($user, $userDb->options);
     }
 
     protected function _initUser(\App\User\User $user, $options)
