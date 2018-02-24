@@ -120,7 +120,7 @@ class User implements \App\Storage\User
                     '".$this->_connection->real_escape_string($user->getPassword())."',
                     ".$api_key.",
                     ".$rss_key.",
-                    '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."'
+                    '".$this->_connection->real_escape_string(json_encode($user->getOptions()))."',
                     '".$this->_connection->real_escape_string(json_encode($user->getAdsIgnore()))."'
                 )");
         } else {
