@@ -1,4 +1,9 @@
 
+## Version 3.8.1
+
+ * correction: crash sur création d'un nouvel utilisateur.
+ * correction: détection des annonces en ligne / hors ligne.
+
 ## Version 3.8
 
  * ajout: compteur d'annonces envoyées dans les alertes.
