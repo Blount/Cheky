@@ -11,10 +11,9 @@
         <tr>
             <td><?php echo htmlspecialchars($user->getUsername()); ?></td>
             <td>
+                <a href="?mod=admin&amp;a=password-user&amp;username=<?php echo urlencode($user->getUsername()); ?>">modifier le mot de passe</a>
                 <?php if (!$user->isAdmin()) : ?>
-                <a href="?mod=admin&amp;a=delete-user&amp;username=<?php echo urlencode($user->getUsername()); ?>">supprimer</a>
-                <?php else: ?>
-                -
+                | <a href="?mod=admin&amp;a=delete-user&amp;username=<?php echo urlencode($user->getUsername()); ?>">supprimer</a>
                 <?php endif; ?>
             </td>
         </tr>
