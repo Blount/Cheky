@@ -6,7 +6,7 @@ if (is_file($config->getFilename()) && !isset($_GET["success"])) {
 }
 
 if ($action == "upgrade"
-    && (!isset($auth) || $auth->getUsername() != "admin")) {
+    && (!isset($userAuthed) || !$userAuthed->isAdmin())) {
     header("HTTP/1.1 403 Forbidden");
     exit;
 }

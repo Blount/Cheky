@@ -35,7 +35,7 @@
         </div>
         <?php if ($userAuthed) : ?>
         <footer>
-            <?php if ($userAuthed->getUsername() == "admin") : ?>
+            <?php if ($userAuthed->isAdmin()) : ?>
             <a href="?mod=admin&amp;a=users" style="color: #EF0000;">Administration</a> |
             <?php endif; ?>
             Version <?php echo APPLICATION_VERSION; ?>

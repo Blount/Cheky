@@ -11,7 +11,7 @@
         <tr>
             <td><?php echo htmlspecialchars($user->getUsername()); ?></td>
             <td>
-                <?php if ($user->getUsername() != "admin") : ?>
+                <?php if (!$user->isAdmin()) : ?>
                 <a href="?mod=admin&amp;a=delete-user&amp;username=<?php echo urlencode($user->getUsername()); ?>">supprimer</a>
                 <?php else: ?>
                 -
