@@ -23,9 +23,14 @@ $check_ad_online = function (Ad $ad) use ($client, $storage) {
     }
 
     // Vérifie si l'annonce est en ligne
+    $client->setFollowLocation(true);
     $content = $client->request($ad->getLink());
     $ad->setOnlineDateChecked($now->format("Y-m-d H:i:s"));
     $ad->setOnline(true);
+
+    if ($ad->getLink() != $client->getUrl()) {
+        $ad->setLink($client->getUrl());
+    }
 
     if (404 == $client->getRespondCode()) {
         $ad->setOnline(false);
