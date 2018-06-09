@@ -10,6 +10,7 @@ try {
     $parser = \AdService\ParserFactory::factory($url);
 } catch (\AdService\Exception $e) {
     $logger->err($e->getMessage());
+    return;
 }
 
 $ad = $parser->processAd(
