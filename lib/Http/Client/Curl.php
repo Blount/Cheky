@@ -11,9 +11,6 @@ class HttpClientCurl extends HttpClientAbstract
         $this->_resource = curl_init();
         curl_setopt($this->_resource, CURLOPT_HEADER, false);
         curl_setopt($this->_resource, CURLOPT_RETURNTRANSFER, true);
-        if (!ini_get("safe_mode") && !ini_get("open_basedir")) {
-            curl_setopt($this->_resource, CURLOPT_FOLLOWLOCATION, true);
-        }
         curl_setopt($this->_resource, CURLOPT_CONNECTTIMEOUT, 5);
     }
 
@@ -64,7 +61,8 @@ class HttpClientCurl extends HttpClientAbstract
 
         if ($this->_respond_code == 301 || $this->_respond_code == 302) {
             $redirect = curl_getinfo($this->_resource, CURLINFO_REDIRECT_URL);
-            if ($redirect) {
+            $this->setLocation($redirect);
+            if ($redirect && $this->getFollowLocation()) {
                 return $this->request($redirect);
             }
         }
