@@ -36,7 +36,9 @@ $check_ad_online = function (Ad $ad) use ($client, $storage) {
         $ad->setLink($client->getUrl());
     }
 
-    if (404 == $client->getRespondCode()) {
+    $code = $client->getRespondCode();
+
+    if (in_array($code, array(404, 410))) {
         $ad->setOnline(false);
 
     } elseif (false !== strpos($content, "Cette annonce est désactivée")) {
