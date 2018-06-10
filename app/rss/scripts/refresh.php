@@ -30,31 +30,15 @@ foreach ($files AS $file) {
 }
 header("Content-Type: application/rss+xml", true);
 
-$logger = Logger::getLogger("main");
-
 $id = sha1($_SERVER["REQUEST_URI"]);
 $cache_filename = DOCUMENT_ROOT."/var/feeds/".$id.".xml";
 if ("development" != APPLICATION_ENV && is_file($cache_filename)) {
-     readfile($cache_filename);
-     return;
+    readfile($cache_filename);
+    return;
 }
 
-$params = $_GET;
-if (isset($params["cities"])) {
-    $params["cities"] = array_map("trim", explode("\n", mb_strtolower($params["cities"])));
-}
-
-$content = $client->request($_GET["url"]);
-
-$filter = new \AdService\Filter($params);
 $siteConfig = \AdService\SiteConfigFactory::factory($_GET["url"]);
 $baseurl = $config->get("general", "baseurl", "");
-
-$ads = $parser->process(
-    $content,
-    $filter,
-    parse_url($_GET["url"], PHP_URL_SCHEME)
-);
 
 $title = $siteConfig->getOption("site_name");
 $urlParams = parse_url($_GET["url"]);
@@ -78,6 +62,40 @@ $feeds->setChannelElement("language", "fr-FR");
 $feeds->setDate(date(DATE_RSS, time()));
 $feeds->setChannelElement("pubDate", date(\DATE_RSS, strtotime("2013-04-06")));
 $feeds->addGenerator();
+
+$params = $_GET;
+if (isset($params["cities"])) {
+    $params["cities"] = array_map("trim", explode("\n", mb_strtolower($params["cities"])));
+}
+
+$content = $client->request($_GET["url"]);
+
+if ($client->getLocation()) {
+    $error = "L'adresse de recherche ".$_GET["url"]." ne semble plus valide (code ".$client->getRespondCode().").";
+}
+
+if (isset($error)) {
+    $item = $feeds->createNewItem();
+    $item->setTitle("Erreur lors de la récupération des annonces");
+    $item->setLink("");
+    $item->setDescription($error);
+    $item->setDate(time());
+    $item->setId(md5(time()));
+    $feeds->addItem($item);
+
+    $content = $feeds->generateFeed();
+    file_put_contents($cache_filename, $content);
+    echo $content;
+    return;
+}
+
+$filter = new \AdService\Filter($params);
+
+$ads = $parser->process(
+    $content,
+    $filter,
+    parse_url($_GET["url"], PHP_URL_SCHEME)
+);
 
 if (count($ads)) {
     foreach ($ads AS $ad) {
