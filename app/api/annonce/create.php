@@ -25,8 +25,19 @@ try {
     );
 }
 
+$content = $client->request($link);
+
+if (200 != $client->getRespondCode()) {
+    return array(
+        "data" => $_POST,
+        "errors" => array(
+            "link" => "Cette adresse ne semble pas valide."
+        )
+    );
+}
+
 $ad = $parser->processAd(
-    $client->request($link),
+    $content,
     parse_url($link, PHP_URL_SCHEME)
 );
 

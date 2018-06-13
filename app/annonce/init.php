@@ -22,12 +22,23 @@ $check_ad_online = function (Ad $ad) use ($client, $storage) {
         }
     }
 
+    if (!isset($date_ad)) {
+        $date_ad = new DateTime();
+    }
+
     // Vérifie si l'annonce est en ligne
+    $client->setFollowLocation(true);
     $content = $client->request($ad->getLink());
     $ad->setOnlineDateChecked($now->format("Y-m-d H:i:s"));
     $ad->setOnline(true);
 
-    if (404 == $client->getRespondCode()) {
+    if ($ad->getLink() != $client->getUrl()) {
+        $ad->setLink($client->getUrl());
+    }
+
+    $code = $client->getRespondCode();
+
+    if (in_array($code, array(404, 410))) {
         $ad->setOnline(false);
 
     } elseif (false !== strpos($content, "Cette annonce est désactivée")) {

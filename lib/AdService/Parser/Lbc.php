@@ -21,7 +21,6 @@ class Lbc extends AbstractParser
             return;
         }
         $this->scheme = $scheme;
-        $this->loadHTML('<?xml encoding="UTF-8">'.$content);
 
         $timeToday = strtotime(date("Y-m-d")." 23:59:59");
         $dateYesterday = $timeToday - 24*3600;
@@ -38,6 +37,105 @@ class Lbc extends AbstractParser
                 unset($exclude_ids);
             }
         }
+
+        if (preg_match("#<script>window.FLUX_STATE\s*=\s*(.+)</script>#", $content, $m)) {
+            $datas = json_decode($m[1], true);
+            if (!is_array($datas) || !isset($datas["adSearch"]["data"]["ads"])) {
+                return $ads;
+            }
+
+            $dataset = array(
+                "list_id" => "setId",
+                "subject" => "setId",
+            );
+
+            foreach ($datas["adSearch"]["data"]["ads"] AS $data) {
+                if (!isset($data["list_id"])) {
+                    continue;
+                }
+
+                // permet d'éliminer les annonces déjà envoyées.
+                if (isset($exclude_ids)) {
+                    if (is_numeric($exclude_ids)) {
+                        /**
+                         * Si $exclude_ids est numérique, alors détection
+                         * à l'ancienne. Quand on rencontre l'ID de la
+                         * dernière annonce, on stoppe la boucle.
+                         */
+                        if ($data["list_id"] == $exclude_ids) {
+                            break;
+                        }
+
+                    } elseif (in_array($data["list_id"], $exclude_ids)) {
+                        continue;
+                    }
+                }
+
+                // permet d'éliminer les annonces déjà envoyées.
+                if ($filter && $data["list_id"] <= $filter->getMinId()) {
+                    continue;
+                }
+
+                $ad = new Ad();
+                $ad->setProfessional(false)
+                   ->setUrgent(false);
+
+                $ad->setId($data["list_id"]);
+
+                if (isset($data["url"])) {
+                    $ad->setLink($data["url"]);
+                }
+
+                if (isset($data["index_date"])) {
+                    $ad->setDate(strtotime($data["index_date"]));
+                }
+
+                if (isset($data["subject"])) {
+                    $ad->setTitle($data["subject"]);
+                }
+
+                if (isset($data["category_name"])) {
+                    $ad->setCategory($data["category_name"]);
+                }
+
+                if (isset($data["price"][0])) {
+                    $ad->setPrice($data["price"][0]);
+                }
+
+                if (isset($data["owner"]["type"])
+                    && "pro" == $data["owner"]["type"]
+                ) {
+                    $ad->setProfessional(true);
+                }
+
+                if (isset($data["options"]["urgent"])) {
+                    $ad->setUrgent($data["options"]["urgent"]);
+                }
+
+                if (isset($data["location"]["department_name"])) {
+                    $ad->setCountry($data["location"]["department_name"]);
+                }
+
+                if (isset($data["location"]["city"])) {
+                    $ad->setCity($data["location"]["city"]);
+                }
+
+                if (isset($data["images"]["urls"][0])) {
+                    $ad->setThumbnailLink($data["images"]["urls"][0]);
+                }
+
+                // exclure les annonces ne correspondant pas au filtre.
+                if ($filter && !$filter->isValid($ad)) {
+                    continue;
+                }
+
+                $ads[$ad->getId()] = $ad;
+            }
+
+            return $ads;
+        }
+
+        $this->loadHTML('<?xml encoding="UTF-8">'.$content);
 
         $adNodes = $this->getElementsByTagName("a");
 

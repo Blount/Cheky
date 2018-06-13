@@ -13,6 +13,8 @@ abstract class HttpClientAbstract
     protected $_body;
     protected $_download_body = true;
     protected $_respond_code;
+    protected $_follow_location;
+    protected $_location;
 
     const METHOD_GET = "get";
     const METHOD_POST = "post";
@@ -178,6 +180,42 @@ abstract class HttpClientAbstract
     public function getUrl()
     {
         return $this->_url;
+    }
+
+    /**
+     * @param string $location
+     * @return HttpClientAbstract
+     */
+    public function setLocation($location)
+    {
+        $this->_location = $location;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->_location;
+    }
+
+    /**
+     * @param bool $follow_location
+     * @return HttpClientAbstract
+     */
+    public function setFollowLocation($follow_location)
+    {
+        $this->_follow_location = $follow_location;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getFollowLocation()
+    {
+        return $this->_follow_location;
     }
 
     /**

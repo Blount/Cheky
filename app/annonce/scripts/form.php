@@ -15,21 +15,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errors["link"] = "Cette adresse ne semble pas valide.";
         }
     }
+
     if (empty($errors)) {
-        $ad = $parser->processAd(
-            $client->request($link),
-            parse_url($link, PHP_URL_SCHEME)
-        );
-        if (!$ad) {
-            $errors["link"] = "Impossible de sauvegarder l'annonce (annonce hors ligne ou format des données invalides).";
+        $content = $client->request($link);
+        if (200 !== $client->getRespondCode()) {
+            $errors["link"] = "Cette adresse ne semble pas valide (Erreur ".$client->getRespondCode().").";
+
+        } else {
+            $ad = $parser->processAd(
+                $content,
+                parse_url($link, PHP_URL_SCHEME)
+            );
+            if (!$ad) {
+                $errors["link"] = "Impossible de sauvegarder l'annonce (annonce hors ligne ou format des données invalides).";
+            }
         }
     }
-    if (empty($errors) && !empty($ad)) {
-        $ad = $parser->processAd(
-            $client->request($link),
-            parse_url($link, PHP_URL_SCHEME)
-        );
 
+    if (empty($errors) && !empty($ad)) {
         $ad_stored = $storage->fetchById($ad->getId());
         if (!$ad_stored) {
             $ad_stored = new \App\Ad\Ad();
