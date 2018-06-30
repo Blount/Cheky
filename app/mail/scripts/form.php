@@ -50,6 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $alert->price_strict = false;
     }
     $alert->group = !empty($_POST["group"])?trim($_POST["group"]):"";
+
     if (empty($alert->url)) {
         $errors["url"] = "Ce champ est obligatoire.";
     } else {
@@ -61,7 +62,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } catch (\AdService\Exception $e) {
             $errors["url"] = "Cette adresse ne semble pas valide.";
         }
+
+        if (!isset($errors["url"])) {
+            $content = $client->request($alert->url);
+
+            // Récupération du résultat de recherche de l'alerte
+            if (!$content) {
+                $errors["url"] = "Curl Error : ".$client->getError();
+
+            } elseif ($client->getLocation()) {
+                $errors["url"] = "L'URL indiquée redirige vers cette URL ".$client->getLocation().". Veuillez corriger votre adresse de recherche.";
+            }
+        }
     }
+
     $alert->interval = (int)$alert->interval;
     if ($alert->interval != (int)$alert->interval || $alert->interval < 0) {
         $errors["interval"] = "Cette valeur n'est pas valide.";
@@ -76,6 +90,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             $alert->categories = null;
         }
+
+        $alert->error = "";
+        $alert->error_count = 0;
+
         $storage->save($alert);
         header("LOCATION: ./?mod=mail"); exit;
     }

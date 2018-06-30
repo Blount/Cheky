@@ -201,6 +201,12 @@ class Main
                     continue;
                 }
 
+                // Alerte en erreur
+                if ($alert->isLocked()) {
+                    echo "ignore";
+                    continue;
+                }
+
                 $log_id = sprintf(
                     "[Pid %s] USER : %s - ALERT ID : %s -> ",
                     getmypid(),
@@ -269,10 +275,18 @@ class Main
                 // Mise à jour de la date de dernière analyse
                 $alert->time_updated = $current_time;
 
+                $content = $this->_httpClient->request($alert->url);
 
                 // Récupération du résultat de recherche de l'alerte
-                if (!$content = $this->_httpClient->request($alert->url)) {
+                if (!$content) {
                     $this->_logger->error($log_id."Curl Error : ".$this->_httpClient->getError());
+                    continue;
+                }
+
+                if ($this->_httpClient->getLocation()) {
+                    $alert->error = "L'URL de recherche redirige vers l'adresse suivante : ".$this->_httpClient->getLocation().".";
+                    $alert->error_count++;
+                    $storage->save($alert);
                     continue;
                 }
 
@@ -318,6 +332,9 @@ class Main
                     }
                     unset($tmp_ads, $tmp_ad);
                 }
+
+                $alert->error = null;
+                $alert->error_count = 0;
 
                 // Si pas de nouvelle annonce à envoyer, on arrête là
                 if ($ads_count == 0) {

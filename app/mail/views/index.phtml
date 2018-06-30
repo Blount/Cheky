@@ -17,6 +17,7 @@
     <thead>
         <tr>
             <th style="width: 20px"></th>
+            <th style="width: 75px">Statut</th>
             <th style="width: 250px"><?php if ($sort == "email") :
                 ?><img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;<?php
                 endif; ?><a href="?mod=mail&amp;sort=email">Envoyer à</a></th>
@@ -43,8 +44,20 @@
     </thead>
     <tbody>
         <?php $i = 1; foreach ($alerts AS $alert) : ?>
-        <tr>
+            <?php $locked = $alert->isLocked(); ?>
+        <tr<?php echo $locked ?
+                    ' class="alert-line-statut-error"' : ""; ?>">
             <td><?php echo $i++; ?></td>
+            <td class="alert-statut <?php echo $locked ?
+                    "alert-statut-error" : "alert-statut-ok"; ?>">
+                <?php if ($locked) : ?>
+                <a href="?mod=mail&amp;a=form&amp;id=<?php echo $alert->id; ?>">
+                    <span title="<?php echo htmlspecialchars($locked); ?>">ERREUR</span>
+                </a>
+                <?php else: ?>
+                <span title="Rien à signaler">OK</span>
+                <?php endif; ?>
+            </td>
             <td><?php echo str_replace(",", "<br />", htmlspecialchars($alert->email)); ?></td>
             <td class="title"><a href="<?php echo htmlspecialchars($alert->url); ?>" target="_blank"><?php
                 echo $alert->title?htmlspecialchars($alert->title):"-"; ?></a></td>

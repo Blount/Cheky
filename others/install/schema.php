@@ -43,6 +43,8 @@ $dbConnection->query("CREATE TABLE IF NOT EXISTS `LBC_Alert` (
     `last_id` TEXT DEFAULT NULL,
     `max_id` INTEGER UNSIGNED NOT NULL DEFAULT '0',
     `ads_count` INTEGER UNSIGNED NOT NULL DEFAULT '0',
+    `error_count` TINYINT UNSIGNED NOT NULL DEFAULT '0',
+    `error` VARCHAR(255) DEFAULT NULL,
     `user_id` MEDIUMINT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `LBCKey_Alert_User`
