@@ -201,6 +201,11 @@ class Main
                     continue;
                 }
 
+                // Alerte en erreur
+                if ($alert->isLocked()) {
+                    continue;
+                }
+
                 $log_id = sprintf(
                     "[Pid %s] USER : %s - ALERT ID : %s -> ",
                     getmypid(),
@@ -211,7 +216,12 @@ class Main
                 try {
                     $config = SiteConfigFactory::factory($alert->url);
                 } catch (Exception $e) {
-                    $this->_logger->warn($log_id.$e->getMessage());
+                    $alert->error_count++;
+                    $alert->error = $e->getMessage();
+                    $storage->save($alert);
+                    $this->_sendMailAlertLocked($alert);
+
+                    $this->_logger->warn($log_id.$alert->error);
                     continue;
                 }
 
@@ -269,10 +279,41 @@ class Main
                 // Mise à jour de la date de dernière analyse
                 $alert->time_updated = $current_time;
 
+                $content = $this->_httpClient->request($alert->url);
 
                 // Récupération du résultat de recherche de l'alerte
-                if (!$content = $this->_httpClient->request($alert->url)) {
-                    $this->_logger->error($log_id."Curl Error : ".$this->_httpClient->getError());
+                if (false === $content) {
+                    $alert->error = "Curl Error : ".$this->_httpClient->getError();
+                    $alert->error_count++;
+                    $storage->save($alert);
+                    $this->_sendMailAlertLocked($alert, $config);
+
+                    $this->_logger->error($log_id.$alert->error);
+                    continue;
+                }
+
+                if ($this->_httpClient->getLocation()) {
+                    $alert->error = "L'URL de recherche redirige vers l'adresse suivante : ".$this->_httpClient->getLocation().".";
+
+                    // Pour une erreur 301, on bloque tout de suite l'alerte
+                    $alert->error_count = 3;
+                    $this->_sendMailAlertLocked($alert, $config);
+
+                    $storage->save($alert);
+                    continue;
+                }
+
+                if (200 != $code = $this->_httpClient->getRespondCode()) {
+                    switch ($code) {
+                        case 404:
+                            $alert->error = "L'adresse de recherche pointe vers un contenu introuvable (Erreur 404).";
+                            break;
+                        default:
+                            $alert->error = "L'adresse de recherche a généré une erreur ".$code.".";
+                    }
+                    $alert->error_count++;
+                    $storage->save($alert);
+                    $this->_sendMailAlertLocked($alert, $config);
                     continue;
                 }
 
@@ -318,6 +359,9 @@ class Main
                     }
                     unset($tmp_ads, $tmp_ad);
                 }
+
+                $alert->error = null;
+                $alert->error_count = 0;
 
                 // Si pas de nouvelle annonce à envoyer, on arrête là
                 if ($ads_count == 0) {
@@ -547,6 +591,51 @@ class Main
         }
         file_put_contents($this->_lockFile, time()."\n".getmypid());
         return $this;
+    }
+
+    protected function _sendMailAlertLocked($alert, $siteConfig = null)
+    {
+        if ($alert->error_count < 3) {
+            return;
+        }
+        if (!$alert->email) {
+            return;
+        }
+
+        $baseurl = $this->_config->get("general", "baseurl", "");
+        $error = false;
+
+        $this->_mailer->clearAddresses();
+        $this->_mailer->clearCustomHeaders();
+
+        try {
+            $emails = explode(",", $alert->email);
+            foreach ($emails AS $email) {
+                $this->_mailer->addAddress(trim($email));
+            }
+
+        } catch (phpmailerException $e) {
+            $error = true;
+        }
+
+        if ($error) {
+            return;
+        }
+
+        $subject = "ERREUR - ";
+        if (isset($siteConfig)) {
+            $subject .= $siteConfig->getOption("site_name")." ";
+        }
+        $subject .= $alert->title;
+        $this->_mailer->Subject = $subject;
+
+        $this->_mailer->Body = require DOCUMENT_ROOT."/app/notifier/views/mail-error.phtml";
+        $this->_mailer->AltBody = require DOCUMENT_ROOT."/app/notifier/views/mail-error-text.phtml";
+
+        try {
+            $this->_mailer->send();
+        } catch (phpmailerException $e) {
+        }
     }
 }
 

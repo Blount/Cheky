@@ -22,6 +22,10 @@ class HttpClientCurl extends HttpClientAbstract
         if ($url) {
             $this->setUrl($url);
         }
+
+        // Reset
+        $this->setLocation(null);
+
         if (!isset($this->_method) || $this->_method == self::METHOD_GET) {
             curl_setopt($this->_resource, CURLOPT_HTTPGET, true);
         } else {

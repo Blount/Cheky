@@ -54,6 +54,7 @@ $showPrice = false;
 // trie les alertes par groupes
 $alertsByGroup = array();
 $groups = array();
+$has_locked = false;
 foreach ($alerts AS $alert) {
     $group = $alert->group?$alert->group:"Sans groupe";
     $groups[] = $group;
@@ -63,6 +64,9 @@ foreach ($alerts AS $alert) {
     }
     if ($alert->cities) {
         $showCities = true;
+    }
+    if ($alert->isLocked()) {
+        $has_locked = true;
     }
 }
 $groups = array_unique($groups);

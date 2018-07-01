@@ -2,6 +2,14 @@
 $alertCategories = $alert->getCategories();
 ?>
 <h2>Création d'une nouvelle alerte</h2>
+
+<?php if ($alert->isLocked()) : ?>
+<div class="alert-error">
+    <h3>Une erreur a été rencontrée sur l'alerte :</h3>
+    <p><?php echo htmlspecialchars($alert->error); ?></p>
+</div>
+<?php endif; ?>
+
 <form action="" method="post" class="form-alert">
     <h2>Options obligatoires</h2>
     <dl>
@@ -12,7 +20,7 @@ $alertCategories = $alert->getCategories();
             <input type="text" id="url" name="url" value="<?php
                 echo htmlspecialchars($alert->url);
             ?>" size="75" placeholder="Ex: <?php
-                echo htmlspecialchars("https://www.leboncoin.fr/ventes_immobilieres/offres/champagne_ardenne/?f=a&th=1&pe=7&ret=1");
+                echo htmlspecialchars("https://www.leboncoin.fr/recherche/?category=9&region=8&real_estate_type=2");
             ?>" />
             <?php if (isset($errors["url"])) : ?>
             <p class="error"><?php echo $errors["url"]; ?></p>

@@ -30,6 +30,8 @@ class Alert
     public $send_joaoappsjoin = 0;
     public $send_slack = 0;
     public $ads_count = 0;
+    public $error_count = 0;
+    public $error = "";
 
     public function fromArray(array $values)
     {
@@ -63,6 +65,11 @@ class Alert
         return array();
     }
 
+    public function isLocked()
+    {
+        return $this->error_count >= 3;
+    }
+
     public function toArray()
     {
         return array(
@@ -92,6 +99,8 @@ class Alert
             "send_joaoappsjoin" => $this->send_joaoappsjoin,
             "send_slack" => $this->send_slack,
             "ads_count" => $this->ads_count,
+            "error_count" => $this->error_count,
+            "error" => $this->error,
         );
     }
 }

@@ -566,6 +566,36 @@ form .select-group select {
     text-decoration: underline;
 }
 
+.alert-line-statut-error {
+    background: RGBA(255, 0, 0, .5);
+    color: #FFFFFF;
+}
+.alert-line-statut-error td {
+    border-color: RGBA(255, 0, 0, 1);
+    font-weight: bold;
+}
+.alert-line-statut-error a {
+    color: #F0F0F0;
+}
+.alert-statut span {
+    display: block;
+    width: 100%;
+    vertical-align: middle;
+    color: #FFFFFF;
+    background: #169A00;
+    font-weight: bold;
+}
+.alert-statut-error span {
+    background: red;
+}
+
+.alert-error {
+    background: #FFFFFF;
+    border: 2px solid #EF0000;
+    color: #EF0000;
+    padding: 0 10px;
+}
+
 @media screen and (max-width: 960px) {
     .user-settings-container {
         flex-direction: column;

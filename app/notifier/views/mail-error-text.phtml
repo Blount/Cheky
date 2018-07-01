@@ -1,0 +1,10 @@
+<?php ob_start(); ?>
+Bonjour,
+
+Votre alerte a été désactivée car une erreur a été recontrée.
+
+Afin de résoudre le problème, ouvrez-alerte afin de prendre connaissance de l'erreur et de la corriger si possible :
+<?php echo $baseurl; ?>?mod=mail&a=form&id=<?php echo $alert->id; ?>
+
+<?php
+return ob_get_clean();
