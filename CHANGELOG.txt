@@ -1,4 +1,8 @@
 
+## Version 4.0
+
+ * ajout: meilleur gestion des erreurs sur les alertes.
+
 ## Version 3.9
 
  * ajout: changement de mot de passe pour les utilisateurs.
