@@ -1,0 +1,17 @@
+<?php ob_start(); ?>
+
+<h1 style="font-size: 16px;">
+    Votre recherche :
+    <?php echo htmlspecialchars($alert->title, null, "UTF-8"); ?>
+</h1>
+
+<p>Votre alerte a été désactivée car une erreur a été recontrée.</p>
+<p>
+    Afin de résoudre le problème,
+    <a href="<?php echo $baseurl; ?>?mod=mail&amp;a=form&amp;id=<?php
+    echo $alert->id; ?>" style="text-decoration: none; color: #E77600;">ouvrez-alerte</a>
+    afin de prendre connaissance de l'erreur et de la corriger si possible.
+</p>
+
+<?php
+return ob_get_clean();
