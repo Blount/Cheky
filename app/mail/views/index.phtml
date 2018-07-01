@@ -1,3 +1,13 @@
+
+<?php if ($has_locked) : ?>
+<div class="alert-error">
+    <p>
+        Vous avez au moins une alerte bloquée par une erreur.<br />
+        Cliquez sur le bouton "ERREUR" des alertes concernées pour plus de détails.
+    </p>
+</div>
+<?php endif; ?>
+
 <p>
     <?php if (0 < $nbAlertes = count($alerts)) : ?>
     <strong><?php echo $nbAlertes ?> <?php
@@ -52,7 +62,7 @@
                     "alert-statut-error" : "alert-statut-ok"; ?>">
                 <?php if ($locked) : ?>
                 <a href="?mod=mail&amp;a=form&amp;id=<?php echo $alert->id; ?>">
-                    <span title="<?php echo htmlspecialchars($locked); ?>">ERREUR</span>
+                    <span title="Cliquez-ici pour plus de détails">ERREUR</span>
                 </a>
                 <?php else: ?>
                 <span title="Rien à signaler">OK</span>
