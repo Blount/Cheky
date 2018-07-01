@@ -203,7 +203,6 @@ class Main
 
                 // Alerte en erreur
                 if ($alert->isLocked()) {
-                    echo "ignore";
                     continue;
                 }
 
@@ -217,7 +216,11 @@ class Main
                 try {
                     $config = SiteConfigFactory::factory($alert->url);
                 } catch (Exception $e) {
-                    $this->_logger->warn($log_id.$e->getMessage());
+                    $alert->error_count++;
+                    $alert->error = $e->getMessage();
+                    $storage->save($alert);
+
+                    $this->_logger->warn($log_id.$alert->error);
                     continue;
                 }
 
@@ -278,14 +281,33 @@ class Main
                 $content = $this->_httpClient->request($alert->url);
 
                 // Récupération du résultat de recherche de l'alerte
-                if (!$content) {
-                    $this->_logger->error($log_id."Curl Error : ".$this->_httpClient->getError());
+                if (false === $content) {
+                    $alert->error = "Curl Error : ".$this->_httpClient->getError();
+                    $alert->error_count++;
+                    $storage->save($alert);
+
+                    $this->_logger->error($log_id.$alert->error);
                     continue;
                 }
 
                 if ($this->_httpClient->getLocation()) {
                     $alert->error = "L'URL de recherche redirige vers l'adresse suivante : ".$this->_httpClient->getLocation().".";
-                    $alert->error_count++;
+
+                    // Pour une erreur 301, on bloque tout de suite l'alerte
+                    $alert->error_count = 3;
+
+                    $storage->save($alert);
+                    continue;
+                }
+
+                if (200 != $code = $this->_httpClient->getRespondCode()) {
+                    switch ($code) {
+                        case 404:
+                            $alert->error = "L'adresse de recherche pointe vers un contenu introuvable (Erreur 404).";
+                            break;
+                        default:
+                            $alert->error = "L'adresse de recherche a généré une erreur ".$code.".";
+                    }
                     $storage->save($alert);
                     continue;
                 }

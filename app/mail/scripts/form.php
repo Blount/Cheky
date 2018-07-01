@@ -72,6 +72,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             } elseif ($client->getLocation()) {
                 $errors["url"] = "L'URL indiquée redirige vers cette URL ".$client->getLocation().". Veuillez corriger votre adresse de recherche.";
+
+            } elseif (200 != $code = $client->getRespondCode()) {
+                switch ($code) {
+                    case 404:
+                        $errors["url"] = "L'adresse indiquée pointe vers un contenu introuvable (Erreur 404).";
+                        break;
+                    default:
+                        $errors["url"] = "L'adresse indiquée a généré une erreur ".$code.".";
+                        break;
+                }
             }
         }
     }
