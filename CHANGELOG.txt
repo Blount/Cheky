@@ -1,4 +1,9 @@
 
+## Version 4.0.1
+
+ * correction: problème sur mise à jour vers 4.0
+
+
 ## Version 4.0
 
  * ajout: meilleur gestion des erreurs sur les alertes.
