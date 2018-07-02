@@ -2,7 +2,7 @@
 
 require_once __DIR__."/update.php";
 
-class Update_38 extends Update
+class Update_401 extends Update
 {
     public function update()
     {
