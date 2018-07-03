@@ -4,6 +4,7 @@ $url = !empty($_GET["aurl"]) ? $_GET["aurl"] : null;
 
 $logger = Logger::getLogger("main");
 
+$client->setFollowLocation(true);
 $content = $client->request($url);
 
 try {
@@ -17,6 +18,12 @@ $ad = $parser->processAd(
     $content,
     parse_url($url, PHP_URL_SCHEME)
 );
+if (!$ad) {
+    $logger->err("Impossible de sauvegarder l'annonce (annonce hors ligne ou format des données invalides).");
+    return;
+}
+
+$ad->setLink($client->getUrl());
 
 $ad_stored = $storage->fetchById($ad->getId());
 if ($ad_stored) {
@@ -40,4 +47,5 @@ $storage->save($ad_stored);
 
 $adPhoto->import($ad_stored);
 
-header("LOCATION: ./?mod=annonce&a=view&id=".$ad->getId()); exit;
+header("LOCATION: ./?mod=annonce&a=view&id=".$ad->getId());
+exit;
