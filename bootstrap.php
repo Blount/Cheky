@@ -14,6 +14,8 @@ define("APPLICATION_VERSION", require DOCUMENT_ROOT."/version.php");
 // les fichiers statiques (js, css, html, etc)
 define("STATIC_REV", 12);
 
+define("COOKIE_PATH", DOCUMENT_ROOT."/var/tmp");
+
 set_include_path(
     __DIR__."/lib".PATH_SEPARATOR.get_include_path()
 );

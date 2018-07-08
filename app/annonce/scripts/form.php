@@ -17,7 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($errors)) {
-        $client->setFollowLocation(true);
+        $client->setFollowLocation(true)
+               ->setCookiePath(COOKIE_PATH);
         $content = $client->request($link);
         if (200 !== $client->getRespondCode()) {
             $errors["link"] = "Cette adresse ne semble pas valide (Erreur ".$client->getRespondCode().").";

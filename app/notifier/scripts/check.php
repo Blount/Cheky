@@ -42,6 +42,8 @@ class Main
             pcntl_signal(SIGINT, array($this, "sigHandler"));
         }
 
+        $client->setCookiePath(COOKIE_PATH);
+
         $this->_httpClient = $client;
         $this->_userStorage = $userStorage;
         $this->_logger = Logger::getLogger("main");
