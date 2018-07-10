@@ -68,6 +68,7 @@ if (isset($params["cities"])) {
     $params["cities"] = array_map("trim", explode("\n", mb_strtolower($params["cities"])));
 }
 
+$client->setCookiePath(COOKIE_PATH);
 $content = $client->request($_GET["url"]);
 
 if ($client->getLocation()) {

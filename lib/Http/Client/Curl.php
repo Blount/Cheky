@@ -23,6 +23,12 @@ class HttpClientCurl extends HttpClientAbstract
             $this->setUrl($url);
         }
 
+        if ($path = $this->getCookiePath()) {
+            $host = parse_url($url, PHP_URL_HOST);
+            curl_setopt($this->_resource, CURLOPT_COOKIEJAR, $path."/".$host);
+            curl_setopt($this->_resource, CURLOPT_COOKIEFILE, $path."/".$host);
+        }
+
         // Reset
         $this->setLocation(null);
 

@@ -17,6 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($errors)) {
+        $client->setFollowLocation(true)
+               ->setCookiePath(COOKIE_PATH);
         $content = $client->request($link);
         if (200 !== $client->getRespondCode()) {
             $errors["link"] = "Cette adresse ne semble pas valide (Erreur ".$client->getRespondCode().").";
@@ -33,6 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($errors) && !empty($ad)) {
+        $ad->setLink($client->getUrl());
         $ad_stored = $storage->fetchById($ad->getId());
         if (!$ad_stored) {
             $ad_stored = new \App\Ad\Ad();

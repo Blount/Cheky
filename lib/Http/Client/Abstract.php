@@ -15,6 +15,7 @@ abstract class HttpClientAbstract
     protected $_respond_code;
     protected $_follow_location;
     protected $_location;
+    protected $_cookie_path;
 
     const METHOD_GET = "get";
     const METHOD_POST = "post";
@@ -180,6 +181,24 @@ abstract class HttpClientAbstract
     public function getUrl()
     {
         return $this->_url;
+    }
+
+    /**
+     * @param string $cookie_path
+     * @return HttpClientAbstract
+     */
+    public function setCookiePath($cookie_path)
+    {
+        $this->_cookie_path = $cookie_path;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCookiePath()
+    {
+        return $this->_cookie_path;
     }
 
     /**
