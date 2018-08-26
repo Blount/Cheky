@@ -11,7 +11,7 @@ if ($storageType == "db") {
 
 $adPhoto = new App\Storage\AdPhoto($userAuthed);
 
-$check_ad_online = function (Ad $ad) use ($client, $storage) {
+$check_ad_online = function (Ad $ad) use ($app, $storage) {
     $now = new DateTime();
 
     if ($ad->getOnlineDateChecked()) {
@@ -27,16 +27,17 @@ $check_ad_online = function (Ad $ad) use ($client, $storage) {
     }
 
     // Vérifie si l'annonce est en ligne
-    $client->setFollowLocation(true);
-    $content = $client->request($ad->getLink());
+    $connector = $app->getConnector($ad->getLink())
+                     ->setFollowLocation(true);
+    $content = $connector->request();
     $ad->setOnlineDateChecked($now->format("Y-m-d H:i:s"));
     $ad->setOnline(true);
 
-    if ($ad->getLink() != $client->getUrl()) {
-        $ad->setLink($client->getUrl());
+    if ($ad->getLink() != $connector->getUrl()) {
+        $ad->setLink($connector->getUrl());
     }
 
-    $code = $client->getRespondCode();
+    $code = $connector->getRespondCode();
 
     if (in_array($code, array(404, 410))) {
         $ad->setOnline(false);
@@ -44,7 +45,7 @@ $check_ad_online = function (Ad $ad) use ($client, $storage) {
     } elseif (false !== strpos($content, "Cette annonce est désactivée")) {
         $ad->setOnline(false);
 
-    } elseif (200 != $client->getRespondCode()) {
+    } elseif (200 != $connector->getRespondCode()) {
         $date_ad->modify("-1 day +1 hour");
         $ad->setOnlineDateChecked($date_ad->format("Y-m-d H:i:s"));
     }

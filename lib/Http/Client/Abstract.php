@@ -16,6 +16,20 @@ abstract class HttpClientAbstract
     protected $_follow_location;
     protected $_location;
     protected $_cookie_path;
+    protected $_referer;
+    protected $_headers;
+    protected $_response_headers;
+    protected $_time_between_requests;
+    protected $_time_last_request;
+
+    protected $_default_headers = array(
+        "Accept" => "text/html",
+        "Accept-Language" => "fr,fr-FR;q=0.8",
+        "Cache-Control" => "max-age=0",
+        "Connection" => "keep-alive",
+        "DNT" => 1,
+        "Upgrade-Insecure-Requests" => 1,
+    );
 
     const METHOD_GET = "get";
     const METHOD_POST = "post";
@@ -256,11 +270,47 @@ abstract class HttpClientAbstract
     }
 
     /**
+     * @param time_between_requests $time_between_request
+     * @return HttpClientAbstract
+     */
+    public function setTimeBetweenRequests($time_between_request)
+    {
+        $this->_time_between_requests = $time_between_request;
+        return $this;
+    }
+
+    /**
+     * @return time_between_requests
+     */
+    public function getTimeBetweenRequests()
+    {
+        return $this->_time_between_requests;
+    }
+
+    /**
      * @return int
      */
     public function getRespondCode()
     {
         return $this->_respond_code;
+    }
+
+    /**
+     * @param float $time_last_request
+     * @return HttpClientAbstract
+     */
+    public function setTimeLastRequest($time_last_request)
+    {
+        $this->_time_last_request = $time_last_request;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTimeLastRequest()
+    {
+        return $this->_time_last_request;
     }
 
     /**

@@ -17,11 +17,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($errors)) {
-        $client->setFollowLocation(true)
-               ->setCookiePath(COOKIE_PATH);
-        $content = $client->request($link);
-        if (200 !== $client->getRespondCode()) {
-            $errors["link"] = "Cette adresse ne semble pas valide (Erreur ".$client->getRespondCode().").";
+        $connector = $app->getConnector($link)
+                         ->setFollowLocation(true)
+                         ->setCookiePath(COOKIE_PATH);
+        $content = $connector->request();
+        if (200 !== $connector->getRespondCode()) {
+            $errors["link"] = "Cette adresse ne semble pas valide (Erreur ".$connector->getRespondCode().").";
 
         } else {
             $ad = $parser->processAd(
@@ -35,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($errors) && !empty($ad)) {
-        $ad->setLink($client->getUrl());
+        $ad->setLink($connector->getUrl());
         $ad_stored = $storage->fetchById($ad->getId());
         if (!$ad_stored) {
             $ad_stored = new \App\Ad\Ad();

@@ -68,11 +68,11 @@ if (isset($params["cities"])) {
     $params["cities"] = array_map("trim", explode("\n", mb_strtolower($params["cities"])));
 }
 
-$client->setCookiePath(COOKIE_PATH);
-$content = $client->request($_GET["url"]);
+$connector = $app->getConnector($_GET["url"]);
+$content = $connector->request();
 
-if ($client->getLocation()) {
-    $error = "L'adresse de recherche ".$_GET["url"]." ne semble plus valide (code ".$client->getRespondCode().").";
+if ($connector->getLocation()) {
+    $error = "L'adresse de recherche ".$_GET["url"]." ne semble plus valide (code ".$connector->getRespondCode().").";
 }
 
 if (isset($error)) {

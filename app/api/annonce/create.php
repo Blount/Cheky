@@ -25,9 +25,10 @@ try {
     );
 }
 
-$content = $client->request($link);
+$connector = $app->getConnector();
+$content = $connector->request();
 
-if (200 != $client->getRespondCode()) {
+if (200 != $connector->getRespondCode()) {
     return array(
         "data" => $_POST,
         "errors" => array(

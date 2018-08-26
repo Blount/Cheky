@@ -7,9 +7,9 @@ use AdService\SiteConfigFactory;
 class Main
 {
     /**
-     * @var HttpClientAbstract
+     * @var Application
      */
-    protected $_httpClient;
+    protected $_app;
 
     /**
      * @var Config_Lite
@@ -32,7 +32,7 @@ class Main
 
     public function __construct(
         \Config_Lite $config,
-        \HttpClientAbstract $client,
+        \Application $app,
         \App\Storage\User $userStorage)
     {
         $this->_config = $config;
@@ -42,9 +42,8 @@ class Main
             pcntl_signal(SIGINT, array($this, "sigHandler"));
         }
 
-        $client->setCookiePath(COOKIE_PATH);
 
-        $this->_httpClient = $client;
+        $this->_app = $app;
         $this->_userStorage = $userStorage;
         $this->_logger = Logger::getLogger("main");
         $this->_lockFile = DOCUMENT_ROOT."/var/.lock";
@@ -281,11 +280,12 @@ class Main
                 // Mise à jour de la date de dernière analyse
                 $alert->time_updated = $current_time;
 
-                $content = $this->_httpClient->request($alert->url);
+                $connector = $this->_app->getConnector($alert->url);
+                $content = $connector->request();
 
                 // Récupération du résultat de recherche de l'alerte
                 if (false === $content) {
-                    $alert->error = "Curl Error : ".$this->_httpClient->getError();
+                    $alert->error = "Curl Error : ".$connector->getError();
                     $alert->error_count++;
                     $storage->save($alert);
                     $this->_sendMailAlertLocked($alert, $config);
@@ -294,8 +294,8 @@ class Main
                     continue;
                 }
 
-                if ($this->_httpClient->getLocation()) {
-                    $alert->error = "L'URL de recherche redirige vers l'adresse suivante : ".$this->_httpClient->getLocation().".";
+                if ($connector->getLocation()) {
+                    $alert->error = "L'URL de recherche redirige vers l'adresse suivante : ".$connector->getLocation().".";
 
                     // Pour une erreur 301, on bloque tout de suite l'alerte
                     $alert->error_count = 3;
@@ -305,7 +305,7 @@ class Main
                     continue;
                 }
 
-                if (200 != $code = $this->_httpClient->getRespondCode()) {
+                if (200 != $code = $connector->getRespondCode()) {
                     switch ($code) {
                         case 404:
                             $alert->error = "L'adresse de recherche pointe vers un contenu introuvable (Erreur 404).";
@@ -575,15 +575,19 @@ class Main
     protected function _checkConnection()
     {
         // teste la connexion
-        $this->_httpClient->setDownloadBody(false);
-        if (false === $this->_httpClient->request("https://www.leboncoin.fr")) {
+        $connector = $this->_app->getConnector("https://www.leboncoin.fr")
+                                ->setDownloadBody(false);
+
+        if (false === $connector->request()) {
             throw new Exception("Connexion vers https://www.leboncoin.fr échouée".
                 (($error = $this->_httpClient->getError())?" (erreur: ".$error.")":"").".");
         }
-        if (200 != $code = $this->_httpClient->getRespondCode()) {
+
+        if (200 != $code = $connector->getRespondCode()) {
             throw new Exception("Code HTTP différent de 200 : ".$code);
         }
-        $this->_httpClient->setDownloadBody(true);
+
+        $connector->setDownloadBody(true);
     }
 
     protected function _lock()
@@ -660,7 +664,7 @@ if (is_file(DOCUMENT_ROOT."/var/.lock_update")) {
 }
 
 try {
-    $main = new Main($config, $client, $userStorage);
+    $main = new Main($config, $app, $userStorage);
 } catch (\Exception $e) {
     Logger::getLogger("main")->info($e->getMessage());
     return;

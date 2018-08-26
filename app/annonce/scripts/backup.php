@@ -4,8 +4,9 @@ $url = !empty($_GET["aurl"]) ? $_GET["aurl"] : null;
 
 $logger = Logger::getLogger("main");
 
-$client->setFollowLocation(true);
-$content = $client->request($url);
+$connector = $app->getConnector($url)
+                 ->setFollowLocation(true);
+$content = $connector->request();
 
 try {
     $parser = \AdService\ParserFactory::factory($url);
@@ -23,7 +24,7 @@ if (!$ad) {
     return;
 }
 
-$ad->setLink($client->getUrl());
+$ad->setLink($connector->getUrl());
 
 $ad_stored = $storage->fetchById($ad->getId());
 if ($ad_stored) {

@@ -19,19 +19,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     if (isset($_POST["testProxy"])) {
-        $client->setProxyIp($options["proxy_ip"])
-            ->setProxyPort($options["proxy_port"])
-            ->setProxyUser($options["proxy_user"]);
-        if (!empty($options["proxy_password"])) {
-            $client->setProxyPassword($options["proxy_password"]);
-        }
         $errors["test"] = array();
-        if (false === $client->request("http://portail.free.fr")) {
-            $errors["test"]["site"] = $client->getError();
+
+        $connector = $app->getConnector("https://portail.free.fr")
+                         ->setProxyIp($options["proxy_ip"])
+                         ->setProxyPort($options["proxy_port"])
+                         ->setProxyUser($options["proxy_user"]);
+        if (!empty($options["proxy_password"])) {
+            $connector->setProxyPassword($options["proxy_password"]);
         }
-        if (false === $client->request("https://www.leboncoin.fr")) {
-            $errors["test"]["lbc"] = $client->getError();
+
+        if (false === $connector->request()) {
+            $errors["test"]["site"] = $connector->getError();
         }
+
+        $connector = $app->getConnector("https://www.leboncoin.fr")
+                         ->setProxyIp($options["proxy_ip"])
+                         ->setProxyPort($options["proxy_port"])
+                         ->setProxyUser($options["proxy_user"]);
+        if (!empty($options["proxy_password"])) {
+            $connector->setProxyPassword($options["proxy_password"]);
+        }
+
+        if (false === $connector->request()) {
+            $errors["test"]["lbc"] = $connector->getError();
+        }
+
     } else {
         $config->set("proxy", "ip", $options["proxy_ip"]);
         $config->set("proxy", "port", $options["proxy_port"]);

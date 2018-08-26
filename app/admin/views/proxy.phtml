@@ -2,7 +2,7 @@
 <div style="width: 680px; border: 1px solid #666666; margin-bottom: 10px; padding: 10px;">
     <h2>Test de connexion</h2>
     <ul>
-        <?php if (!$client->hasProxy()) : ?>
+        <?php if (!$connector->hasProxy()) : ?>
         <li>aucun proxy configuré.</li>
         <?php else: ?>
         <li>utilisation d'un proxy pour la connexion.</li>
