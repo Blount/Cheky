@@ -64,16 +64,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if (!isset($errors["url"])) {
-            $content = $client->request($alert->url);
+            $connector = $app->getConnector($alert->url);
+            $content = $connector->request();
 
             // Récupération du résultat de recherche de l'alerte
             if (!$content) {
-                $errors["url"] = "Curl Error : ".$client->getError();
+                $errors["url"] = "Curl Error : ".$connector->getError();
 
-            } elseif ($client->getLocation()) {
-                $errors["url"] = "L'URL indiquée redirige vers cette URL ".$client->getLocation().". Veuillez corriger votre adresse de recherche.";
+            } elseif ($connector->getLocation()) {
+                $errors["url"] = "L'URL indiquée redirige vers cette URL ".$connector->getLocation().". Veuillez corriger votre adresse de recherche.";
 
-            } elseif (200 != $code = $client->getRespondCode()) {
+            } elseif (200 != $code = $connector->getRespondCode()) {
                 switch ($code) {
                     case 404:
                         $errors["url"] = "L'adresse indiquée pointe vers un contenu introuvable (Erreur 404).";

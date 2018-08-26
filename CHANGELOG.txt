@@ -1,4 +1,8 @@
 
+## Version 4.2
+
+ * correction: modifie la gestion des connexions HTTP.
+
 ## Version 4.1
 
  * correction: sauvegarde d'annonce sur URL invalide.

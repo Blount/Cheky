@@ -8,11 +8,12 @@ if (!$userAuthed->isAdmin()) {
 $security_issue = false;
 
 $test_url = rtrim($config->get("general", "baseurl"), "/")."/var/config.ini";
-$content = $client->request($test_url);
+$connector = $app->getConnector($test_url);
+$content = $connector->request();
 
-if (200 == $client->getRespondCode()
+if (200 == $connector->getRespondCode()
     || false !== strpos($content, "[general]")) {
     $security_issue = true;
 }
 
-unset($test_url, $content);
+unset($connector, $test_url, $content);

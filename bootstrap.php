@@ -24,7 +24,7 @@ require_once "Http/Client/Curl.php";
 require_once "Config/Lite.php";
 require_once "Log4php/Logger.php";
 
-class Bootstrap
+class Application
 {
     /**
      * @var Config_Lite
@@ -34,7 +34,7 @@ class Bootstrap
     /**
      * @var HttpClientCurl
      */
-    protected $_client;
+    protected $_connectors = array();
 
     protected function initAutoload()
     {
@@ -156,22 +156,43 @@ class Bootstrap
         }
     }
 
-    public function getClient()
+    /**
+     *
+     * @param string $url
+     * @return HttpClientCurl
+     */
+    public function getConnector($url)
     {
-        if (!$this->_client) {
-            $client = new HttpClientCurl();
+        $host = parse_url($url, PHP_URL_HOST);
+
+        if (!isset($this->_connectors[$host])) {
+            $connector = new HttpClientCurl();
+
+            // Pour Leboncoin, limite le nombre de requête par seconde
+            if (false !== strpos($host, "leboncoin")) {
+                $connector->setTimeBetweenRequests(1);
+            }
+
             $proxy = $this->_config->get("proxy", null, array());
             if (!empty($proxy["ip"])) {
-                $client->setProxyIp($proxy["ip"]);
+                $connector->setProxyIp($proxy["ip"]);
                 if (!empty($proxy["port"])) {
-                    $client->setProxyPort($proxy["port"]);
+                    $connector->setProxyPort($proxy["port"]);
                 }
             }
+
             if ($userAgent = $this->_config->get("http", "user_agent", "")) {
-                $client->setUserAgent($userAgent);
+                $connector->setUserAgent($userAgent);
             }
+
+            $connector->setCookiePath(COOKIE_PATH);
+
+            $this->_connectors[$host] = $connector;
         }
-        return $client;
+
+        $this->_connectors[$host]->setUrl($url);
+
+        return $this->_connectors[$host];
     }
 
     public function __construct()
@@ -252,12 +273,9 @@ class Bootstrap
 
 $config = new Config_Lite(DOCUMENT_ROOT."/var/config.ini");
 
-$bootstrap = new Bootstrap();
-$bootstrap->bootstrap($config);
+$app = new Application();
+$app->bootstrap($config);
 $userAuthed = null;
-
-// initialise le client HTTP.
-$client = $bootstrap->getClient();
 
 // si stockage en base de données, on initialise la connexion
 if ("db" == $config->get("storage", "type", "files")) {

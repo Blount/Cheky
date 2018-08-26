@@ -9,9 +9,10 @@ class HttpClientCurl extends HttpClientAbstract
     public function __construct()
     {
         $this->_resource = curl_init();
-        curl_setopt($this->_resource, CURLOPT_HEADER, false);
+        curl_setopt($this->_resource, CURLOPT_HEADER, true);
         curl_setopt($this->_resource, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->_resource, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($this->_resource, CURLOPT_ENCODING, "gzip, deflate");
     }
 
     public function request($url = null)
@@ -19,15 +20,34 @@ class HttpClientCurl extends HttpClientAbstract
         if (!$this->_url && !$url) {
             throw new Exception("Aucune URL à appeler.");
         }
+
         if ($url) {
             $this->setUrl($url);
         }
 
         if ($path = $this->getCookiePath()) {
-            $host = parse_url($url, PHP_URL_HOST);
+            $host = parse_url($this->_url, PHP_URL_HOST);
             curl_setopt($this->_resource, CURLOPT_COOKIEJAR, $path."/".$host);
             curl_setopt($this->_resource, CURLOPT_COOKIEFILE, $path."/".$host);
         }
+
+        $headers = $this->_default_headers;
+
+        if ($this->_headers) {
+            $headers = array_merge($headers, $this->_headers);
+        }
+
+        if ($this->_referer) {
+            $headers["Referer"] = $this->_referer;
+        }
+
+        $this->_referer = $this->_url;
+
+        $curl_headers = array();
+        foreach ($headers AS $key => $value) {
+            $curl_headers[] = $key.": ".$value;
+        }
+        curl_setopt($this->_resource, CURLOPT_HTTPHEADER, $curl_headers);
 
         // Reset
         $this->setLocation(null);
@@ -37,6 +57,7 @@ class HttpClientCurl extends HttpClientAbstract
         } else {
             curl_setopt($this->_resource, CURLOPT_POST, true);
         }
+
         if ($this->_proxy_ip) {
             if ($this->getProxyType() == self::PROXY_TYPE_WEB) {
                 $url = $this->_proxy_ip.urlencode($this->getUrl());
@@ -55,12 +76,36 @@ class HttpClientCurl extends HttpClientAbstract
                 }
             }
         }
+
         if ($userAgent = $this->getUserAgent()) {
             curl_setopt($this->_resource, CURLOPT_USERAGENT, $userAgent);
         }
+
         curl_setopt($this->_resource, CURLOPT_NOBODY, !$this->_download_body);
-        curl_setopt($this->_resource, CURLOPT_URL, $url);
-        $body = curl_exec($this->_resource);
+        curl_setopt($this->_resource, CURLOPT_URL, $this->_url);
+
+        if ($this->_time_between_requests && $this->_time_last_request) {
+            $time = microtime(true) - $this->_time_last_request;
+            if ($time < $this->_time_between_requests) {
+                sleep(ceil($this->_time_between_requests - $time));
+            }
+        }
+
+        $response = curl_exec($this->_resource);
+        $this->_time_last_request = microtime(true);
+
+        $header_size = curl_getinfo($this->_resource, CURLINFO_HEADER_SIZE);
+        $headers = mb_substr($response, 0, $header_size);
+        $body = mb_substr($response, $header_size);
+        $headers = explode("\r\n", $headers);
+        $this->_response_headers = array();
+        foreach ($headers AS $header) {
+            if (false !== strpos($header, ":")) {
+                $data = explode(":", $header);
+                $this->_response_headers[$data[0]] = trim($data[1]);
+            }
+        }
+
         $this->_respond_code = curl_getinfo($this->_resource, CURLINFO_HTTP_CODE);
 
         $content_type = curl_getinfo($this->_resource, CURLINFO_CONTENT_TYPE);
