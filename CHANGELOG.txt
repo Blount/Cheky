@@ -1,4 +1,8 @@
 
+## Version 4.3
+
+ * correction: utilise l'API Leboncoin.
+
 ## Version 4.2
 
  * correction: modifie la gestion des connexions HTTP.
