@@ -119,7 +119,6 @@ class Main
             $this->_logger->info("[Pid ".getmypid()."] Hors de la plage horaire. Contrôle annulé.");
             return;
         }
-        $this->_checkConnection();
         $users = $this->_userStorage->fetchAll();
 
         // génération d'URL court pour les SMS
@@ -570,24 +569,6 @@ class Main
             $this->shutdown();
             exit;
         }
-    }
-
-    protected function _checkConnection()
-    {
-        // teste la connexion
-        $connector = $this->_app->getConnector("https://www.leboncoin.fr")
-                                ->setDownloadBody(false);
-
-        if (false === $connector->request()) {
-            throw new Exception("Connexion vers https://www.leboncoin.fr échouée".
-                (($error = $this->_httpClient->getError())?" (erreur: ".$error.")":"").".");
-        }
-
-        if (200 != $code = $connector->getRespondCode()) {
-            throw new Exception("Code HTTP différent de 200 : ".$code);
-        }
-
-        $connector->setDownloadBody(true);
     }
 
     protected function _lock()

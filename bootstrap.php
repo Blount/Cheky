@@ -166,11 +166,16 @@ class Application
         $host = parse_url($url, PHP_URL_HOST);
 
         if (!isset($this->_connectors[$host])) {
-            $connector = new HttpClientCurl();
-
             // Pour Leboncoin, limite le nombre de requête par seconde
             if (false !== strpos($host, "leboncoin")) {
-                $connector->setTimeBetweenRequests(1);
+                $connector = new App\Lbc\HTTPConnector();
+                $connector->setHeader("Accept", "*/*")
+                          ->setHeader("api_key", $this->_config->get("lbc", "api_key", "ba0c2dad52b3ec"))
+                          ->setHeader("origin", "https://www.leboncoin.fr")
+                          ->setHeader("content-type", "text/plain;charset=UTF-8");
+
+            } else {
+                $connector = new HttpClientCurl();
             }
 
             $proxy = $this->_config->get("proxy", null, array());

@@ -24,8 +24,6 @@ if (!$ad) {
     return;
 }
 
-$ad->setLink($connector->getUrl());
-
 $ad_stored = $storage->fetchById($ad->getId());
 if ($ad_stored) {
     if ($_SERVER["REQUEST_METHOD"] != "POST") {
