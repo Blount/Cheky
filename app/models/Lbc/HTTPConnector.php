@@ -225,6 +225,10 @@ class HTTPConnector extends HttpClientCurl
             curl_setopt($this->_resource, CURLOPT_POSTFIELDS, $data);
         }
 
+        if (false === $options) {
+            return "";
+        }
+
         $this->_referer = $this->_url;
 
         $response = parent::request();
@@ -296,7 +300,8 @@ class HTTPConnector extends HttpClientCurl
         }
 
         if (empty($query_string)) {
-            throw new Exception("Adresse de recherche invalide");
+            $this->_respond_code = 400;
+            return false;
         }
 
         $ad_type = "offer";
