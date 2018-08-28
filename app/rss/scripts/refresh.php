@@ -71,7 +71,16 @@ if (isset($params["cities"])) {
 $connector = $app->getConnector($_GET["url"]);
 $content = $connector->request();
 
-if ($connector->getLocation()) {
+if (200 != $code = $connector->getRespondCode()) {
+    switch ($code) {
+        case 404:
+            $error = "L'adresse de recherche pointe vers un contenu introuvable (Erreur 404).";
+            break;
+        default:
+            $error = "L'adresse de recherche a généré une erreur ".$code.".";
+    }
+
+} elseif ($connector->getLocation()) {
     $error = "L'adresse de recherche ".$_GET["url"]." ne semble plus valide (code ".$connector->getRespondCode().").";
 }
 

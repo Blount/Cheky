@@ -314,6 +314,27 @@ abstract class HttpClientAbstract
     }
 
     /**
+     * @param string $name
+     * @param string $value
+     * @return HttpClientAbstract
+     */
+    public function setHeader($name, $value)
+    {
+        $this->_headers[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return HttpClientAbstract
+     */
+    public function removeHeader($name)
+    {
+        unset($this->_headers[$name]);
+        return $this;
+    }
+
+    /**
      * Retourne la dernière erreur générée.
      * @return string
      */

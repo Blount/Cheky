@@ -33,10 +33,6 @@ $check_ad_online = function (Ad $ad) use ($app, $storage) {
     $ad->setOnlineDateChecked($now->format("Y-m-d H:i:s"));
     $ad->setOnline(true);
 
-    if ($ad->getLink() != $connector->getUrl()) {
-        $ad->setLink($connector->getUrl());
-    }
-
     $code = $connector->getRespondCode();
 
     if (in_array($code, array(404, 410))) {

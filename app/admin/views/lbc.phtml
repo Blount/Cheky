@@ -1,0 +1,24 @@
+
+
+<?php if (isset($_GET["success"])) : ?>
+<p style="color: #001FA6;"><strong>Mise à jour de la configuration effectuée.</strong></p>
+<?php endif; ?>
+
+<form action="?mod=admin&amp;a=lbc" method="post" autocomplete="off">
+    <h2>Configuration Leboncoin</h2>
+
+    <dl>
+        <dt class="api-key"><label for="api-key">Clé API</label></dt>
+        <dd class="api-key">
+            <input type="text" id="api-key" name="api_key" value="<?php
+                echo isset($api_key) ? $api_key : ""
+            ?>" />
+            <?php if (!empty($errors["api_key"])) : ?>
+            <p class="error"><?php echo $errors["api_key"]; ?></p>
+            <?php endif; ?>
+        </dd>
+    </dl>
+    <p><input type="submit" value="Enregistrer" /></p>
+</form>
+
+

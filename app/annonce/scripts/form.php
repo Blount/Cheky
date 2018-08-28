@@ -36,7 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($errors) && !empty($ad)) {
-        $ad->setLink($connector->getUrl());
         $ad_stored = $storage->fetchById($ad->getId());
         if (!$ad_stored) {
             $ad_stored = new \App\Ad\Ad();
