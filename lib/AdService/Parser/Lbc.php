@@ -31,7 +31,7 @@ class Lbc extends AbstractParser
 
 
         $datas = json_decode($content, true);
-        if (!$datas || !is_array($datas) || !$datas["ads"]) {
+        if (!is_array($datas) || empty($datas["ads"]) || !is_array($datas["ads"])) {
             return $ads;
         }
 
