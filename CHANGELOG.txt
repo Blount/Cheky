@@ -1,4 +1,9 @@
 
+## Version 4.3.2
+
+ * correction: recherches Leboncoin sur données GPS.
+ * correction: erreur si aucune annonce trouvée.
+
 ## Version 4.3
 
  * correction: utilise l'API Leboncoin.
