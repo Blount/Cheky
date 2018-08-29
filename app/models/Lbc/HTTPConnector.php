@@ -342,6 +342,15 @@ class HTTPConnector extends HttpClientCurl
         if (!empty($query_string["departments"])) {
             $location["departments"][0] = (string) $query_string["departments"];
         }
+        if (!empty($query_string["lat"])) {
+            $location["area"]["lat"] = (float) $query_string["lat"];
+        }
+        if (!empty($query_string["lng"])) {
+            $location["area"]["lng"] = (float) $query_string["lng"];
+        }
+        if (!empty($query_string["radius"])) {
+            $location["area"]["radius"] = (float) $query_string["radius"];
+        }
         if (!empty($query_string["cities"])) {
             $cities = explode(",", $query_string["cities"]);
             $options_cities = array();
@@ -400,6 +409,9 @@ class HTTPConnector extends HttpClientCurl
             $query_string["region_near"],
             $query_string["departments"],
             $query_string["cities"],
+            $query_string["lat"],
+            $query_string["lng"],
+            $query_string["radius"],
             $query_string["owner_type"],
             $query_string["sort"],
             $query_string["order"]
