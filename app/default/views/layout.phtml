@@ -12,6 +12,19 @@
         <?php if ($userAuthed) : ?>
         <header>
             <h1><a href="./">Cheky</a></h1>
+
+            <?php if ($userAuthed->isAdmin() && $version = $app->upgradeAvailable()) : ?>
+            <p class="upgrade-available">
+                <a href="?mod=admin&amp;a=upgrade">
+                    <span class="fa fa-arrow-circle-up"></span>
+                    Cheky <?php echo $version; ?> est disponible.
+                    Cliquez ici pour mettre à jour votre version
+                    (<?php echo APPLICATION_VERSION; ?>).
+                    <span class="fa fa-arrow-circle-up"></span>
+                </a>
+            </p>
+            <?php endif; ?>
+
             <ul class="topmenu">
                 <li<?php echo $module === "default"?' class="active"':''; ?>><a href="./?"><img src="static/images/home.png" alt="" /></a></li>
                 <li<?php echo $module === "mail"?' class="active"':''; ?>><a href="?mod=mail">Mes alertes</a></li>

@@ -267,6 +267,24 @@ footer {
     font-size: .85em;
 }
 
+.upgrade-available {
+    margin: 10px 0;
+    padding: 10px;
+    background: #FFF;
+    color: #CA8100;
+    font-size: 1.1em;
+}
+.upgrade-available a:link,
+.upgrade-available a:active,
+.upgrade-available a:hover,
+.upgrade-available a:visited {
+    color: #CA8100;
+}
+.upgrade-available .fa {
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+
 .message-success {
     font-weight: bold;
     color: #339933;

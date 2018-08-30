@@ -12,7 +12,7 @@ define("APPLICATION_VERSION", require DOCUMENT_ROOT."/version.php");
 
 // Constante utilisée pour forcer le navigateur à télécharger
 // les fichiers statiques (js, css, html, etc)
-define("STATIC_REV", 12);
+define("STATIC_REV", 13);
 
 define("COOKIE_PATH", DOCUMENT_ROOT."/var/tmp");
 
@@ -217,6 +217,28 @@ class Application
                 $this->$method();
             }
         }
+    }
+
+    /**
+     * @return boolean|string
+     */
+    public function upgradeAvailable()
+    {
+        if (!$currentVersion = $this->_config->get("general", "version", "")) {
+            return false;
+        }
+
+        $updater = new \App\Updater(APPLICATION_VERSION);
+
+        try {
+            $latestVersion = $updater->getLatestVersion();
+
+        } catch (Exception $e) {
+            return false;
+        }
+
+        return version_compare($currentVersion, $latestVersion, "<") ?
+               $latestVersion : false;
     }
 
     public function _exceptionHandler($e)
