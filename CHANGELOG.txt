@@ -1,4 +1,9 @@
 
+## Version 4.3.3
+
+ * ajout: affiche un message lors d'une mise à jour disponible.
+ * correction: prend en charge le nouveau système de recherche géographique de Leboncoin.
+
 ## Version 4.3.2
 
  * correction: recherches Leboncoin sur données GPS.
