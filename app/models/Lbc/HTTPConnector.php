@@ -334,13 +334,13 @@ class HTTPConnector extends HttpClientCurl
         unset($query_string["region"], $query_string["departement"]);
 
         if (!empty($query_string["regions"])) {
-            $location["regions"][0] = (string) $query_string["regions"];
+            $location["regions"] = explode(",", $query_string["regions"]);
         }
         if (!empty($query_string["region_near"])) {
             $location["region_near"] = true;
         }
         if (!empty($query_string["departments"])) {
-            $location["departments"][0] = (string) $query_string["departments"];
+            $location["departments"] = explode(",", $query_string["departments"]);
         }
         if (!empty($query_string["lat"])) {
             $location["area"]["lat"] = (float) $query_string["lat"];
@@ -355,10 +355,32 @@ class HTTPConnector extends HttpClientCurl
             $cities = explode(",", $query_string["cities"]);
             $options_cities = array();
             foreach ($cities AS $city) {
-                if (5 == strlen($city)) {
+                if (0 === strpos($city, "d_")) {
+                    $id = (int) substr($city, 2);
+                    $options_cities[] = array(
+                        "department_id" => (string) $id,
+                        "locationType" => "department",
+                    );
+
+                } elseif (0 === strpos($city, "rn_")) {
+                    $id = (int) substr($city, 3);
+                    $options_cities[] = array(
+                        "region_id" => (string) $id,
+                        "locationType" => "region_near",
+                    );
+
+                } elseif (0 === strpos($city, "r_")) {
+                    $id = (int) substr($city, 2);
+                    $options_cities[] = array(
+                        "region_id" => (string) $id,
+                        "locationType" => "region",
+                    );
+
+                } elseif (5 == strlen($city)) {
                     $options_cities[] = array(
                         "label" => "Toutes les communes ".$city,
                         "zipcode" => $city,
+                        "locationType" => "city",
                     );
 
                 } else {
@@ -367,6 +389,7 @@ class HTTPConnector extends HttpClientCurl
                         "city" => $city[0],
                         "label" => $city[0]." (".$city[1].")",
                         "zipcode" => $city[1],
+                        "locationType" => "city",
                     );
                 }
             }
