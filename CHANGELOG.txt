@@ -1,4 +1,8 @@
 
+## Version 4.3.4
+
+ * correction: algo Leboncoin.
+
 ## Version 4.3.3
 
  * ajout: affiche un message lors d'une mise à jour disponible.
