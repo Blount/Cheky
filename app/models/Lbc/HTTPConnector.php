@@ -339,6 +339,9 @@ class HTTPConnector extends HttpClientCurl
         if (!empty($query_string["region_near"])) {
             $location["region_near"] = true;
         }
+        if (!empty($query_string["department_near"])) {
+            $location["department_near"] = true;
+        }
         if (!empty($query_string["departments"])) {
             $location["departments"] = explode(",", $query_string["departments"]);
         }
@@ -350,6 +353,10 @@ class HTTPConnector extends HttpClientCurl
         }
         if (!empty($query_string["radius"])) {
             $location["area"]["radius"] = (float) $query_string["radius"];
+        }
+        if (!empty($query_string["location"]) && empty($query_string["cities"])) {
+            $query_string["cities"] = $query_string["location"];
+            unset($query_string["location"]);
         }
         if (!empty($query_string["cities"])) {
             $cities = explode(",", $query_string["cities"]);
@@ -430,7 +437,9 @@ class HTTPConnector extends HttpClientCurl
             $query_string["search_in"],
             $query_string["regions"],
             $query_string["region_near"],
+            $query_string["region_near"],
             $query_string["departments"],
+            $query_string["department_near"],
             $query_string["cities"],
             $query_string["lat"],
             $query_string["lng"],
