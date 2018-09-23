@@ -451,15 +451,15 @@ class HTTPConnector extends HttpClientCurl
 
         if (!empty($query_string)) {
             foreach ($query_string AS $key => $value) {
-                $is_range = strpos($value, "-");
-
-                if ($is_range) {
+                if (false !== strpos($value, "-")
+                    && preg_match("#(?:min|[0-9+])-(?:max|[0-9+])#", $value)
+                ) {
                     $value = array_map(function ($v) {
                         if (is_numeric($v)) {
                             return (float) $v;
                         }
                         return $v;
-                    }, explode($is_range ? "-" : ",", $value));
+                    }, explode("-", $value));
                     $data = array();
                     if ("min" != $value[0]) {
                         $data["min"] = $value[0];
