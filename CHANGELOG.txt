@@ -1,4 +1,8 @@
 
+## Version 4.3.5
+
+ * correction: détection des valeurs "range".
+
 ## Version 4.3.4
 
  * correction: algo Leboncoin.
