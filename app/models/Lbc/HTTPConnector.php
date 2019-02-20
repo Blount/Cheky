@@ -210,7 +210,7 @@ class HTTPConnector extends HttpClientCurl
     public function request($url = null)
     {
         if (!$this->_url && !$url) {
-            throw new Exception("Aucune URL à appeler.");
+            throw new \Exception("Aucune URL à appeler.");
         }
 
         if ($url) {
