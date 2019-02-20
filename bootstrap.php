@@ -298,7 +298,7 @@ class Application
     }
 }
 
-$config = new Config_Lite(DOCUMENT_ROOT."/var/config.ini");
+$config = new Config_Lite(DOCUMENT_ROOT."/var/config.ini", LOCK_EX);
 
 $app = new Application();
 $app->bootstrap($config);
