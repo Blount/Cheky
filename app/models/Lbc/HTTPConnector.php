@@ -394,7 +394,7 @@ class HTTPConnector extends HttpClientCurl
                         "locationType" => "city",
                     );
 
-                } else {
+                } elseif (false !== strpos($city, "_")) {
                     $city = explode("_", $city);
                     $options_cities[] = array(
                         "city" => $city[0],
