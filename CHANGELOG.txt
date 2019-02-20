@@ -1,4 +1,12 @@
 
+## Version 4.4
+
+ * ajout: gestion de tags sur les annonces sauvegardées.
+ * correction: analyseur d'URL Leboncoin.
+ * correction: affiche le lien RSS généré au lieu de le charger dans le navigateur.
+ * correction: erreur si adresse de recherche mal formée.
+ * correction: protection sur le fichier config.ini.
+
 ## Version 4.3.5
 
  * correction: détection des valeurs "range".

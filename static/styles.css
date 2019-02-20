@@ -475,6 +475,19 @@ form .select-group select {
     color: #E00000;
 }
 
+/**
+ * Liste des annonces sauvegardées
+ */
+.tags-filter a {
+    line-height: 2;
+    display: inline-block;
+    border: 1px solid #424242;
+    padding: 0 10px;
+}
+.tags-filter a.active {
+    background: #424242;
+    color: #FFFFFF;
+}
 
 /**
  * Fiche d'annonce sauvegardée
@@ -539,7 +552,8 @@ form .select-group select {
     margin-top: 10px;
 }
 .annonce-description p,
-.annonce-comment > div {
+.annonce-comment > div,
+.annonce-tags > div {
     box-sizing: border-box;
     border: 1px solid #424242;
     padding: 10px;
@@ -552,6 +566,12 @@ form .select-group select {
     margin-top: 10px;
     font-size: 1em;
     line-height: 2;
+}
+.annonce-tags .annonce-tag {
+    display: inline-block;
+    line-height: 2;
+    border: 1px solid #424242;
+    padding: 0 5px;
 }
 
 .status {
@@ -612,6 +632,15 @@ form .select-group select {
     border: 2px solid #EF0000;
     color: #EF0000;
     padding: 0 10px;
+}
+
+.block-rss-url pre {
+    max-width: 100%;
+    overflow: auto;
+    padding: 5px;
+    background: #666666;
+    color: #FFFFFF;
+    font-size: .8em;
 }
 
 @media screen and (max-width: 960px) {

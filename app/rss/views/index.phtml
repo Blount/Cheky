@@ -1,3 +1,14 @@
+<?php if (isset($rss_url)) : ?>
+<div class="block block-rss-url">
+    <h2 class="block-title">Adresse du flux RSS correspondant à votre recherche</h2>
+    <div class="block-content">
+        <p>Copiez l'adresse suivante dans votre agrégateur RSS :</p>
+        <pre><?php echo htmlspecialchars($rss_url); ?></pre>
+        <p><a href="<?php echo htmlspecialchars($rss_url); ?>" target="_blank">Cliquez ici pour ouvrir le lien dans un nouvel onglet.</a></p>
+    </div>
+</div>
+<?php endif; ?>
+
 <form action="" method="post">
     <h2>Génération d'un flux RSS</h2>
     <dl>

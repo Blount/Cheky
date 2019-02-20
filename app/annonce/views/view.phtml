@@ -85,6 +85,28 @@ $date = implode("/", array_reverse(explode("-", $ad->getDate())));
                 </a></p>
             </div>
         </div>
+        <div id="tags" class="annonce-tags">
+            <span class="annonce-label">Tags</span>
+            <div>
+                <?php foreach ($ad->getTags() AS $tag) : ?>
+                <span class="annonce-tag">
+                    <a href="?mod=annonce&amp;a=tag-delete&amp;id=<?php
+                        echo $ad->getId(); ?>&amp;tag=<?php
+                        echo htmlspecialchars($tag); ?>"
+                       title="Supprimer ce tag"><span class="fa fa-times"></span></a>
+                    <?php echo htmlspecialchars($tag); ?>
+                </span>
+                <?php endforeach; ?>
+
+                <form action="?mod=annonce&amp;a=tag-add&amp;id=<?php
+                        echo $ad->getId(); ?>" method="POST">
+                    <p>
+                        <input type="text" name="tags" value="" placeholder="Ajouter des tags (séparé par des virgules) ..." />
+                        <input type="submit" value="Ajouter" />
+                    </p>
+                </form>
+            </div>
+        </div>
     </div>
     <?php $photos = $ad->getPhotos(); ?>
     <div class="annonce-photos">

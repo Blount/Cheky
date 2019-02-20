@@ -12,7 +12,7 @@ define("APPLICATION_VERSION", require DOCUMENT_ROOT."/version.php");
 
 // Constante utilisée pour forcer le navigateur à télécharger
 // les fichiers statiques (js, css, html, etc)
-define("STATIC_REV", 13);
+define("STATIC_REV", 14);
 
 define("COOKIE_PATH", DOCUMENT_ROOT."/var/tmp");
 
@@ -298,7 +298,7 @@ class Application
     }
 }
 
-$config = new Config_Lite(DOCUMENT_ROOT."/var/config.ini");
+$config = new Config_Lite(DOCUMENT_ROOT."/var/config.ini", LOCK_EX);
 
 $app = new Application();
 $app->bootstrap($config);

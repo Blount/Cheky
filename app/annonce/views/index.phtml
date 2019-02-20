@@ -6,6 +6,19 @@
     <a href="?mod=annonce&amp;a=form" class="link-create-ad">Sauvegarder une annonce</a>
 </p>
 
+<?php if ($tags) : ?>
+<div class="tags-filter">
+    Filtrer par tag :
+    <?php foreach ($tags AS $tag => $ad_ids) : ?>
+    <a href="?mod=annonce&amp;tag=<?php echo htmlspecialchars($tag); ?>"<?php
+        echo in_array($tag, $filter_tags) ? ' class="active"' : '';
+    ?>><?php
+        echo htmlspecialchars($tag); ?></a>
+    <?php endforeach; ?>
+    <a href="?mod=annonce&amp;tag=clean-filter"><span class="fa fa-times"></span></a>
+</div>
+<?php endif; ?>
+
 <table style="width: 100%;">
     <thead>
         <tr>
@@ -35,7 +48,7 @@
                 <?php endif; ?>
                 <a href="?mod=annonce&amp;sort=date_created">Date de sauvegarde</a>
             </th>
-            <th style="width: 200px">
+            <th style="width: 150px">
                 <?php if ($sort == "date") : ?>
                 <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
                 <?php endif; ?>
@@ -53,7 +66,7 @@
                 <?php endif; ?>
                 <a href="?mod=annonce&amp;sort=price">Prix</a>
             </th>
-            <th style="width: 200px">
+            <th style="width: 100px">
                 <?php if ($sort == "zip_code") : ?>
                 <img src="static/images/sort-<?php echo $order; ?>.png" alt="" />&nbsp;
                 <?php endif; ?>
@@ -65,6 +78,7 @@
                 <?php endif; ?>
                 <a href="?mod=annonce&amp;sort=city">Villes</a>
             </th>
+            <th style="width: 100px">&nbsp;</th>
             <th style="width: 20px">&nbsp;</th>
         </tr>
     </thead>
@@ -112,6 +126,7 @@
             </td>
             <td><?php echo htmlspecialchars($ad->getZipCode()); ?></td>
             <td><?php echo htmlspecialchars($ad->getCity()); ?></td>
+            <td><?php echo $ad->getTags() ? htmlspecialchars(implode(", ", $ad->getTags())) : "-"; ?></td>
             <td><a href="?mod=annonce&amp;a=form-delete&amp;id=<?php echo $ad->getId(); ?>"
                 title="Supprimer l'annonce"><span class="fa fa-times"></span></a></td>
         </tr>

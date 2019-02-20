@@ -20,7 +20,6 @@ class Ad implements \App\Storage\Ad
         if (is_file($this->_filename)) {
             $fopen = fopen($this->_filename, "r");
             if ($header = fgetcsv($fopen, 0, ",", '"')) {
-                $nb_columns = count($header);
                 while (false !== $values = fgetcsv($fopen, 0, ",", '"')) {
                     $ad = new AdItem();
                     $options = array_combine(
@@ -35,6 +34,9 @@ class Ad implements \App\Storage\Ad
                     }
                     if (!isset($options["online"])) {
                         $options["online"] = 1;
+                    }
+                    if (!empty($options["tags"])) {
+                        $options["tags"] = explode(",", $options["tags"]);
                     }
                     $ad->setFromArray($options);
                     $ads[$ad->getId()] = $ad;
@@ -103,6 +105,9 @@ class Ad implements \App\Storage\Ad
                         if (!empty($options["properties"])) {
                             $options["properties"] = json_decode($options["properties"], true);
                         }
+                        if (!empty($options["tags"])) {
+                            $options["tags"] = explode(",", $options["tags"]);
+                        }
                         if (!isset($options["online"])) {
                             $options["online"] = 1;
                         }
@@ -138,6 +143,7 @@ class Ad implements \App\Storage\Ad
             $data = $a->toArray();
             $data["photos"] = json_encode($data["photos"]);
             $data["properties"] = json_encode($data["properties"]);
+            $data["tags"] = implode(",", $data["tags"]);
             if (empty($data["date_created"])) {
                 $data["date_created"] = date("Y-m-d H:i:s");
             }
@@ -147,6 +153,7 @@ class Ad implements \App\Storage\Ad
             $data = $ad->toArray();
             $data["photos"] = json_encode($data["photos"]);
             $data["properties"] = json_encode($data["properties"]);
+            $data["tags"] = implode(",", $data["tags"]);
             if (empty($data["date_created"])) {
                 $data["date_created"] = date("Y-m-d H:i:s");
             }
@@ -177,6 +184,7 @@ class Ad implements \App\Storage\Ad
             $data = $a->toArray();
             $data["photos"] = json_encode($data["photos"]);
             $data["properties"] = json_encode($data["properties"]);
+            $data["tags"] = implode(",", $data["tags"]);
             fputcsv($fpNewFile, $data, ",", '"');
         }
 
@@ -192,6 +200,21 @@ class Ad implements \App\Storage\Ad
         }
 
         return $this;
+    }
+
+    public function fetchTags()
+    {
+        $ads = $this->fetchAll();
+        $tags = array();
+        foreach ($ads AS $ad) {
+            foreach ($ad->getTags() AS $tag) {
+                $tags[$tag][] = $ad->getId();
+            }
+        }
+
+        ksort($tags, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return $tags;
     }
 
     protected function _checkFile()

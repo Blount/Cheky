@@ -210,7 +210,7 @@ class HTTPConnector extends HttpClientCurl
     public function request($url = null)
     {
         if (!$this->_url && !$url) {
-            throw new Exception("Aucune URL à appeler.");
+            throw new \Exception("Aucune URL à appeler.");
         }
 
         if ($url) {
@@ -358,6 +358,10 @@ class HTTPConnector extends HttpClientCurl
             $query_string["cities"] = $query_string["location"];
             unset($query_string["location"]);
         }
+        if (!empty($query_string["locations"]) && empty($query_string["cities"])) {
+            $query_string["cities"] = $query_string["locations"];
+            unset($query_string["locations"]);
+        }
         if (!empty($query_string["cities"])) {
             $cities = explode(",", $query_string["cities"]);
             $options_cities = array();
@@ -390,7 +394,7 @@ class HTTPConnector extends HttpClientCurl
                         "locationType" => "city",
                     );
 
-                } else {
+                } elseif (false !== strpos($city, "_")) {
                     $city = explode("_", $city);
                     $options_cities[] = array(
                         "city" => $city[0],
