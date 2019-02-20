@@ -358,6 +358,10 @@ class HTTPConnector extends HttpClientCurl
             $query_string["cities"] = $query_string["location"];
             unset($query_string["location"]);
         }
+        if (!empty($query_string["locations"]) && empty($query_string["cities"])) {
+            $query_string["cities"] = $query_string["locations"];
+            unset($query_string["locations"]);
+        }
         if (!empty($query_string["cities"])) {
             $cities = explode(",", $query_string["cities"]);
             $options_cities = array();
