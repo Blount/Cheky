@@ -56,6 +56,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         $query["price_strict"] = isset($values["price_strict"])?
             (int)(bool)$values["price_strict"]:0;
-        header("LOCATION: ./?".http_build_query($query));
+
+        $baseurl = $config->get("general", "baseurl", "");
+        $rss_url = rtrim($baseurl, "/")."/?".http_build_query($query);
     }
 }

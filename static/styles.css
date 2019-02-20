@@ -614,6 +614,15 @@ form .select-group select {
     padding: 0 10px;
 }
 
+.block-rss-url pre {
+    max-width: 100%;
+    overflow: auto;
+    padding: 5px;
+    background: #666666;
+    color: #FFFFFF;
+    font-size: .8em;
+}
+
 @media screen and (max-width: 960px) {
     .user-settings-container {
         flex-direction: column;
