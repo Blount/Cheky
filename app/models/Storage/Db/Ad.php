@@ -44,8 +44,14 @@ class Ad implements \App\Storage\Ad
                     $adDb[$key] = array();
                 }
             }
+
+            if (!empty($adDb["tags"])) {
+                $adDb["tags"] = explode(",", $adDb["tags"]);
+            }
+
             $ad = new AdItem();
             $ad->setFromArray($adDb);
+
             $ads[] = $ad;
         }
         return $ads;
@@ -65,6 +71,11 @@ class Ad implements \App\Storage\Ad
                     $adDb[$key] = array();
                 }
             }
+
+            if (!empty($adDb["tags"])) {
+                $adDb["tags"] = explode(",", $adDb["tags"]);
+            }
+
             $ad = new AdItem();
             $ad->setFromArray($adDb);
         }
@@ -76,6 +87,9 @@ class Ad implements \App\Storage\Ad
         $options = $ad->toArray();
         $options["photos"] = json_encode($options["photos"]);
         $options["properties"] = json_encode($options["properties"]);
+        if (!$options["tags"] = implode(",", $options["tags"])) {
+            $options["tags"] = null;
+        }
 
         if (!$ad->getAid()) {
             $options["user_id"] = $this->_user->getId();
@@ -132,6 +146,27 @@ class Ad implements \App\Storage\Ad
             WHERE `aid` = ".$ad->getAid());
 
         return $this;
+    }
+
+    public function fetchTags()
+    {
+        $query = "SELECT `id`, `tags` FROM ".$this->_table
+            ." WHERE user_id = ".$this->_user->getId();
+        $adsDb = $this->_connection->query($query);
+        $tags = array();
+        while ($tagDb = $adsDb->fetch_assoc()) {
+            if (!$tagDb["tags"]) {
+                continue;
+            }
+            $ad_tags = explode(",", $tagDb["tags"]);
+            foreach ($ad_tags AS $tag) {
+                $tags[$tag][] = $tagDb["id"];
+            }
+        }
+
+        ksort($tags, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return $tags;
     }
 
     /**

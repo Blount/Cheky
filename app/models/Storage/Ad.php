@@ -13,4 +13,6 @@ interface Ad
     public function save(AdItem $ad);
 
     public function delete(AdItem $ad);
+
+    public function fetchTags();
 }

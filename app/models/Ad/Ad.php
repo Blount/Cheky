@@ -7,6 +7,7 @@ class Ad extends \AdService\Ad
     protected $_aid;
     protected $_date_created;
     protected $_comment;
+    protected $_tags;
     protected $_online;
     protected $_online_date_checked;
 
@@ -62,6 +63,27 @@ class Ad extends \AdService\Ad
     public function getComment()
     {
         return $this->_comment;
+    }
+
+    /**
+     * @param array $tags
+     * @return Ad
+     */
+    public function setTags($tags)
+    {
+        $this->_tags = $tags;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTags()
+    {
+        if (!$this->_tags) {
+            return array();
+        }
+        return $this->_tags;
     }
 
     /**
@@ -124,6 +146,7 @@ class Ad extends \AdService\Ad
         $data = parent::toArray();
         $data["date_created"] = (string) $this->_date_created;
         $data["comment"] = (string) $this->_comment;
+        $data["tags"] = $this->getTags();
         $data["online"] = (int) $this->_online;
         $data["online_date_checked"] = (string) $this->_online_date_checked;
         return $data;
