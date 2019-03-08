@@ -1,4 +1,9 @@
 
+## Version 4.4.1
+
+ * correction: analyse de la partie géographique de l'adresse de recherche.
+ * correction: label sur la colonne de tag des annonces sauvegardées.
+
 ## Version 4.4
 
  * ajout: gestion de tags sur les annonces sauvegardées.

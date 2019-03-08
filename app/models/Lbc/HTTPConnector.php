@@ -402,9 +402,18 @@ class HTTPConnector extends HttpClientCurl
                         "zipcode" => $city[1],
                         "locationType" => "city",
                     );
+                } else {
+                    $options_cities[] = array(
+                        "city" => $city,
+                        "label" => $city." (toute la ville)",
+                        "locationType" => "city",
+                    );
                 }
             }
-            $location["city_zipcodes"] = $options_cities;
+        }
+
+        if ($options_cities) {
+            $location = array("locations" => $options_cities);
         }
 
         $options = array(
